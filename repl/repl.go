@@ -10,7 +10,6 @@ import (
 
 const PROMPT = ">> "
 
-// Start will create a new repl and wait for use input
 func Start(in io.Reader, out io.Writer) {
 	scanner := bufio.NewScanner(in)
 
