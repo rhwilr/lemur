@@ -28,6 +28,8 @@ if (5 < 10) {
 10 == 10;
 10 != 9;
 $
+"foobar"
+"foo bar"
 `
 
 	tests := []struct {
@@ -72,7 +74,7 @@ $
 		{token.IDENT, "ten"},
 		{token.RPAREN, ")"},
 		{token.SEMICOLON, ";"},
-		
+
 		{token.BANG, "!"},
 		{token.MINUS, "-"},
 		{token.SLASH, "/"},
@@ -112,7 +114,10 @@ $
 		{token.SEMICOLON, ";"},
 
 		{token.ILLEGAL, "$"},
-		
+
+		{token.STRING, "foobar"},
+		{token.STRING, "foo bar"},
+
 		{token.EOF, ""},
 	}
 
