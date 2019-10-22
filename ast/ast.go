@@ -173,7 +173,7 @@ func (il *IntegerLiteral) String() string       { return il.Token.Literal }
 /*
 ** StringLiteral
  */
- type StringLiteral struct {
+type StringLiteral struct {
 	Token token.Token // token.STRING
 	Value string
 }
@@ -185,14 +185,14 @@ func (sl *StringLiteral) String() string       { return sl.Token.Literal }
 /*
 ** ArrayLiteral
  */
- type ArrayLiteral struct {
-	Token token.Token // token.Array
+type ArrayLiteral struct {
+	Token    token.Token // token.Array
 	Elements []Expression
 }
 
 func (al *ArrayLiteral) expressionNode()      {}
 func (al *ArrayLiteral) TokenLiteral() string { return al.Token.Literal }
-func (al *ArrayLiteral) String() string       { 
+func (al *ArrayLiteral) String() string {
 	var out bytes.Buffer
 
 	elements := []string{}
@@ -207,26 +207,51 @@ func (al *ArrayLiteral) String() string       {
 	return out.String()
 }
 
+/*
+** HashLiteral
+ */
+type HashLiteral struct {
+	Token token.Token // the '{' token
+	Pairs map[Expression]Expression
+}
+
+func (hl *HashLiteral) expressionNode()      {}
+func (hl *HashLiteral) TokenLiteral() string { return hl.Token.Literal }
+func (hl *HashLiteral) String() string {
+	var out bytes.Buffer
+
+	pairs := []string{}
+	for key, value := range hl.Pairs {
+		pairs = append(pairs, key.String()+":"+value.String())
+	}
+
+	out.WriteString("{")
+	out.WriteString(strings.Join(pairs, ", "))
+	out.WriteString("}")
+
+	return out.String()
+}
 
 /*
 ** IndexExpression
  */
 type IndexExpression struct {
-	Token    token.Token // Then '[' token
-	Left     Expression
-	Index    Expression
+	Token token.Token // Then '[' token
+	Left  Expression
+	Index Expression
 }
-func (ie *IndexExpression) expressionNode() {}
+
+func (ie *IndexExpression) expressionNode()      {}
 func (ie *IndexExpression) TokenLiteral() string { return ie.Token.Literal }
 func (ie *IndexExpression) String() string {
 	var out bytes.Buffer
-	
+
 	out.WriteString("(")
 	out.WriteString(ie.Left.String())
 	out.WriteString("[")
 	out.WriteString(ie.Index.String())
 	out.WriteString("])")
-	
+
 	return out.String()
 }
 
@@ -341,6 +366,7 @@ type CallExpression struct {
 	Function  Expression
 	Arguments []Expression
 }
+
 func (ce *CallExpression) expressionNode()      {}
 func (ce *CallExpression) TokenLiteral() string { return ce.Token.Literal }
 func (ce *CallExpression) String() string {
