@@ -3,7 +3,6 @@ package evaluator
 import (
 	"fmt"
 	"monkey/object"
-	"unicode/utf8"
 )
 
 var builtins = map[string]*object.Builtin{
