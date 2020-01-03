@@ -5,10 +5,8 @@ as described in [Write an Interpreter in Go](https://interpreterbook.com/).
 
 ## Development
 
+Use the Makefile to run tests, lint, and build the project:
 
-
-### Testing
-
-```go
-go test ./...
+```sh
+make test
 ```
