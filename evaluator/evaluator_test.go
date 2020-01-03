@@ -1,9 +1,9 @@
 package evaluator
 
 import (
-	"monkey/lexer"
-	"monkey/object"
-	"monkey/parser"
+	"github.com/rhwilr/monkey/lexer"
+	"github.com/rhwilr/monkey/object"
+	"github.com/rhwilr/monkey/parser"
 	"testing"
 )
 

@@ -1,6 +1,6 @@
 package lexer
 
-import "monkey/token"
+import "github.com/rhwilr/monkey/token"
 
 // The Lexer is used to parse source code and turn it into tokens
 type Lexer struct {
