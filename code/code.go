@@ -17,10 +17,12 @@ type Definition struct {
 
 const (
 	OpConstant Opcode = iota
+	OpAdd
 )
 
 var definitions = map[Opcode]*Definition{
 	OpConstant: {"OpConstant", []int{2}},
+	OpAdd:      {"OpAdd", []int{}},
 }
 
 func Lookup(op byte) (*Definition, error) {
@@ -85,7 +87,7 @@ func (ins Instructions) String() string {
 	i := 0
 	for i < len(ins) {
 		def, err := Lookup(ins[i])
-		
+
 		if err != nil {
 			fmt.Fprintf(&out, "ERROR: %s\n", err)
 			continue
@@ -108,7 +110,9 @@ func (ins Instructions) fmtInstruction(def *Definition, operands []int) string {
 		return fmt.Sprintf("ERROR: operand len %d does not match defined %d\n", len(operands), operandCount)
 	}
 
-	switch operandCount{
+	switch operandCount {
+	case 0:
+		return def.Name
 	case 1:
 		return fmt.Sprintf("%s %d", def.Name, operands[0])
 	}
