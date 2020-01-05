@@ -37,6 +37,13 @@ func (c *Compiler) Compile(node ast.Node) error {
 			}
 			c.emit(code.OpPop)
 
+		case *ast.Boolean:
+			if node.Value {
+				c.emit(code.OpTrue)
+			} else {
+				c.emit(code.OpFalse)
+			}
+
 		case *ast.InfixExpression:
 			err := c.Compile(node.Left)
 			if err != nil {
