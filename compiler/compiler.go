@@ -2,6 +2,7 @@ package compiler
 
 import (
 	"fmt"
+
 	"github.com/rhwilr/monkey/ast"
 	"github.com/rhwilr/monkey/code"
 	"github.com/rhwilr/monkey/object"
@@ -21,59 +22,95 @@ func New() *Compiler {
 
 func (c *Compiler) Compile(node ast.Node) error {
 	switch node := node.(type) {
-		// Statements
-		case *ast.Program:
-			for _, s := range node.Statements {
-				err := c.Compile(s)
-				if err != nil {
-					return err
-				}
-			}
-
-		case *ast.ExpressionStatement:
-			err := c.Compile(node.Expression)
+	// Statements
+	case *ast.Program:
+		for _, s := range node.Statements {
+			err := c.Compile(s)
 			if err != nil {
 				return err
 			}
-			c.emit(code.OpPop)
-
-		case *ast.Boolean:
-			if node.Value {
-				c.emit(code.OpTrue)
-			} else {
-				c.emit(code.OpFalse)
-			}
-
-		case *ast.InfixExpression:
-			err := c.Compile(node.Left)
-			if err != nil {
-				return err
-			}
-
-			err = c.Compile(node.Right)
-			if err != nil {
-				return err
-			}
-
-			switch node.Operator {
-			case "+":
-				c.emit(code.OpAdd)
-			case "-":
-				c.emit(code.OpSub)
-			case "*":
-				c.emit(code.OpMul)
-			case "/":
-				c.emit(code.OpDiv)
-			default:
-				return fmt.Errorf("unknown operator %s", node.Operator)
-			}
-
-		case *ast.IntegerLiteral:
-			integer := &object.Integer{Value: node.Value}
-			c.emit(code.OpConstant, c.addConstant(integer))
 		}
 
-		return nil
+	case *ast.ExpressionStatement:
+		err := c.Compile(node.Expression)
+		if err != nil {
+			return err
+		}
+		c.emit(code.OpPop)
+
+	case *ast.Boolean:
+		if node.Value {
+			c.emit(code.OpTrue)
+		} else {
+			c.emit(code.OpFalse)
+		}
+
+	case *ast.PrefixExpression:
+		err := c.Compile(node.Right)
+		if err != nil {
+			return err
+		}
+
+		switch node.Operator {
+		case "!":
+			c.emit(code.OpBang)
+		case "-":
+			c.emit(code.OpMinus)
+		default:
+			return fmt.Errorf("unknown operator %s", node.Operator)
+		}
+
+	case *ast.InfixExpression:
+		// The < operator is not implemented in the VM, but we can use the >
+		// operator by swapping the parameters.
+		if node.Operator == "<" {
+			err := c.Compile(node.Right)
+			if err != nil {
+				return err
+			}
+			err = c.Compile(node.Left)
+			if err != nil {
+				return err
+			}
+			c.emit(code.OpGreaterThan)
+			return nil
+		}
+
+		err := c.Compile(node.Left)
+		if err != nil {
+			return err
+		}
+
+		err = c.Compile(node.Right)
+		if err != nil {
+			return err
+		}
+
+		switch node.Operator {
+		case "+":
+			c.emit(code.OpAdd)
+		case "-":
+			c.emit(code.OpSub)
+		case "*":
+			c.emit(code.OpMul)
+		case "/":
+			c.emit(code.OpDiv)
+		case ">":
+			c.emit(code.OpGreaterThan)
+		case "==":
+			c.emit(code.OpEqual)
+		case "!=":
+			c.emit(code.OpNotEqual)
+		default:
+			return fmt.Errorf("unknown operator %s", node.Operator)
+		}
+
+	case *ast.IntegerLiteral:
+		integer := &object.Integer{Value: node.Value}
+		c.emit(code.OpConstant, c.addConstant(integer))
+	}
+
+	return nil
 }
 
 func (c *Compiler) emit(op code.Opcode, operands ...int) int {
@@ -90,7 +127,7 @@ func (c *Compiler) addInstruction(ins []byte) int {
 
 func (c *Compiler) addConstant(obj object.Object) int {
 	c.constants = append(c.constants, obj)
-	return len(c.constants) -1
+	return len(c.constants) - 1
 }
 
 type Bytecode struct {
