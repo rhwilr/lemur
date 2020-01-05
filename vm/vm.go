@@ -50,7 +50,7 @@ func (vm *VM) Run() error {
 			if err != nil {
 				return err
 			}
-		
+
 		case code.OpMinus:
 			err := vm.executeMinusOperator()
 			if err != nil {
@@ -77,10 +77,26 @@ func (vm *VM) Run() error {
 			if err != nil {
 				return err
 			}
+
 		case code.OpBang:
 			err := vm.executeBangOperator()
 			if err != nil {
 				return err
+			}
+
+		case code.OpJump:
+			pos := int(code.ReadUint16(vm.instructions[ip+1:]))
+			// we have to set the instruction pointer to the value before the jump,
+			// since the loop will increment ip once more.
+			ip = pos - 1
+
+		case code.OpJumpNotTruthy:
+			pos := int(code.ReadUint16(vm.instructions[ip+1:]))
+			ip += 2
+
+			condition := vm.pop()
+			if !isTruthy(condition) {
+				ip = pos - 1
 			}
 		}
 	}
@@ -208,4 +224,13 @@ func (vm *VM) executeMinusOperator() error {
 
 	value := operand.(*object.Integer).Value
 	return vm.push(&object.Integer{Value: -value})
+}
+
+func isTruthy(obj object.Object) bool {
+	switch obj := obj.(type) {
+	case *object.Boolean:
+		return obj.Value
+	default:
+		return true
+	}
 }
