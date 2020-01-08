@@ -3,8 +3,9 @@ package object
 import (
 	"bytes"
 	"fmt"
-	"hash/fnv"
 	"github.com/rhwilr/monkey/ast"
+	"github.com/rhwilr/monkey/code"
+	"hash/fnv"
 	"strings"
 )
 
@@ -16,16 +17,17 @@ type Object interface {
 }
 
 const (
-	INTEGER_OBJ      = "INTEGER"
-	BOOLEAN_OBJ      = "BOOLEAN"
-	NULL_OBJ         = "NULL"
-	STRING_OBJ       = "STRING"
-	ARRAY_OBJ        = "ARRAY"
-	HASH_OBJ         = "HASH"
-	RETURN_VALUE_OBJ = "RETURN_VALUE"
-	FUNCTION_OBJ     = "FUNCTION"
-	BUILTIN_OBJ      = "BUILTIN"
-	ERROR_OBJ        = "ERROR"
+	INTEGER_OBJ           = "INTEGER"
+	BOOLEAN_OBJ           = "BOOLEAN"
+	NULL_OBJ              = "NULL"
+	STRING_OBJ            = "STRING"
+	ARRAY_OBJ             = "ARRAY"
+	HASH_OBJ              = "HASH"
+	RETURN_VALUE_OBJ      = "RETURN_VALUE"
+	FUNCTION_OBJ          = "FUNCTION"
+	COMPILED_FUNCTION_OBJ = "COMPILED_FUNCTION_OBJ"
+	BUILTIN_OBJ           = "BUILTIN"
+	ERROR_OBJ             = "ERROR"
 )
 
 /*
@@ -182,6 +184,18 @@ func (f *Function) Inspect() string {
 	out.WriteString("\n}")
 
 	return out.String()
+}
+
+/*
+** Compiled function
+ */
+type CompiledFunction struct {
+	Instructions code.Instructions
+}
+
+func (cf *CompiledFunction) Type() ObjectType { return COMPILED_FUNCTION_OBJ }
+func (cf *CompiledFunction) Inspect() string {
+	return fmt.Sprintf("CompiledFunction[%p]", cf)
 }
 
 /*
