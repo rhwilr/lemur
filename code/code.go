@@ -42,6 +42,7 @@ const (
 	OpCall
 	OpReturn
 	OpReturnValue
+	OpGetBuiltin
 )
 
 var definitions = map[Opcode]*Definition{
@@ -71,6 +72,7 @@ var definitions = map[Opcode]*Definition{
 	OpCall:          {"OpCall", []int{1}},
 	OpReturn:        {"OpReturn", []int{}},
 	OpReturnValue:   {"OpReturnValue", []int{}},
+	OpGetBuiltin:    {"OpGetBuiltin", []int{1}},
 }
 
 func Lookup(op byte) (*Definition, error) {
@@ -129,7 +131,7 @@ func ReadOperands(def *Definition, ins Instructions) ([]int, int) {
 	return operands, offset
 }
 
-func ReadUint8(ins Instructions) uint8 { return uint8(ins[0]) }
+func ReadUint8(ins Instructions) uint8   { return uint8(ins[0]) }
 func ReadUint16(ins Instructions) uint16 { return binary.BigEndian.Uint16(ins) }
 
 func (ins Instructions) String() string {
