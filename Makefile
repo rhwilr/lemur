@@ -21,7 +21,10 @@ test: ## Run unittests
 
 build: dep ## Build the binary file
 	@go build -i -o build/main $(PKG)
- 
+
+benchmark: dep ## Build the benchmark binary
+	@go build -o build/benchmark ./benchmark
+
 clean: ## Remove previous build
 	@rm -f $(PROJECT_NAME)/build
  

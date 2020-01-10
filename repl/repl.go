@@ -50,7 +50,6 @@ func Start(in io.Reader, out io.Writer) {
 		}
 
 		code := comp.Bytecode()
-		constants = code.Constants
 		machine := vm.NewWithGlobalsStore(code, globals)
 
 		err = machine.Run()
@@ -60,8 +59,10 @@ func Start(in io.Reader, out io.Writer) {
 		}
 
 		lastPopped := machine.LastPoppedStackElem()
-		io.WriteString(out, lastPopped.Inspect())
-		io.WriteString(out, "\n")
+		if lastPopped != nil {
+			io.WriteString(out, lastPopped.Inspect())
+			io.WriteString(out, "\n")
+		}
 	}
 }
 
