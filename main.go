@@ -77,7 +77,7 @@ func runRepl() {
 	repl.Start(os.Stdin, os.Stdout)
 }
 
-func runEvaluator() {
+func runEvaluator2() {
 	args := flag.Args()
 
 	f, err := os.Open(args[0])
@@ -132,6 +132,40 @@ func runEvaluator() {
 		duration)
 }
 
+func runEvaluator() {
+	args := flag.Args()
+
+	f, err := os.Open(args[0])
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer f.Close()
+
+	var duration time.Duration
+
+	input, err := ioutil.ReadAll(f)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	code := compiler.Read(input)
+	machine := vm.New(code)
+
+	start := time.Now()
+
+	err = machine.Run()
+	if err != nil {
+		fmt.Printf("vm error: %s", err)
+		return
+	}
+	duration = time.Since(start)
+
+	result := machine.LastPoppedStackElem()
+	fmt.Printf("result=%s, duration=%s\n",
+		result.Inspect(),
+		duration)
+}
+
 func runCompiler() {
 	args := flag.Args()
 
@@ -164,5 +198,31 @@ func runCompiler() {
 		log.Fatal(err)
 	}
 
-	// code := c.Bytecode()
+	code := c.Bytecode()
+
+
+	bytecode := code.Write()
+
+	f2, err := os.Create("a.out")
+	if err != nil {
+		fmt.Printf("vm error: %s", err)
+		return
+	}
+
+	n2, _ := f2.Write(bytecode)
+	fmt.Printf("wrote %d bytes\n", n2)
+
+
+	// run
+	code = compiler.Read(bytecode)
+	machine := vm.New(code)
+
+	err = machine.Run()
+	if err != nil {
+		fmt.Printf("vm error: %s", err)
+		return
+	}
+
+	result := machine.LastPoppedStackElem()
+	fmt.Printf("result=%s\n",result.Inspect())
 }

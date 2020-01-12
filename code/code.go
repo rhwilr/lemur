@@ -154,7 +154,7 @@ func (ins Instructions) String() string {
 
 		operands, read := ReadOperands(def, ins[i+1:])
 
-		fmt.Fprintf(&out, "%04d %s\n", i, ins.fmtInstruction(def, operands))
+		fmt.Fprintf(&out, "%04d %s\n", i, ins.fmtInstruction(ins[i], def, operands))
 
 		i += 1 + read
 	}
@@ -162,7 +162,7 @@ func (ins Instructions) String() string {
 	return out.String()
 }
 
-func (ins Instructions) fmtInstruction(def *Definition, operands []int) string {
+func (ins Instructions) fmtInstruction(opcode byte, def *Definition, operands []int) string {
 	operandCount := len(def.OperandWidths)
 
 	if len(operands) != operandCount {
@@ -173,9 +173,9 @@ func (ins Instructions) fmtInstruction(def *Definition, operands []int) string {
 	case 0:
 		return def.Name
 	case 1:
-		return fmt.Sprintf("%s %d", def.Name, operands[0])
+		return fmt.Sprintf("%s(%d) %d", def.Name, opcode, operands[0])
 	case 2:
-		return fmt.Sprintf("%s %d %d", def.Name, operands[0], operands[1])
+		return fmt.Sprintf("%s(%d) %d %d", def.Name, opcode, operands[0], operands[1])
 	}
 
 	return fmt.Sprintf("ERROR: unhandled operandCount for %s\n", def.Name)
