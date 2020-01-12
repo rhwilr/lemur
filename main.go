@@ -25,8 +25,10 @@ import (
 
 var (
 	engine      string
+	output      string
 	interactive bool
 	compile     bool
+	script     bool
 	version     bool
 )
 
@@ -41,7 +43,9 @@ func init() {
 	flag.BoolVar(&compile, "c", false, "compile input to bytecode")
 
 	flag.BoolVar(&interactive, "i", false, "enable interactive mode")
-	flag.StringVar(&engine, "e", "vm", "engine to use (eval or vm)")
+	flag.BoolVar(&script, "s", false, "interpret .mon script")
+	flag.StringVar(&engine, "e", "vm", "engine to use (eval or vm), only supported with scripts")
+	flag.StringVar(&output, "o", "a.out", "name of the output file")
 }
 
 func main() {
@@ -61,8 +65,14 @@ func main() {
 		
 		os.Exit(0)
 	}
+
+	if script {
+		runEvaluator()
+
+		os.Exit(0)
+	}
 	
-	runEvaluator()
+	runVM()
 	os.Exit(0)
 }
 
@@ -77,7 +87,7 @@ func runRepl() {
 	repl.Start(os.Stdin, os.Stdout)
 }
 
-func runEvaluator2() {
+func runEvaluator() {
 	args := flag.Args()
 
 	f, err := os.Open(args[0])
@@ -132,42 +142,10 @@ func runEvaluator2() {
 		duration)
 }
 
-func runEvaluator() {
-	args := flag.Args()
-
-	f, err := os.Open(args[0])
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer f.Close()
-
-	var duration time.Duration
-
-	input, err := ioutil.ReadAll(f)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	code := compiler.Read(input)
-	machine := vm.New(code)
-
-	start := time.Now()
-
-	err = machine.Run()
-	if err != nil {
-		fmt.Printf("vm error: %s", err)
-		return
-	}
-	duration = time.Since(start)
-
-	result := machine.LastPoppedStackElem()
-	fmt.Printf("result=%s, duration=%s\n",
-		result.Inspect(),
-		duration)
-}
-
 func runCompiler() {
 	args := flag.Args()
+	var duration time.Duration
+	start := time.Now()
 
 	if len(args) < 1 {
 		log.Fatal("no source file given to compile")
@@ -202,27 +180,48 @@ func runCompiler() {
 
 
 	bytecode := code.Write()
-
-	f2, err := os.Create("a.out")
+	f2, err := os.Create(output)
 	if err != nil {
 		fmt.Printf("vm error: %s", err)
 		return
 	}
 
-	n2, _ := f2.Write(bytecode)
-	fmt.Printf("wrote %d bytes\n", n2)
+	duration = time.Since(start)
 
+	writer, _ := f2.Write(bytecode)
+	fmt.Printf("wrote %d bytes in %s\n", writer, duration)
+}
 
-	// run
-	code = compiler.Read(bytecode)
+func runVM() {
+	args := flag.Args()
+
+	f, err := os.Open(args[0])
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer f.Close()
+
+	// var duration time.Duration
+
+	input, err := ioutil.ReadAll(f)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	code := compiler.Read(input)
 	machine := vm.New(code)
+
+	// start := time.Now()
 
 	err = machine.Run()
 	if err != nil {
 		fmt.Printf("vm error: %s", err)
 		return
 	}
+	// duration = time.Since(start)
 
-	result := machine.LastPoppedStackElem()
-	fmt.Printf("result=%s\n",result.Inspect())
+	// result := machine.LastPoppedStackElem()
+	// fmt.Printf("result=%s, duration=%s\n",
+	// 	result.Inspect(),
+	// 	duration)
 }
