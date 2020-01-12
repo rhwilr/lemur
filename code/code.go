@@ -171,7 +171,7 @@ func (ins Instructions) fmtInstruction(opcode byte, def *Definition, operands []
 
 	switch operandCount {
 	case 0:
-		return def.Name
+		return fmt.Sprintf("%s(%d)", def.Name, opcode)
 	case 1:
 		return fmt.Sprintf("%s(%d) %d", def.Name, opcode, operands[0])
 	case 2:
