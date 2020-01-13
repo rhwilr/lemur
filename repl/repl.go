@@ -1,8 +1,8 @@
 package repl
 
 import (
-	"bufio"
 	"fmt"
+	"strings"
 	"io"
 
 	"github.com/rhwilr/monkey/compiler"
@@ -10,13 +10,14 @@ import (
 	"github.com/rhwilr/monkey/object"
 	"github.com/rhwilr/monkey/parser"
 	"github.com/rhwilr/monkey/vm"
+
+	"github.com/carmark/pseudo-terminal-go/terminal"
 )
 
 const PROMPT = ">> "
 
 func Start(in io.Reader, out io.Writer) {
-	scanner := bufio.NewScanner(in)
-
+	// Init monkey parser and vm
 	constants := []object.Object{}
 	globals := make([]object.Object, vm.GlobalsSize)
 	
@@ -25,51 +26,74 @@ func Start(in io.Reader, out io.Writer) {
 		symbolTable.DefineBuiltin(i, v.Name)
 	}
 
+	// Start repl
+	term, err := terminal.NewWithStdInOut()
+	if err != nil {
+		panic(err)
+	}
+	defer term.ReleaseFromStdInOut() // defer this  
+
+	fmt.Println("Ctrl-D to break")
+	term.SetPrompt(PROMPT)
+
+	line, err:= term.ReadLine()
 	for {
-		fmt.Printf(PROMPT)
-		scanned := scanner.Scan()
-		if !scanned {
+		if err == io.EOF {
+			fmt.Println()
 			return
 		}
 
-		line := scanner.Text()
-		l := lexer.New(line)
-		p := parser.New(l)
+		if (err != nil && strings.Contains(err.Error(), "control-c break")) || len(line) == 0 {
+			line, err = term.ReadLine()
+		} else {
+			out := evaluateLine(line, symbolTable, constants, globals)
 
-		program := p.ParseProgram()
-		if len(p.Errors()) != 0 {
-			printParserErrors(out, p.Errors())
-			continue
-		}
-
-		comp := compiler.NewWithState(symbolTable, constants)
-		err := comp.Compile(program)
-		if err != nil {
-			fmt.Fprintf(out, "Woops! Compilation failed:\n %s\n", err)
-			continue
-		}
-
-		code := comp.Bytecode()
-		machine := vm.NewWithGlobalsStore(code, globals)
-
-		err = machine.Run()
-		if err != nil {
-			fmt.Fprintf(out, "Woops! Executing bytecode failed:\n %s\n", err)
-			continue
-		}
-
-		lastPopped := machine.LastPoppedStackElem()
-		if lastPopped != nil {
-			io.WriteString(out, lastPopped.Inspect())
-			io.WriteString(out, "\n")
+			term.Write([]byte(out+"\r\n"))
+			line, err = term.ReadLine()
 		}
 	}
+
+	term.Write([]byte(line))
 }
 
-func printParserErrors(out io.Writer, errors []string) {
-	io.WriteString(out, "Woops! We ran into some monkey business here!\n")
-	io.WriteString(out, " parser errors:\n")
+func evaluateLine(line string, symbolTable *compiler.SymbolTable, constants []object.Object, globals []object.Object) string {
+	l := lexer.New(line)
+	p := parser.New(l)
+
+	program := p.ParseProgram()
+	if len(p.Errors()) != 0 {
+		printParserErrors(p.Errors())
+		return ""
+	}
+
+	comp := compiler.NewWithState(symbolTable, constants)
+	err := comp.Compile(program)
+	if err != nil {
+		fmt.Printf("Woops! Compilation failed:\n %s\n", err)
+		return ""
+	}
+
+	code := comp.Bytecode()
+	machine := vm.NewWithGlobalsStore(code, globals)
+
+	err = machine.Run()
+	if err != nil {
+		fmt.Printf("Woops! Executing bytecode failed:\n %s\n", err)
+		return ""
+	}
+
+	lastPopped := machine.LastPoppedStackElem()
+	if lastPopped != nil {
+		return lastPopped.Inspect()
+	}
+
+	return ""
+}
+
+func printParserErrors(errors []string) {
+	fmt.Printf("Woops! We ran into some monkey business here!\n")
+	fmt.Printf(" parser errors:\n")
 	for _, msg := range errors {
-		io.WriteString(out, "\t"+msg+"\n")
+		fmt.Printf("\t"+msg+"\n")
 	}
 }
