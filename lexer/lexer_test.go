@@ -16,7 +16,7 @@ let add = fn(x, y) {
 };
 
 let result = add(five, ten);
-!-/*5;
+!-*/5;
 5 < 10 > 5;
 
 if (5 < 10) {
@@ -79,8 +79,8 @@ $
 
 		{token.BANG, "!"},
 		{token.MINUS, "-"},
-		{token.SLASH, "/"},
 		{token.ASTERISK, "*"},
+		{token.SLASH, "/"},
 		{token.INT, "5"},
 		{token.SEMICOLON, ";"},
 		{token.INT, "5"},
@@ -150,6 +150,77 @@ $
 		if tok.Literal != tt.expectedLiteral {
 			t.Fatalf("tests[%d] - literal wrong. expected=%q, got=%q",
 				i, tt.expectedLiteral, tok.Literal)
+		}
+	}
+}
+
+
+func TestSimpleComment(t *testing.T) {
+	input := `5; // This is a single line comment
+// The next line assignes a variable
+let number = 1;
+// The variable has been assigned,
+// but this line is stille a comment.`
+
+	tests := []struct {
+		expectedType    token.TokenType
+		expectedLiteral string
+	}{
+		{token.INT, "5"},
+		{token.SEMICOLON, ";"},
+		{token.LET, "let"},
+		{token.IDENT, "number"},
+		{token.ASSIGN, "="},
+		{token.INT, "1"},
+		{token.SEMICOLON, ";"},
+		{token.EOF, ""},
+	}
+	l := New(input)
+	for i, tt := range tests {
+		tok := l.NextToken()
+		if tok.Type != tt.expectedType {
+			t.Fatalf("tests[%d] - tokentype wrong, expected=%q, got=%q", i, tt.expectedType, tok.Type)
+		}
+		if tok.Literal != tt.expectedLiteral {
+			t.Fatalf("tests[%d] - Literal wrong, expected=%q, got=%q", i, tt.expectedLiteral, tok.Literal)
+		}
+	}
+}
+
+func TestMultiLineComment(t *testing.T) {
+	input := `number/* A comment can start right after source code,
+and can span multiple lines.
+let nope = "string"; */
+let a = 1;
+// Single line comment with //
+
+let number /* next we assign the variable */ = 3;`
+
+	tests := []struct {
+		expectedType    token.TokenType
+		expectedLiteral string
+	}{
+		{token.IDENT, "number"},
+		{token.LET, "let"},
+		{token.IDENT, "a"},
+		{token.ASSIGN, "="},
+		{token.INT, "1"},
+		{token.SEMICOLON, ";"},
+		{token.LET, "let"},
+		{token.IDENT, "number"},
+		{token.ASSIGN, "="},
+		{token.INT, "3"},
+		{token.SEMICOLON, ";"},
+		{token.EOF, ""},
+	}
+	l := New(input)
+	for i, tt := range tests {
+		tok := l.NextToken()
+		if tok.Type != tt.expectedType {
+			t.Fatalf("tests[%d] - tokentype wrong, expected=%q, got=%q", i, tt.expectedType, tok.Type)
+		}
+		if tok.Literal != tt.expectedLiteral {
+			t.Fatalf("tests[%d] - Literal wrong, expected=%q, got=%q", i, tt.expectedLiteral, tok.Literal)
 		}
 	}
 }

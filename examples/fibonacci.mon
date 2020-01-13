@@ -1,13 +1,15 @@
 let fibonacci = fn(x) {
+  // 0 and 1 are the trivial cases, we handle those first.
   if (x == 0) {
-    0
-  } else {
-    if (x == 1) {
-      return 1;
-    } else {
-      fibonacci(x - 1) + fibonacci(x - 2);
-    }
+    return 0;
   }
+  if (x == 1) {
+    return 1;
+  }
+
+  // otherwise, the fibonacci number is 
+  // the sum of the two previous numbers.
+  fibonacci(x - 1) + fibonacci(x - 2);
 };
 
 fibonacci(16);

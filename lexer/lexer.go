@@ -23,6 +23,15 @@ func (l *Lexer) NextToken() token.Token {
 	var tok token.Token
 
 	l.skipWhitespace()
+	if l.ch == '/' && l.peekChar() == '/' {
+		l.skipSinglLineComments()
+		return l.NextToken()
+	}
+
+	if l.ch == '/' && l.peekChar() == '*' {
+		l.skipMultiLineComments()
+		return l.NextToken()
+	}
 
 	switch l.ch {
 	case '=':
@@ -117,6 +126,40 @@ func (l *Lexer) skipWhitespace() {
 		l.readChar()
 	}
 }
+
+func (l *Lexer) skipSinglLineComments() {
+	// consume characters until we encounter a newline or the end of the file
+	for l.ch != '\n' && l.ch != 0 {
+		l.readChar()
+	}
+
+	l.skipWhitespace()
+}
+
+func (l *Lexer) skipMultiLineComments() {
+	// consume characters until we encounter the end of the comment or EOF
+	found := false
+
+	for !found {
+		// abort if we are at EOF.
+		if l.ch == 0 {
+			found = true
+		}
+
+		// keep going until we find "*/"
+		if l.ch == '*' && l.peekChar() == '/' {
+			found = true
+
+			// Since the end sequence uses two characters, 
+			// we need to consume both.
+			l.readChar()
+		}
+		l.readChar()
+	}
+
+	l.skipWhitespace()
+}
+
 
 func (l *Lexer) readItentifier() string {
 	position := l.position
