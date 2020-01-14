@@ -2,6 +2,7 @@ package evaluator
 
 import (
 	"fmt"
+
 	"github.com/rhwilr/monkey/ast"
 	"github.com/rhwilr/monkey/object"
 )
@@ -109,6 +110,9 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 		}
 
 		return evalIndexExpression(left, index)
+
+	case *ast.AssignStatement:
+		return evalAssignStatement(node, env)
 	}
 
 	return nil
@@ -207,13 +211,13 @@ func evalIntegerInfixExpression(operator string, left, right object.Object) obje
 	rightVal := right.(*object.Integer).Value
 
 	switch operator {
-	case "+":
+	case "+", "+=":
 		return &object.Integer{Value: leftVal + rightVal}
-	case "-":
+	case "-", "-=":
 		return &object.Integer{Value: leftVal - rightVal}
-	case "*":
+	case "*", "*=":
 		return &object.Integer{Value: leftVal * rightVal}
-	case "/":
+	case "/", "/=":
 		return &object.Integer{Value: leftVal / rightVal}
 	case "<":
 		return nativeBoolToBooleanObject(leftVal < rightVal)
@@ -353,6 +357,85 @@ func applyFunction(fn object.Object, args []object.Object) object.Object {
 	default:
 		return newError("not a function: %s", fn.Type())
 	}
+}
+
+func evalAssignStatement(a *ast.AssignStatement, env *object.Environment) (val object.Object) {
+	evaluated := Eval(a.Value, env)
+	if isError(evaluated) {
+		return evaluated
+	}
+
+	switch a.Operator {
+	case "+=":
+		current, ok := env.Get(a.Name.String())
+		if !ok {
+			return newError("%s is unknown", a.Name.String())
+		}
+
+		res := evalInfixExpression("+=", current, evaluated)
+		if isError(res) {
+			fmt.Printf("Error handling += %s\n", res.Inspect())
+			return res
+		}
+
+		env.Set(a.Name.String(), res)
+		return res
+
+	case "-=":
+		current, ok := env.Get(a.Name.String())
+		if !ok {
+			return newError("%s is unknown", a.Name.String())
+		}
+
+		res := evalInfixExpression("-=", current, evaluated)
+		if isError(res) {
+			fmt.Printf("Error handling -= %s\n", res.Inspect())
+			return res
+		}
+
+		env.Set(a.Name.String(), res)
+		return res
+
+	case "*=":
+		current, ok := env.Get(a.Name.String())
+		if !ok {
+			return newError("%s is unknown", a.Name.String())
+		}
+
+		res := evalInfixExpression("*=", current, evaluated)
+		if isError(res) {
+			fmt.Printf("Error handling *= %s\n", res.Inspect())
+			return res
+		}
+
+		env.Set(a.Name.String(), res)
+		return res
+
+	case "/=":
+		current, ok := env.Get(a.Name.String())
+		if !ok {
+			return newError("%s is unknown", a.Name.String())
+		}
+
+		res := evalInfixExpression("/=", current, evaluated)
+		if isError(res) {
+			fmt.Printf("Error handling /= %s\n", res.Inspect())
+			return res
+		}
+
+		env.Set(a.Name.String(), res)
+		return res
+
+	case "=":
+		// The assignment operator is not allowed to create new variables
+		_, ok := env.Get(a.Name.String())
+		if !ok {
+			return newError("%s is unknown", a.Name.String())
+		}
+
+		env.Set(a.Name.String(), evaluated)
+	}
+	return evaluated
 }
 
 /*

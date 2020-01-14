@@ -389,3 +389,24 @@ func (ce *CallExpression) String() string {
 
 	return out.String()
 }
+
+
+/*
+** AssignStatement
+ */
+type AssignStatement struct {
+	Token    token.Token
+	Name     *Identifier
+	Operator string
+	Value    Expression
+}
+
+func (as *AssignStatement) expressionNode() {}
+func (as *AssignStatement) TokenLiteral() string { return as.Token.Literal }
+func (as *AssignStatement) String() string {
+	var out bytes.Buffer
+	out.WriteString(as.Name.String())
+	out.WriteString(as.Operator)
+	out.WriteString(as.Value.String())
+	return out.String()
+}

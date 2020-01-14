@@ -27,6 +27,10 @@ if (5 < 10) {
 
 10 == 10;
 10 != 9;
+4 += 1;
+4 -= 1;
+4 /= 2;
+4 *= 2;
 $
 "foobar"
 "foo bar"
@@ -114,6 +118,24 @@ $
 		{token.NOT_EQ, "!="},
 		{token.INT, "9"},
 		{token.SEMICOLON, ";"},
+
+		{token.INT, "4"},
+		{token.PLUS_EQUALS, "+="},
+		{token.INT, "1"},
+		{token.SEMICOLON, ";"},
+		{token.INT, "4"},
+		{token.MINUS_EQUALS, "-="},
+		{token.INT, "1"},
+		{token.SEMICOLON, ";"},
+		{token.INT, "4"},
+		{token.SLASH_EQUALS, "/="},
+		{token.INT, "2"},
+		{token.SEMICOLON, ";"},
+		{token.INT, "4"},
+		{token.ASTERISK_EQUALS, "*="},
+		{token.INT, "2"},
+		{token.SEMICOLON, ";"},
+
 
 		{token.ILLEGAL, "$"},
 

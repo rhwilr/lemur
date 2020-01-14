@@ -14,6 +14,7 @@ import (
 const (
 	_ int = iota
 	LOWEST
+	ASSIGN      // =
 	EQUALS      // ==
 	LESSGREATER // > or <
 	SUM         // +
@@ -24,16 +25,22 @@ const (
 )
 
 var precedences = map[token.TokenType]int{
-	token.EQ:       EQUALS,
-	token.NOT_EQ:   EQUALS,
-	token.LT:       LESSGREATER,
-	token.GT:       LESSGREATER,
-	token.PLUS:     SUM,
-	token.MINUS:    SUM,
-	token.SLASH:    PRODUCT,
-	token.ASTERISK: PRODUCT,
-	token.LPAREN:   CALL,
-	token.LBRACKET: INDEX,
+	token.EQ:     EQUALS,
+	token.NOT_EQ: EQUALS,
+	token.LT:     LESSGREATER,
+	token.GT:     LESSGREATER,
+
+	token.PLUS:            SUM,
+	token.PLUS_EQUALS:     SUM,
+	token.MINUS:           SUM,
+	token.MINUS_EQUALS:    SUM,
+	token.SLASH:           PRODUCT,
+	token.SLASH_EQUALS:    PRODUCT,
+	token.ASTERISK:        PRODUCT,
+	token.ASTERISK_EQUALS: PRODUCT,
+	token.LPAREN:          CALL,
+	token.LBRACKET:        INDEX,
+	token.ASSIGN:          ASSIGN,
 }
 
 type (
@@ -93,6 +100,11 @@ func New(l *lexer.Lexer) *Parser {
 	p.registerInfix(token.GT, p.parseInfixExpression)
 	p.registerInfix(token.LPAREN, p.parseCallExpression)
 	p.registerInfix(token.LBRACKET, p.parseIndexExpression)
+	p.registerInfix(token.ASSIGN, p.parseAssignExpression)
+	p.registerInfix(token.PLUS_EQUALS, p.parseAssignExpression)
+	p.registerInfix(token.MINUS_EQUALS, p.parseAssignExpression)
+	p.registerInfix(token.SLASH_EQUALS, p.parseAssignExpression)
+	p.registerInfix(token.ASTERISK_EQUALS, p.parseAssignExpression)
 
 	return p
 }
@@ -307,7 +319,7 @@ func (p *Parser) parseHashLiteral() ast.Expression {
 
 		p.nextToken()
 		value := p.parseExpression(LOWEST)
-		
+
 		hash.Pairs[key] = value
 
 		if !p.peekTokenIs(token.RBRACE) && !p.expectPeek(token.COMMA) {
@@ -454,6 +466,35 @@ func (p *Parser) parseIndexExpression(left ast.Expression) ast.Expression {
 	}
 
 	return exp
+}
+
+// parseAssignExpression parses a bare assignment, without a `let`.
+func (p *Parser) parseAssignExpression(name ast.Expression) ast.Expression {
+	stmt := &ast.AssignStatement{Token: p.curToken}
+	if n, ok := name.(*ast.Identifier); ok {
+		stmt.Name = n
+	} else {
+		msg := fmt.Sprintf("expected assign token to be IDENT, got %s instead.", name.TokenLiteral())
+		p.errors = append(p.errors, msg)
+	}
+
+	oper := p.curToken
+	p.nextToken()
+
+	switch oper.Type {
+	case token.PLUS_EQUALS:
+		stmt.Operator = "+="
+	case token.MINUS_EQUALS:
+		stmt.Operator = "-="
+	case token.SLASH_EQUALS:
+		stmt.Operator = "/="
+	case token.ASTERISK_EQUALS:
+		stmt.Operator = "*="
+	default:
+		stmt.Operator = "="
+	}
+	stmt.Value = p.parseExpression(LOWEST)
+	return stmt
 }
 
 /*

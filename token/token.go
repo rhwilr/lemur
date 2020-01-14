@@ -16,8 +16,14 @@ const (
 	IDENT = "IDENT" // Identifier like variable names
 	INT   = "INT"   // Integers 1, 2,3, 42...
 
+	// Assignments
+	ASSIGN          = "="
+	PLUS_EQUALS     = "+="
+	MINUS_EQUALS    = "-="
+	SLASH_EQUALS    = "/="
+	ASTERISK_EQUALS = "*="
+
 	// Operators
-	ASSIGN   = "="
 	PLUS     = "+"
 	MINUS    = "-"
 	BANG     = "!"
@@ -32,7 +38,7 @@ const (
 	// Delimiters
 	COMMA     = ","
 	SEMICOLON = ";"
-	COLON = ":"
+	COLON     = ":"
 
 	LPAREN   = "("
 	RPAREN   = ")"
