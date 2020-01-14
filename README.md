@@ -14,7 +14,9 @@ I made some changes in this implementation that differe from the implementation
 in the book. Here are the changes I made.
 
 - Added single-line & multi-line comments.
-
+- Allow assignments without `let`.
+- `let` can only be used to initialize a variable.
+- More assignment operators such as `+=`, `-=`, `*=`, and `/=`.
 
 
 ## Development
