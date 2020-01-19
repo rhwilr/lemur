@@ -948,6 +948,81 @@ func TestRecursiveFunctions(t *testing.T) {
 			},
 		},
 	}
+
+	runCompilerTests(t, tests)
+}
+
+func TestAssignmentStatements(t *testing.T) {
+	tests := []compilerTestCase{
+		{
+			input: `
+			let one = 1;
+			one = 22;
+			`,
+			expectedConstants: []interface{}{1, 22},
+			expectedInstructions: []code.Instructions{
+				code.Make(code.OpConstant, 0),
+				code.Make(code.OpSetGlobal, 0),
+				code.Make(code.OpGetGlobal, 0),
+				code.Make(code.OpConstant, 1),
+				code.Make(code.OpAssignGlobal, 0),
+				code.Make(code.OpPop),
+			},
+		},
+		{
+			input: `let a = 5; a += 1;`,
+			expectedConstants: []interface{}{5, 1},
+			expectedInstructions: []code.Instructions{
+				code.Make(code.OpConstant, 0),
+				code.Make(code.OpSetGlobal, 0),
+				code.Make(code.OpGetGlobal, 0),
+				code.Make(code.OpConstant, 1),
+				code.Make(code.OpAdd),
+				code.Make(code.OpAssignGlobal, 0),
+				code.Make(code.OpPop),
+			},
+		},
+		{
+			input: `let a = 5; a -= 1;`,
+			expectedConstants: []interface{}{5, 1},
+			expectedInstructions: []code.Instructions{
+				code.Make(code.OpConstant, 0),
+				code.Make(code.OpSetGlobal, 0),
+				code.Make(code.OpGetGlobal, 0),
+				code.Make(code.OpConstant, 1),
+				code.Make(code.OpSub),
+				code.Make(code.OpAssignGlobal, 0),
+				code.Make(code.OpPop),
+			},
+		},
+		{
+			input: `let a = 6; a *= 2;`,
+			expectedConstants: []interface{}{6, 2},
+			expectedInstructions: []code.Instructions{
+				code.Make(code.OpConstant, 0),
+				code.Make(code.OpSetGlobal, 0),
+				code.Make(code.OpGetGlobal, 0),
+				code.Make(code.OpConstant, 1),
+				code.Make(code.OpMul),
+				code.Make(code.OpAssignGlobal, 0),
+				code.Make(code.OpPop),
+			},
+		},
+		{
+			input: `let a = 6; a /= 2;`,
+			expectedConstants: []interface{}{6, 2},
+			expectedInstructions: []code.Instructions{
+				code.Make(code.OpConstant, 0),
+				code.Make(code.OpSetGlobal, 0),
+				code.Make(code.OpGetGlobal, 0),
+				code.Make(code.OpConstant, 1),
+				code.Make(code.OpDiv),
+				code.Make(code.OpAssignGlobal, 0),
+				code.Make(code.OpPop),
+			},
+		},
+	}
+
 	runCompilerTests(t, tests)
 }
 

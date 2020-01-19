@@ -214,6 +214,36 @@ func (c *Compiler) Compile(node ast.Node) error {
 			c.emit(code.OpSetLocal, symbol.Index)
 		}
 
+	// Assignment
+	case *ast.AssignStatement:
+		symbol, ok := c.symbolTable.Resolve(node.Name.Value)
+		if !ok {
+			return fmt.Errorf("undefined variable %s", node.Name.Value)
+		}
+		c.loadSymbol(symbol)
+
+		err := c.Compile(node.Value)
+		if err != nil {
+			return err
+		}
+
+		switch node.Operator {
+		case "+=":
+			c.emit(code.OpAdd)
+		case "-=":
+			c.emit(code.OpSub)
+		case "*=":
+			c.emit(code.OpMul)
+		case "/=":
+			c.emit(code.OpDiv)
+		}
+
+		if symbol.Scope == GlobalScope {
+			c.emit(code.OpAssignGlobal, symbol.Index)
+		} else {
+			c.emit(code.OpAssignLocal, symbol.Index)
+		}
+
 	case *ast.Identifier:
 		symbol, ok := c.symbolTable.Resolve(node.Value)
 		if !ok {

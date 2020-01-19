@@ -62,9 +62,9 @@ func TestWrite(t *testing.T) {
 			f(32);
 			`,
 			expected: []byte{
-				2, 2, 0, 0, 0, 3, 0, 0, 0, 1, 0, 0, 0, 1, 18, 
-				0, 25, 0, 0, 0, 0, 0, 0, 0, 0, 32, 27, 0, 0, 
-				0, 17, 0, 0, 16, 0, 0, 0, 0, 1, 23, 1, 6,
+				2, 2, 0, 0, 0, 3, 0, 0, 0, 1, 0, 0, 0, 1, 19, 
+				0, 27, 0, 0, 0, 0, 0, 0, 0, 0, 32, 29, 0, 0, 
+				0, 17, 0, 0, 16, 0, 0, 0, 0, 1, 25, 1, 6,
 			},
 		},
 	}
@@ -102,7 +102,7 @@ func runBytecodeTests(t *testing.T, tests []bytecodeTestCase) error {
 
 		for i, ins := range bytecode {
 			if tt.expected[i] != ins {
-				return fmt.Errorf("wrong byte at %d.\nwant=%q\ngot =%q", i, tt.expected[i], ins)
+				return fmt.Errorf("wrong byte at %d.\nwant=%d\ngot =%d", i, tt.expected[i], ins)
 			}
 		}
 	}

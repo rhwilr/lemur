@@ -104,6 +104,7 @@ func TestGlobalLetStatements(t *testing.T) {
 		{"let one = 1; one", 1},
 		{"let one = 1; let two = 2; one + two", 3},
 		{"let one = 1; let two = one + one; one + two", 3},
+		{"let a = 5; a = 6;", 6},
 	}
 
 	runVmTests(t, tests)
@@ -631,6 +632,17 @@ func TestRecursiveFibonacci(t *testing.T) {
 			expected: 610,
 		},
 	}
+	runVmTests(t, tests)
+}
+
+func TestAssignmentStatements(t *testing.T) {
+	tests := []vmTestCase{
+		{"let a = 5; a += 1;", 6},
+		{"let a = 5; a -= 1;", 4},
+		{"let a = 6; a /= 2;", 3},
+		{"let a = 6; a *= 2;", 12},
+	}
+
 	runVmTests(t, tests)
 }
 

@@ -365,13 +365,13 @@ func evalAssignStatement(a *ast.AssignStatement, env *object.Environment) (val o
 		return evaluated
 	}
 
+	current, ok := env.Get(a.Name.String())
+	if !ok {
+		return newError("%s is unknown", a.Name.String())
+	}
+
 	switch a.Operator {
 	case "+=":
-		current, ok := env.Get(a.Name.String())
-		if !ok {
-			return newError("%s is unknown", a.Name.String())
-		}
-
 		res := evalInfixExpression("+=", current, evaluated)
 		if isError(res) {
 			fmt.Printf("Error handling += %s\n", res.Inspect())
@@ -382,11 +382,6 @@ func evalAssignStatement(a *ast.AssignStatement, env *object.Environment) (val o
 		return res
 
 	case "-=":
-		current, ok := env.Get(a.Name.String())
-		if !ok {
-			return newError("%s is unknown", a.Name.String())
-		}
-
 		res := evalInfixExpression("-=", current, evaluated)
 		if isError(res) {
 			fmt.Printf("Error handling -= %s\n", res.Inspect())
@@ -397,11 +392,6 @@ func evalAssignStatement(a *ast.AssignStatement, env *object.Environment) (val o
 		return res
 
 	case "*=":
-		current, ok := env.Get(a.Name.String())
-		if !ok {
-			return newError("%s is unknown", a.Name.String())
-		}
-
 		res := evalInfixExpression("*=", current, evaluated)
 		if isError(res) {
 			fmt.Printf("Error handling *= %s\n", res.Inspect())
@@ -412,11 +402,6 @@ func evalAssignStatement(a *ast.AssignStatement, env *object.Environment) (val o
 		return res
 
 	case "/=":
-		current, ok := env.Get(a.Name.String())
-		if !ok {
-			return newError("%s is unknown", a.Name.String())
-		}
-
 		res := evalInfixExpression("/=", current, evaluated)
 		if isError(res) {
 			fmt.Printf("Error handling /= %s\n", res.Inspect())
