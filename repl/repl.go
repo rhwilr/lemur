@@ -33,7 +33,7 @@ func Start(in io.Reader, out io.Writer) {
 	}
 	defer term.ReleaseFromStdInOut() // defer this  
 
-	fmt.Println("Ctrl-D to break")
+	fmt.Println("Press Ctrl-D to break")
 	term.SetPrompt(PROMPT)
 
 	line, err:= term.ReadLine()

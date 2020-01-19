@@ -271,6 +271,36 @@ func TestAssignmentStatements(t *testing.T) {
 	}
 }
 
+func TestPostfixStatements(t *testing.T) {
+	tests := []struct {
+		input    string
+		expected int64
+	}{
+		{"let a = 5; a++;", 5},
+		{"let a = 5; a++; a", 6},
+		{"let a = 5; a--;", 5},
+		{"let a = 5; a--; a", 4},
+	}
+
+	for _, tt := range tests {
+		testIntegerObject(t, testEval(tt.input), tt.expected)
+	}
+}
+
+func TestPrefixStatements(t *testing.T) {
+	tests := []struct {
+		input    string
+		expected int64
+	}{
+		{"let a = 5; ++a;", 6},
+		{"let a = 5; --a;", 4},
+	}
+
+	for _, tt := range tests {
+		testIntegerObject(t, testEval(tt.input), tt.expected)
+	}
+}
+
 func TestFunctionObject(t *testing.T) {
 	input := "fn(x) { x + 2; };"
 

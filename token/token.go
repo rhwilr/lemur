@@ -23,6 +23,10 @@ const (
 	SLASH_EQUALS    = "/="
 	ASTERISK_EQUALS = "*="
 
+	// Postfix
+	MINUS_MINUS = "--"
+	PLUS_PLUS = "++"
+
 	// Operators
 	PLUS     = "+"
 	MINUS    = "-"

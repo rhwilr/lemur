@@ -641,6 +641,8 @@ func TestAssignmentStatements(t *testing.T) {
 		{"let a = 5; a -= 1;", 4},
 		{"let a = 6; a /= 2;", 3},
 		{"let a = 6; a *= 2;", 12},
+		{"let a = 5; ++a;", 6},
+		{"let a = 5; --a;", 4},
 	}
 
 	runVmTests(t, tests)

@@ -1,8 +1,8 @@
 package ast
 
 import (
-	"fmt"
 	"bytes"
+	"fmt"
 	"github.com/rhwilr/monkey/token"
 	"strings"
 )
@@ -390,7 +390,6 @@ func (ce *CallExpression) String() string {
 	return out.String()
 }
 
-
 /*
 ** AssignStatement
  */
@@ -401,12 +400,31 @@ type AssignStatement struct {
 	Value    Expression
 }
 
-func (as *AssignStatement) expressionNode() {}
+func (as *AssignStatement) expressionNode()      {}
 func (as *AssignStatement) TokenLiteral() string { return as.Token.Literal }
 func (as *AssignStatement) String() string {
 	var out bytes.Buffer
 	out.WriteString(as.Name.String())
 	out.WriteString(as.Operator)
 	out.WriteString(as.Value.String())
+	return out.String()
+}
+
+/*
+** PostfixExpression
+ */
+type PostfixExpression struct {
+	Token    token.Token
+	Operator string
+}
+
+func (pe *PostfixExpression) expressionNode()      {}
+func (pe *PostfixExpression) TokenLiteral() string { return pe.Token.Literal }
+func (pe *PostfixExpression) String() string {
+	var out bytes.Buffer
+	out.WriteString("(")
+	out.WriteString(pe.Token.Literal)
+	out.WriteString(pe.Operator)
+	out.WriteString(")")
 	return out.String()
 }

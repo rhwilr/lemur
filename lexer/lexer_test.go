@@ -32,6 +32,8 @@ if (5 < 10) {
 4 /= 2;
 4 *= 2;
 $
+++
+--
 "foobar"
 "foo bar"
 [1, 2];
@@ -138,6 +140,9 @@ $
 
 
 		{token.ILLEGAL, "$"},
+
+		{token.PLUS_PLUS, "++"},
+		{token.MINUS_MINUS, "--"},
 
 		{token.STRING, "foobar"},
 		{token.STRING, "foo bar"},

@@ -144,6 +144,14 @@ func (c *Compiler) Compile(node ast.Node) error {
 			c.emit(code.OpBang)
 		case "-":
 			c.emit(code.OpMinus)
+		case "++":
+			integer := &object.Integer{Value: 1}
+			c.emit(code.OpConstant, c.addConstant(integer))
+			c.emit(code.OpAdd)
+		case"--":
+			integer := &object.Integer{Value: 1}
+			c.emit(code.OpConstant, c.addConstant(integer))
+			c.emit(code.OpMinus)
 		default:
 			return fmt.Errorf("unknown operator %s", node.Operator)
 		}
@@ -228,9 +236,9 @@ func (c *Compiler) Compile(node ast.Node) error {
 		}
 
 		switch node.Operator {
-		case "+=":
+		case "+=", "++":
 			c.emit(code.OpAdd)
-		case "-=":
+		case "-=", "--":
 			c.emit(code.OpSub)
 		case "*=":
 			c.emit(code.OpMul)

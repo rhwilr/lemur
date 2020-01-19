@@ -58,6 +58,8 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 		}
 
 		return evalInfixExpression(node.Operator, left, right)
+	case *ast.PostfixExpression:
+		return evalPostfixExpression(env, node.Operator, node)
 	case *ast.IfExpression:
 		return evalIfExpression(node, env)
 
@@ -203,6 +205,42 @@ func evalInfixExpression(operator string, left, right object.Object) object.Obje
 		return newError("type mismatch: %s %s %s", left.Type(), operator, right.Type())
 	default:
 		return newError("unknown operator: %s %s %s", left.Type(), operator, right.Type())
+	}
+}
+
+func evalPostfixExpression(env *object.Environment, operator string, node *ast.PostfixExpression) object.Object {
+	switch operator {
+	case "++":
+		val, ok := env.Get(node.Token.Literal)
+		if !ok {
+			return newError("%s is unknown", node.Token.Literal)
+		}
+
+		switch arg := val.(type) {
+		case *object.Integer:
+			v := arg.Value
+			env.Set(node.Token.Literal, &object.Integer{Value: v + 1})
+			return arg
+		default:
+			return newError("%s is not an int", node.Token.Literal)
+
+		}
+	case "--":
+		val, ok := env.Get(node.Token.Literal)
+		if !ok {
+			return newError("%s is unknown", node.Token.Literal)
+		}
+
+		switch arg := val.(type) {
+		case *object.Integer:
+			v := arg.Value
+			env.Set(node.Token.Literal, &object.Integer{Value: v - 1})
+			return arg
+		default:
+			return newError("%s is not an int", node.Token.Literal)
+		}
+	default:
+		return newError("unknown operator: %s", operator)
 	}
 }
 
@@ -371,7 +409,7 @@ func evalAssignStatement(a *ast.AssignStatement, env *object.Environment) (val o
 	}
 
 	switch a.Operator {
-	case "+=":
+	case "+=", "++":
 		res := evalInfixExpression("+=", current, evaluated)
 		if isError(res) {
 			fmt.Printf("Error handling += %s\n", res.Inspect())
@@ -381,7 +419,7 @@ func evalAssignStatement(a *ast.AssignStatement, env *object.Environment) (val o
 		env.Set(a.Name.String(), res)
 		return res
 
-	case "-=":
+	case "-=", "--":
 		res := evalInfixExpression("-=", current, evaluated)
 		if isError(res) {
 			fmt.Printf("Error handling -= %s\n", res.Inspect())

@@ -1026,6 +1026,70 @@ func TestAssignmentStatements(t *testing.T) {
 	runCompilerTests(t, tests)
 }
 
+
+func TestPrefixAndPostfixStatements(t *testing.T) {
+	tests := []compilerTestCase{
+		{
+			input: "let a = 5; ++a;",
+			expectedConstants: []interface{}{5, 1},
+			expectedInstructions: []code.Instructions{
+				code.Make(code.OpConstant, 0),
+				code.Make(code.OpSetGlobal, 0),
+				code.Make(code.OpGetGlobal, 0),
+				code.Make(code.OpConstant, 1),
+				code.Make(code.OpAdd),
+				code.Make(code.OpAssignGlobal, 0),
+				code.Make(code.OpPop),
+			},
+		},
+		{
+			input: "let a = 5; --a;",
+			expectedConstants: []interface{}{5, 1},
+			expectedInstructions: []code.Instructions{
+				code.Make(code.OpConstant, 0),
+				code.Make(code.OpSetGlobal, 0),
+				code.Make(code.OpGetGlobal, 0),
+				code.Make(code.OpConstant, 1),
+				code.Make(code.OpSub),
+				code.Make(code.OpAssignGlobal, 0),
+				code.Make(code.OpPop),
+			},
+		},
+		{
+			input: "let a = 5; a++;",
+			expectedConstants: []interface{}{5, 1},
+			expectedInstructions: []code.Instructions{
+				code.Make(code.OpConstant, 0),
+				code.Make(code.OpSetGlobal, 0),
+				code.Make(code.OpGetGlobal, 0),
+				code.Make(code.OpGetGlobal, 0),
+				code.Make(code.OpConstant, 1),
+				code.Make(code.OpAdd),
+				code.Make(code.OpAssignGlobal, 0),
+				code.Make(code.OpPop),
+				code.Make(code.OpPop),
+			},
+		},
+		{
+			input: "let a = 5; a--;",
+			expectedConstants: []interface{}{5, 1},
+			expectedInstructions: []code.Instructions{
+				code.Make(code.OpConstant, 0),
+				code.Make(code.OpSetGlobal, 0),
+				code.Make(code.OpGetGlobal, 0),
+				code.Make(code.OpGetGlobal, 0),
+				code.Make(code.OpConstant, 1),
+				code.Make(code.OpAdd),
+				code.Make(code.OpAssignGlobal, 0),
+				code.Make(code.OpPop),
+				code.Make(code.OpPop),
+			},
+		},
+	}
+
+	runCompilerTests(t, tests)
+}
+
 /*
 ** Helpers
  */

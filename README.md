@@ -17,6 +17,7 @@ in the book. Here are the changes I made.
 - Allow assignments without `let`.
 - `let` can only be used to initialize a variable.
 - More assignment operators such as `+=`, `-=`, `*=`, and `/=`.
+- Added postfix operators (`i++`, `i--`).
 
 
 ## Development
