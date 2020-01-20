@@ -641,6 +641,17 @@ func TestAssignmentStatements(t *testing.T) {
 		{"let a = 5; a -= 1;", 4},
 		{"let a = 6; a /= 2;", 3},
 		{"let a = 6; a *= 2;", 12},
+	}
+
+	runVmTests(t, tests)
+}
+
+func TestPrefixAndPostfixStatements(t *testing.T) {
+	tests := []vmTestCase{
+		{"let a = 5; a++;", 5},
+		{"let a = 5; a++; a", 6},
+		{"let a = 5; a--;", 5},
+		{"let a = 5; a--; a", 4},
 		{"let a = 5; ++a;", 6},
 		{"let a = 5; --a;", 4},
 	}
@@ -663,16 +674,19 @@ func runVmTests(t *testing.T, tests []vmTestCase) {
 			t.Fatalf("compiler error: %s", err)
 		}
 
-		// for i, constant := range comp.Bytecode().Constants {
-		// 	fmt.Printf("CONSTANT %d %p (%T):\n", i, constant, constant)
-		// 	switch constant := constant.(type) {
-		// 	case *object.CompiledFunction:
-		// 		fmt.Printf(" Instructions:\n%s", constant.Instructions)
-		// 	case *object.Integer:
-		// 		fmt.Printf(" Value: %d\n", constant.Value)
-		// 	}
-		// 	fmt.Printf("\n")
-		// }
+		for i, constant := range comp.Bytecode().Constants {
+			fmt.Printf("CONSTANT %d %p (%T):\n", i, constant, constant)
+			switch constant := constant.(type) {
+			case *object.CompiledFunction:
+				fmt.Printf(" Instructions:\n%s", constant.Instructions)
+			case *object.Integer:
+				fmt.Printf(" Value: %d\n", constant.Value)
+			}
+			fmt.Printf("\n")
+		}
+
+		fmt.Printf("\n\n Instructions:\n")
+		fmt.Printf(comp.Bytecode().Instructions.String())
 
 		vm := New(comp.Bytecode())
 		err = vm.Run()

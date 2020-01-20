@@ -1079,7 +1079,7 @@ func TestPrefixAndPostfixStatements(t *testing.T) {
 				code.Make(code.OpGetGlobal, 0),
 				code.Make(code.OpGetGlobal, 0),
 				code.Make(code.OpConstant, 1),
-				code.Make(code.OpAdd),
+				code.Make(code.OpSub),
 				code.Make(code.OpAssignGlobal, 0),
 				code.Make(code.OpPop),
 				code.Make(code.OpPop),

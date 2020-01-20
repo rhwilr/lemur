@@ -947,15 +947,15 @@ func TestParsingHashLiteralsWithExpressions(t *testing.T) {
 // Test operators: +=, -=, /=, and *=.
 func TestMutators(t *testing.T) {
 	input := []string{
-		// "let w = 5; w *= 3;",
-		// "let x = 15; x += 3;",
-		// "let y = 10; y /= 2;",
-		// "let z = 10; y -= 2;",
-		// "let z = 1; z++;",
-		// "let z = 1; z--;",
+		"let w = 5; w *= 3;",
+		"let x = 15; x += 3;",
+		"let y = 10; y /= 2;",
+		"let z = 10; y -= 2;",
+		"let z = 1; z++;",
+		"let z = 1; z--;",
 		"let z = 1; ++z;",
 		"let z = 1; --z;",
-		// "let z = 10; let a = 3; y = a;",
+		"let z = 10; let a = 3; y = a;",
 	}
 
 	for _, txt := range input {

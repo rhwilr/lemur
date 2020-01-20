@@ -213,7 +213,8 @@ func (p *Parser) parseExpressionStatement() *ast.ExpressionStatement {
 }
 
 func (p *Parser) parseExpression(precedence int) ast.Expression {
-	postfix := p.postfixParseFns[p.curToken.Type]
+	// postfix
+	postfix := p.postfixParseFns[p.peekToken.Type]
 	if postfix != nil {
 		val := postfix()
 		if val != nil {
@@ -221,6 +222,7 @@ func (p *Parser) parseExpression(precedence int) ast.Expression {
 		}
 	}
 
+	// prefix expressions
 	prefix := p.prefixParseFns[p.curToken.Type]
 	if prefix == nil {
 		p.noPrefixParseFnError(p.curToken.Type)
@@ -228,6 +230,7 @@ func (p *Parser) parseExpression(precedence int) ast.Expression {
 	}
 	leftExp := prefix()
 
+	// infix
 	for !p.peekTokenIs(token.SEMICOLON) && precedence < p.peekPrecedence() {
 		infix := p.infixParseFns[p.peekToken.Type]
 		if infix == nil {
@@ -274,13 +277,19 @@ func (p *Parser) parsePrefixAssignmentExpression() ast.Expression {
 // parsePostfixExpression parses a postfix-based expression.
 func (p *Parser) parsePostfixExpression() ast.Expression {
 	// The current postfix operator only support identifiers
-	if p.prevToken.Type != token.IDENT {
+	if p.curToken.Type != token.IDENT {
+		msg := fmt.Sprintf("postfix operators are only supported on identifiers")
+		p.errors = append(p.errors, msg)
 		return nil
 	}
 
+	ident := &ast.Identifier{Token: p.curToken, Value: p.curToken.Literal}
+	p.nextToken()
+
 	expression := &ast.PostfixExpression{
-		Token:    p.prevToken,
+		Token:    p.curToken,
 		Operator: p.curToken.Literal,
+		Name: 		ident,
 	}
 
 	return expression

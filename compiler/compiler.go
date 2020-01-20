@@ -144,17 +144,39 @@ func (c *Compiler) Compile(node ast.Node) error {
 			c.emit(code.OpBang)
 		case "-":
 			c.emit(code.OpMinus)
+		default:
+			return fmt.Errorf("unknown operator %s", node.Operator)
+		}
+
+	case *ast.PostfixExpression:
+		err := c.Compile(node.Name)
+		if err != nil {
+			return err
+		}
+
+		symbol, ok := c.symbolTable.Resolve(node.Name.Value)
+		if !ok {
+			return fmt.Errorf("undefined variable %s", node.Name.Value)
+		}
+		c.loadSymbol(symbol)
+
+		switch node.Operator {
 		case "++":
 			integer := &object.Integer{Value: 1}
 			c.emit(code.OpConstant, c.addConstant(integer))
 			c.emit(code.OpAdd)
-		case"--":
+		case "--":
 			integer := &object.Integer{Value: 1}
 			c.emit(code.OpConstant, c.addConstant(integer))
-			c.emit(code.OpMinus)
-		default:
-			return fmt.Errorf("unknown operator %s", node.Operator)
+			c.emit(code.OpSub)
 		}
+
+		if symbol.Scope == GlobalScope {
+			c.emit(code.OpAssignGlobal, symbol.Index)
+		} else {
+			c.emit(code.OpAssignLocal, symbol.Index)
+		}
+		c.emit(code.OpPop)
 
 	case *ast.InfixExpression:
 		// The < operator is not implemented in the VM, but we can use the >
