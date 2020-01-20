@@ -65,12 +65,29 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 
 	// LetStatements
 	case *ast.LetStatement:
+		if env.Exists(node.Name.Value) {
+			return newError("identifier '%s' has already been declared", node.Name.Value)
+		}
+
 		val := Eval(node.Value, env)
 		if isError(val) {
 			return val
 		}
 
-		env.Set(node.Name.Value, val)
+		env.DefineVariable(node.Name.Value, val)
+
+	// ConstStatement
+	case *ast.ConstStatement:
+		if env.Exists(node.Name.Value) {
+			return newError("identifier '%s' has already been declared", node.Name.Value)
+		}
+
+		val := Eval(node.Value, env)
+		if isError(val) {
+			return val
+		}
+
+		env.DefineConstant(node.Name.Value, val)
 	case *ast.Identifier:
 		return evalIdentifier(node, env)
 
@@ -219,7 +236,10 @@ func evalPostfixExpression(env *object.Environment, operator string, node *ast.P
 		switch arg := val.(type) {
 		case *object.Integer:
 			v := arg.Value
-			env.Set(node.Name.TokenLiteral(), &object.Integer{Value: v + 1})
+			_, err := env.Set(node.Name.TokenLiteral(), &object.Integer{Value: v + 1})
+			if err != nil {
+				return newError(err.Error())
+			}
 			return arg
 		default:
 			return newError("%s is not an int", node.Name.TokenLiteral())
@@ -229,7 +249,10 @@ func evalPostfixExpression(env *object.Environment, operator string, node *ast.P
 		switch arg := val.(type) {
 		case *object.Integer:
 			v := arg.Value
-			env.Set(node.Name.TokenLiteral(), &object.Integer{Value: v - 1})
+			_, err := env.Set(node.Name.TokenLiteral(), &object.Integer{Value: v - 1})
+			if err != nil {
+				return newError(err.Error())
+			}
 			return arg
 		default:
 			return newError("%s is not an int", node.Name.TokenLiteral())
@@ -417,7 +440,7 @@ func evalAssignStatement(a *ast.AssignStatement, env *object.Environment) (val o
 
 	current, ok := env.Get(a.Name.String())
 	if !ok {
-		return newError("%s is unknown", a.Name.String())
+		return newError("assignment to undeclared variable '%s'", a.Name.String())
 	}
 
 	switch a.Operator {
@@ -428,7 +451,10 @@ func evalAssignStatement(a *ast.AssignStatement, env *object.Environment) (val o
 			return res
 		}
 
-		env.Set(a.Name.String(), res)
+		_, err := env.Set(a.Name.String(), res)
+		if err != nil {
+			return newError(err.Error())
+		}
 		return res
 
 	case "-=", "--":
@@ -438,7 +464,10 @@ func evalAssignStatement(a *ast.AssignStatement, env *object.Environment) (val o
 			return res
 		}
 
-		env.Set(a.Name.String(), res)
+		_, err := env.Set(a.Name.String(), res)
+		if err != nil {
+			return newError(err.Error())
+		}
 		return res
 
 	case "*=":
@@ -448,7 +477,10 @@ func evalAssignStatement(a *ast.AssignStatement, env *object.Environment) (val o
 			return res
 		}
 
-		env.Set(a.Name.String(), res)
+		_, err := env.Set(a.Name.String(), res)
+		if err != nil {
+			return newError(err.Error())
+		}
 		return res
 
 	case "/=":
@@ -458,17 +490,18 @@ func evalAssignStatement(a *ast.AssignStatement, env *object.Environment) (val o
 			return res
 		}
 
-		env.Set(a.Name.String(), res)
+		_, err := env.Set(a.Name.String(), res)
+		if err != nil {
+			return newError(err.Error())
+		}
 		return res
 
 	case "=":
 		// The assignment operator is not allowed to create new variables
-		_, ok := env.Get(a.Name.String())
-		if !ok {
-			return newError("%s is unknown", a.Name.String())
+		_, err := env.Set(a.Name.String(), evaluated)
+		if err != nil {
+			return newError(err.Error())
 		}
-
-		env.Set(a.Name.String(), evaluated)
 	}
 	return evaluated
 }
@@ -480,7 +513,7 @@ func extendFunctionEnv(fn *object.Function, args []object.Object) *object.Enviro
 	env := object.NewEnclosedEnvironment(fn.Env)
 
 	for paramIdx, param := range fn.Parameters {
-		env.Set(param.Value, args[paramIdx])
+		env.DefineVariable(param.Value, args[paramIdx])
 	}
 
 	return env

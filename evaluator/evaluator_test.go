@@ -219,6 +219,26 @@ if (10 > 1) {
 			`{"name": "Monkey"}[fn(x) { x }];`,
 			"unusable as hash key: FUNCTION",
 		},
+		{
+			"let foobar = 5; let foobar = 6;",
+			"identifier 'foobar' has already been declared",
+		},
+		{
+			"foobar = 5;",
+			"assignment to undeclared variable 'foobar'",
+		},
+		{
+			"foobar += 5;",
+			"assignment to undeclared variable 'foobar'",
+		},
+		{
+			"const foobar = 5; const foobar = 6;",
+			"identifier 'foobar' has already been declared",
+		},
+		{
+			"const foobar = 5; foobar = 6;",
+			"assignment to constant variable 'foobar'",
+		},
 	}
 
 	for _, tt := range tests {
@@ -248,6 +268,22 @@ func TestLetStatements(t *testing.T) {
 		{"let a = 5; let b = a; b;", 5},
 		{"let a = 5; let b = a; let c = a + b + 5; c;", 15},
 		{"let a = 5; a = 6;", 6},
+	}
+
+	for _, tt := range tests {
+		testIntegerObject(t, testEval(tt.input), tt.expected)
+	}
+}
+
+func TestConstStatements(t *testing.T) {
+	tests := []struct {
+		input    string
+		expected int64
+	}{
+		{"const a = 5; a;", 5},
+		{"const a = 5 * 5; a;", 25},
+		{"const a = 5; const b = a; b;", 5},
+		{"const a = 5; const b = a; const c = a + b + 5; c;", 15},
 	}
 
 	for _, tt := range tests {

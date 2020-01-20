@@ -10,6 +10,7 @@ func TestNextToken(t *testing.T) {
 	input := `
 let five = 5;
 let ten = 10;
+const immutable = "test";
 
 let add = fn(x, y) {
 	x + y;
@@ -54,6 +55,12 @@ $
 		{token.IDENT, "ten"},
 		{token.ASSIGN, "="},
 		{token.INT, "10"},
+		{token.SEMICOLON, ";"},
+
+		{token.CONST, "const"},
+		{token.IDENT, "immutable"},
+		{token.ASSIGN, "="},
+		{token.STRING, "test"},
 		{token.SEMICOLON, ";"},
 
 		{token.LET, "let"},

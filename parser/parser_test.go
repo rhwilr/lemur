@@ -7,6 +7,25 @@ import (
 	"testing"
 )
 
+func TestIncompleteLetConstStatement(t *testing.T) {
+	input := []string{"let", "const", "let x;", "const x;"}
+
+	for _, str := range input {
+		l := lexer.New(str)
+		p := New(l)
+		_ = p.ParseProgram()
+
+		errors := p.errors
+		if len(errors) < 1 {
+			t.Errorf("UNexpected error-count!")
+		}
+
+		if len(p.Errors()) != len(errors) {
+			t.Errorf("Mismatch of errors + error-messages!")
+		}
+	}
+}
+
 func TestLetStatements(t *testing.T) {
 	tests := []struct {
 		input              string
@@ -35,6 +54,40 @@ func TestLetStatements(t *testing.T) {
 		}
 
 		val := stmt.(*ast.LetStatement).Value
+		if !testLiteralExpression(t, val, tt.expectedValue) {
+			return
+		}
+	}
+}
+
+func TestConstStatements(t *testing.T) {
+	tests := []struct {
+		input              string
+		expectedIdentifier string
+		expectedValue      interface{}
+	}{
+		{"const x = 5;", "x", 5},
+		{"const y = true;", "y", true},
+		{"const foobar = y;", "foobar", "y"},
+	}
+
+	for _, tt := range tests {
+		l := lexer.New(tt.input)
+		p := New(l)
+		program := p.ParseProgram()
+		checkParserErrors(t, p)
+
+		if len(program.Statements) != 1 {
+			t.Fatalf("program.Statements does not contain 1 statements. got=%d",
+				len(program.Statements))
+		}
+
+		stmt := program.Statements[0]
+		if !testConstStatement(t, stmt, tt.expectedIdentifier) {
+			return
+		}
+		
+		val := stmt.(*ast.ConstStatement).Value
 		if !testLiteralExpression(t, val, tt.expectedValue) {
 			return
 		}
@@ -989,6 +1042,31 @@ func testLetStatement(t *testing.T, s ast.Statement, name string) bool {
 
 	if letStmt.Name.TokenLiteral() != name {
 		t.Errorf("s.Name not '%s'. got=%s", name, letStmt.Name)
+		return false
+	}
+
+	return true
+}
+
+func testConstStatement(t *testing.T, s ast.Statement, name string) bool {
+	if s.TokenLiteral() != "const" {
+		t.Errorf("s.TokenLiteral not 'const'. got %q", s.TokenLiteral())
+		return false
+	}
+
+	letStmt, ok := s.(*ast.ConstStatement)
+	if !ok {
+		t.Errorf("s not *ast.LetStatement. got=%T", s)
+		return false
+	}
+
+	if letStmt.Name.Value != name {
+		t.Errorf("s.Name not '%s'. got=%s", name, letStmt.Name.Value)
+		return false
+	}
+
+	if letStmt.Name.TokenLiteral() != name {
+		t.Errorf("s.Name not '%s'. got=%s", name, letStmt.Name.Value)
 		return false
 	}
 
