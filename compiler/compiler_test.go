@@ -80,6 +80,102 @@ func TestCompilerScopes(t *testing.T) {
 	}
 }
 
+
+func TestErrorHandling(t *testing.T) {
+	tests := []struct {
+		input           string
+		expectedMessage string
+	}{
+		// {
+		// 	"5 + true;",
+		// 	"type mismatch: INTEGER + BOOLEAN",
+		// },
+// 		{
+// 			"5 + true; 5;",
+// 			"type mismatch: INTEGER + BOOLEAN",
+// 		},
+// 		{
+// 			"-true",
+// 			"unknown operator: -BOOLEAN",
+// 		},
+// 		{
+// 			"true + false;",
+// 			"unknown operator: BOOLEAN + BOOLEAN",
+// 		},
+// 		{
+// 			"true + false + true + false;",
+// 			"unknown operator: BOOLEAN + BOOLEAN",
+// 		},
+// 		{
+// 			"5; true + false; 5",
+// 			"unknown operator: BOOLEAN + BOOLEAN",
+// 		},
+// 		{
+// 			"if (10 > 1) { true + false; }",
+// 			"unknown operator: BOOLEAN + BOOLEAN",
+// 		},
+// 		{
+// 			`
+// if (10 > 1) {
+//   if (10 > 1) {
+//     return true + false;
+//   }
+
+//   return 1;
+// }
+// `,
+// 			"unknown operator: BOOLEAN + BOOLEAN",
+// 		},
+// 		{
+// 			"foobar",
+// 			"identifier not found: foobar",
+// 		},
+// 		{
+// 			`"Hello" - "World"`,
+// 			"unknown operator: STRING - STRING",
+// 		},
+// 		{
+// 			`{"name": "Monkey"}[fn(x) { x }];`,
+// 			"unusable as hash key: FUNCTION",
+// 		},
+// 		{
+// 			"let foobar = 5; let foobar = 6;",
+// 			"identifier 'foobar' has already been declared",
+// 		},
+// 		{
+// 			"foobar = 5;",
+// 			"assignment to undeclared variable 'foobar'",
+// 		},
+// 		{
+// 			"foobar += 5;",
+// 			"assignment to undeclared variable 'foobar'",
+// 		},
+// 		{
+// 			"const foobar = 5; const foobar = 6;",
+// 			"identifier 'foobar' has already been declared",
+// 		},
+// 		{
+// 			"const foobar = 5; foobar = 6;",
+// 			"assignment to constant variable 'foobar'",
+// 		},
+	}
+
+	for _, tt := range tests {
+		program := parse(tt.input)
+
+		compiler := New()
+		err := compiler.Compile(program)
+		if err == nil {
+			t.Errorf("no error object returned. expected=%q", tt.expectedMessage)
+			continue
+		}
+
+		if err.Error() != tt.expectedMessage {
+			t.Errorf("wrong error message. expected=%q, got=%q", tt.expectedMessage, err.Error())
+		}
+	}
+}
+
 func TestIntegerArithmetic(t *testing.T) {
 	tests := []compilerTestCase{
 		{
@@ -316,6 +412,55 @@ func TestGlobalLetStatements(t *testing.T) {
 	let two = one;
 	two;
 	`,
+			expectedConstants: []interface{}{1},
+			expectedInstructions: []code.Instructions{
+				code.Make(code.OpConstant, 0),
+				code.Make(code.OpSetGlobal, 0),
+				code.Make(code.OpGetGlobal, 0),
+				code.Make(code.OpSetGlobal, 1),
+				code.Make(code.OpGetGlobal, 1),
+				code.Make(code.OpPop),
+			},
+		},
+	}
+	runCompilerTests(t, tests)
+}
+
+
+func TestGlobalConstantsStatements(t *testing.T) {
+	tests := []compilerTestCase{
+		{
+			input: `
+			const one = 1;
+			const two = 2;
+			`,
+			expectedConstants: []interface{}{1, 2},
+			expectedInstructions: []code.Instructions{
+				code.Make(code.OpConstant, 0),
+				code.Make(code.OpSetGlobal, 0),
+				code.Make(code.OpConstant, 1),
+				code.Make(code.OpSetGlobal, 1),
+			},
+		},
+		{
+			input: `
+			const one = 1;
+			one;
+			`,
+			expectedConstants: []interface{}{1},
+			expectedInstructions: []code.Instructions{
+				code.Make(code.OpConstant, 0),
+				code.Make(code.OpSetGlobal, 0),
+				code.Make(code.OpGetGlobal, 0),
+				code.Make(code.OpPop),
+			},
+		},
+		{
+			input: `
+			const one = 1;
+			const two = one;
+			two;
+			`,
 			expectedConstants: []interface{}{1},
 			expectedInstructions: []code.Instructions{
 				code.Make(code.OpConstant, 0),
@@ -719,6 +864,31 @@ func TestLetStatementScopes(t *testing.T) {
 				},
 			},
 			expectedInstructions: []code.Instructions{
+				code.Make(code.OpClosure, 2, 0),
+				code.Make(code.OpPop),
+			},
+		},
+		{
+			input: `
+			let num = 55;
+			fn() { num++ }
+			`,
+			expectedConstants: []interface{}{
+				55,
+				1,
+				[]code.Instructions{
+					code.Make(code.OpGetGlobal, 0),
+					code.Make(code.OpGetGlobal, 0),
+					code.Make(code.OpConstant, 1),
+					code.Make(code.OpAdd),
+					code.Make(code.OpAssignGlobal, 0),
+					code.Make(code.OpPop),
+					code.Make(code.OpReturnValue),
+				},
+			},
+			expectedInstructions: []code.Instructions{
+				code.Make(code.OpConstant, 0),
+				code.Make(code.OpSetGlobal, 0),
 				code.Make(code.OpClosure, 2, 0),
 				code.Make(code.OpPop),
 			},
