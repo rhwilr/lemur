@@ -499,6 +499,11 @@ func (p *Parser) parseFunctionLiteral() ast.Expression {
 
 	lit.Body = p.parseBlockStatement()
 
+	if !p.peekTokenIs(token.SEMICOLON) {
+		msg := fmt.Sprintf("Syntax error, expected semicolon.")
+		p.errors = append(p.errors, msg)
+	}
+
 	return lit
 }
 

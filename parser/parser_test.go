@@ -17,7 +17,7 @@ func TestIncompleteLetConstStatement(t *testing.T) {
 
 		errors := p.errors
 		if len(errors) < 1 {
-			t.Errorf("UNexpected error-count!")
+			t.Errorf("Unexpected error-count!")
 		}
 
 		if len(p.Errors()) != len(errors) {
@@ -86,7 +86,7 @@ func TestConstStatements(t *testing.T) {
 		if !testConstStatement(t, stmt, tt.expectedIdentifier) {
 			return
 		}
-		
+
 		val := stmt.(*ast.ConstStatement).Value
 		if !testLiteralExpression(t, val, tt.expectedValue) {
 			return
@@ -563,7 +563,7 @@ func TestIfElseExpression(t *testing.T) {
 }
 
 func TestFunctionLiteralParsing(t *testing.T) {
-	input := `fn(x, y) { x + y; }`
+	input := `fn(x, y) { x + y; };`
 
 	l := lexer.New(input)
 	p := New(l)
@@ -571,25 +571,21 @@ func TestFunctionLiteralParsing(t *testing.T) {
 	checkParserErrors(t, p)
 
 	if len(program.Statements) != 1 {
-		t.Fatalf("program.Body does not contain %d statements. got=%d\n",
-			1, len(program.Statements))
+		t.Fatalf("program.Body does not contain %d statements. got=%d\n", 1, len(program.Statements))
 	}
 
 	stmt, ok := program.Statements[0].(*ast.ExpressionStatement)
 	if !ok {
-		t.Fatalf("program.Statements[0] is not ast.ExpressionStatement. got=%T",
-			program.Statements[0])
+		t.Fatalf("program.Statements[0] is not ast.ExpressionStatement. got=%T", program.Statements[0])
 	}
 
 	function, ok := stmt.Expression.(*ast.FunctionLiteral)
 	if !ok {
-		t.Fatalf("stmt.Expression is not ast.FunctionLiteral. got=%T",
-			stmt.Expression)
+		t.Fatalf("stmt.Expression is not ast.FunctionLiteral. got=%T", stmt.Expression)
 	}
 
 	if len(function.Parameters) != 2 {
-		t.Fatalf("function literal parameters wrong. want 2, got=%d\n",
-			len(function.Parameters))
+		t.Fatalf("function literal parameters wrong. want 2, got=%d\n", len(function.Parameters))
 	}
 
 	testLiteralExpression(t, function.Parameters[0], "x")
@@ -1016,6 +1012,40 @@ func TestMutators(t *testing.T) {
 		p := New(l)
 		_ = p.ParseProgram()
 		checkParserErrors(t, p)
+	}
+}
+
+func TestSyntaxErrors(t *testing.T) {
+	tests := []struct {
+		input         string
+		expectedErrors  []string
+	}{
+		{
+			input: `
+			let minusOne = fn() {}
+			minusOne();
+			`,
+			expectedErrors: []string{
+				"Syntax error, expected semicolon.",
+			},
+		},
+	}
+
+	for _, test := range tests {
+		l := lexer.New(test.input)
+		p := New(l)
+		_ = p.ParseProgram()
+
+		errors := p.errors
+		if len(errors) != len(test.expectedErrors) {
+			t.Errorf("Unexpected error-count. got=%d, want=%d", len(errors), len(test.expectedErrors))
+		}
+
+		for i, msg := range test.expectedErrors {
+			if errors[i] != msg {
+				t.Errorf("Error message mismatch: got='%s', want='%s'", errors[i], msg)
+			}
+		}
 	}
 }
 
