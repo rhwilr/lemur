@@ -18,6 +18,7 @@ in the book. Here are the changes I made.
 - `let` can only be used to initialize a variable.
 - More assignment operators such as `+=`, `-=`, `*=`, and `/=`.
 - Added prefix and postfix operators (`++i`, `--i`, `i++`, `i--`).
+- Allow accessing individual characters of a string via the index-operator.
 
 
 ## Development

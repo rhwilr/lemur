@@ -387,6 +387,44 @@ func TestStringLiteral(t *testing.T) {
 	}
 }
 
+func TestStringIndexExpressions(t *testing.T) {
+	tests := []struct {
+		input    string
+		expected interface{}
+	}{
+		{
+			`"Hello"[0]`,
+			"H",
+		},
+		{
+			`"Hello"[1]`,
+			"e",
+		},
+		{
+			`"Hello"[100]`,
+			nil,
+		},
+		{
+			`"Hello"[-1]`,
+			nil,
+		},
+		{
+			"\"Steve\"[1]",
+			"t",
+		},
+	}
+	for _, tt := range tests {
+		evaluated := testEval(tt.input)
+
+		str, ok := tt.expected.(string)
+		if ok {
+			testStringObject(t, evaluated, str)
+		} else {
+			testNullObject(t, evaluated)
+		}
+	}
+}
+
 func TestStringConcatenation(t *testing.T) {
 	input := `"Hello" + " " + "World!"`
 
@@ -657,6 +695,20 @@ func testIntegerObject(t *testing.T, obj object.Object, expected int64) bool {
 		return false
 	}
 
+	return true
+}
+
+func testStringObject(t *testing.T, obj object.Object, expected string) bool {
+	result, ok := obj.(*object.String)
+	if !ok {
+		t.Errorf("obj is not String. got=%T(%+v)", obj, obj)
+		return false
+	}
+	if result.Value != expected {
+		t.Errorf("object has wrong value. got=%s, want=%s",
+			result.Value, expected)
+		return false
+	}
 	return true
 }
 

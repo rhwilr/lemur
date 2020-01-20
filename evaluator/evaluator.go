@@ -317,6 +317,8 @@ func evalIndexExpression(left, index object.Object) object.Object {
 		return evalArrayIndexExpression(left, index)
 	case left.Type() == object.HASH_OBJ:
 		return evalHashIndexExpression(left, index)
+	case left.Type() == object.STRING_OBJ:
+		return evalStringIndexExpression(left, index)
 	default:
 		return newError("index operator not supported: %s", left.Type())
 	}
@@ -348,6 +350,21 @@ func evalHashIndexExpression(hash, index object.Object) object.Object {
 	}
 
 	return pair.Value
+}
+
+func evalStringIndexExpression(stringObj, index object.Object) object.Object {
+	str := stringObj.(*object.String).Value
+	idx := index.(*object.Integer).Value
+	max := int64(len(str) - 1)
+
+	if idx < 0 || idx > max {
+		return NULL
+	}
+
+	chars := []rune(str)
+	ret := chars[idx]
+
+	return &object.String{Value: string(ret)}
 }
 
 func evalIdentifier(node *ast.Identifier, env *object.Environment) object.Object {
