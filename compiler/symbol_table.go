@@ -1,5 +1,7 @@
 package compiler
 
+import "fmt"
+
 type SymbolScope string
 
 const (
@@ -10,10 +12,18 @@ const (
 	FunctionScope SymbolScope = "FUNCTION"
 )
 
+type SymbolType int
+
+const (
+	VariableType SymbolType = iota
+	ConstantType
+)
+
 type Symbol struct {
 	Name  string
 	Scope SymbolScope
 	Index int
+	Type SymbolType
 }
 
 type SymbolTable struct {
@@ -38,8 +48,13 @@ func NewEnclosedSymbolTable(outer *SymbolTable) *SymbolTable {
 	return s
 }
 
-func (s *SymbolTable) Define(name string) Symbol {
-	symbol := Symbol{Name: name, Index: s.numDefinitions}
+func (s *SymbolTable) Define(name string, symbolType SymbolType) (Symbol, error) {
+	symbol := Symbol{Name: name, Index: s.numDefinitions, Type: symbolType}
+
+	found, ok := s.store[name]
+	if ok && found.Scope != FunctionScope {
+		return symbol, fmt.Errorf("identifier '%s' has already been declared", name)
+	}
 
 	if s.Outer == nil {
 		symbol.Scope = GlobalScope
@@ -50,7 +65,7 @@ func (s *SymbolTable) Define(name string) Symbol {
 	s.store[name] = symbol
 	s.numDefinitions++
 
-	return symbol
+	return symbol, nil
 }
 
 func (s *SymbolTable) Resolve(name string) (Symbol, bool) {

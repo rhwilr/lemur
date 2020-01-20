@@ -86,78 +86,26 @@ func TestErrorHandling(t *testing.T) {
 		input           string
 		expectedMessage string
 	}{
-		// {
-		// 	"5 + true;",
-		// 	"type mismatch: INTEGER + BOOLEAN",
-		// },
-// 		{
-// 			"5 + true; 5;",
-// 			"type mismatch: INTEGER + BOOLEAN",
-// 		},
-// 		{
-// 			"-true",
-// 			"unknown operator: -BOOLEAN",
-// 		},
-// 		{
-// 			"true + false;",
-// 			"unknown operator: BOOLEAN + BOOLEAN",
-// 		},
-// 		{
-// 			"true + false + true + false;",
-// 			"unknown operator: BOOLEAN + BOOLEAN",
-// 		},
-// 		{
-// 			"5; true + false; 5",
-// 			"unknown operator: BOOLEAN + BOOLEAN",
-// 		},
-// 		{
-// 			"if (10 > 1) { true + false; }",
-// 			"unknown operator: BOOLEAN + BOOLEAN",
-// 		},
-// 		{
-// 			`
-// if (10 > 1) {
-//   if (10 > 1) {
-//     return true + false;
-//   }
-
-//   return 1;
-// }
-// `,
-// 			"unknown operator: BOOLEAN + BOOLEAN",
-// 		},
-// 		{
-// 			"foobar",
-// 			"identifier not found: foobar",
-// 		},
-// 		{
-// 			`"Hello" - "World"`,
-// 			"unknown operator: STRING - STRING",
-// 		},
-// 		{
-// 			`{"name": "Monkey"}[fn(x) { x }];`,
-// 			"unusable as hash key: FUNCTION",
-// 		},
-// 		{
-// 			"let foobar = 5; let foobar = 6;",
-// 			"identifier 'foobar' has already been declared",
-// 		},
-// 		{
-// 			"foobar = 5;",
-// 			"assignment to undeclared variable 'foobar'",
-// 		},
-// 		{
-// 			"foobar += 5;",
-// 			"assignment to undeclared variable 'foobar'",
-// 		},
-// 		{
-// 			"const foobar = 5; const foobar = 6;",
-// 			"identifier 'foobar' has already been declared",
-// 		},
-// 		{
-// 			"const foobar = 5; foobar = 6;",
-// 			"assignment to constant variable 'foobar'",
-// 		},
+		{
+			"let foobar = 5; let foobar = 6;",
+			"identifier 'foobar' has already been declared",
+		},
+		{
+			"foobar = 5;",
+			"assignment to undeclared variable 'foobar'",
+		},
+		{
+			"foobar += 5;",
+			"assignment to undeclared variable 'foobar'",
+		},
+		{
+			"const foobar = 5; const foobar = 6;",
+			"identifier 'foobar' has already been declared",
+		},
+		{
+			"const foobar = 5; foobar = 6;",
+			"assignment to constant variable 'foobar'",
+		},
 	}
 
 	for _, tt := range tests {

@@ -232,8 +232,12 @@ func (c *Compiler) Compile(node ast.Node) error {
 		c.emit(code.OpConstant, c.addConstant(str))
 
 	case *ast.LetStatement:
-		symbol := c.symbolTable.Define(node.Name.Value)
-		err := c.Compile(node.Value)
+		symbol, err := c.symbolTable.Define(node.Name.Value, VariableType)
+		if err != nil {
+			return fmt.Errorf(err.Error())
+		}
+
+		err = c.Compile(node.Value)
 		if err != nil {
 			return err
 		}
@@ -245,8 +249,12 @@ func (c *Compiler) Compile(node ast.Node) error {
 		}
 
 	case *ast.ConstStatement:
-		symbol := c.symbolTable.Define(node.Name.Value)
-		err := c.Compile(node.Value)
+		symbol, err := c.symbolTable.Define(node.Name.Value, ConstantType)
+		if err != nil {
+			return fmt.Errorf(err.Error())
+		}
+
+		err = c.Compile(node.Value)
 		if err != nil {
 			return err
 		}
@@ -261,8 +269,12 @@ func (c *Compiler) Compile(node ast.Node) error {
 	case *ast.AssignStatement:
 		symbol, ok := c.symbolTable.Resolve(node.Name.Value)
 		if !ok {
-			return fmt.Errorf("undefined variable %s", node.Name.Value)
+			return fmt.Errorf("assignment to undeclared variable '%s'", node.Name.Value)
 		}
+		if symbol.Type == ConstantType {
+			return fmt.Errorf("assignment to constant variable '%s'", node.Name.Value)
+		}
+
 		c.loadSymbol(symbol)
 
 		err := c.Compile(node.Value)
@@ -358,7 +370,7 @@ func (c *Compiler) Compile(node ast.Node) error {
 		}
 
 		for _, p := range node.Parameters {
-			c.symbolTable.Define(p.Value)
+			c.symbolTable.Define(p.Value, VariableType)
 		}
 
 		err := c.Compile(node.Body)
