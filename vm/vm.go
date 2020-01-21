@@ -105,7 +105,7 @@ func (vm *VM) Run() error {
 		case code.OpPop:
 			vm.pop()
 
-		case code.OpEqual, code.OpNotEqual, code.OpGreaterThan:
+		case code.OpEqual, code.OpNotEqual, code.OpGreaterThan, code.OpGreaterOrEqual:
 			err := vm.executeComparison(op)
 			if err != nil {
 				return err
@@ -378,14 +378,7 @@ func (vm *VM) executeComparison(op code.Opcode) error {
 		return vm.executeStringComparison(op, left, right)
 	}
 
-	switch op {
-	case code.OpEqual:
-		return vm.push(nativeBoolToBooleanObject(right == left))
-	case code.OpNotEqual:
-		return vm.push(nativeBoolToBooleanObject(right != left))
-	default:
-		return fmt.Errorf("unknown operator: %d (%s %s)", op, left.Type(), right.Type())
-	}
+	return vm.executeBooleanComparison(op, left, right)
 }
 
 func (vm *VM) executeIntegerComparison(op code.Opcode, left, right object.Object) error {
@@ -399,6 +392,8 @@ func (vm *VM) executeIntegerComparison(op code.Opcode, left, right object.Object
 		return vm.push(nativeBoolToBooleanObject(rightValue != leftValue))
 	case code.OpGreaterThan:
 		return vm.push(nativeBoolToBooleanObject(leftValue > rightValue))
+	case code.OpGreaterOrEqual:
+		return vm.push(nativeBoolToBooleanObject(leftValue >= rightValue))
 	default:
 		return fmt.Errorf("unknown operator: %d", op)
 	}
@@ -415,8 +410,21 @@ func (vm *VM) executeStringComparison(op code.Opcode, left, right object.Object)
 		return vm.push(nativeBoolToBooleanObject(rightValue != leftValue))
 	case code.OpGreaterThan:
 		return vm.push(nativeBoolToBooleanObject(leftValue > rightValue))
+	case code.OpGreaterOrEqual:
+		return vm.push(nativeBoolToBooleanObject(leftValue >= rightValue))
 	default:
 		return fmt.Errorf("unknown operator: %d", op)
+	}
+}
+
+func (vm *VM) executeBooleanComparison(op code.Opcode, left, right object.Object) error {
+	switch op {
+	case code.OpEqual:
+		return vm.push(nativeBoolToBooleanObject(right == left))
+	case code.OpNotEqual:
+		return vm.push(nativeBoolToBooleanObject(right != left))
+	default:
+		return fmt.Errorf("unknown operator: %d (%s %s)", op, left.Type(), right.Type())
 	}
 }
 

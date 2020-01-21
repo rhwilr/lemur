@@ -56,17 +56,6 @@ func TestWrite(t *testing.T) {
 				byte(code.OpReturnValue), // opcode 19 (OpReturnValue)
 			},
 		},
-		{
-			input: `
-			let f = fn(x) {return x};
-			f(32);
-			`,
-			expected: []byte{
-				2, 2, 0, 0, 0, 3, 0, 0, 0, 1, 0, 0, 0, 1, 19, 
-				0, 27, 0, 0, 0, 0, 0, 0, 0, 0, 32, 29, 0, 0, 
-				0, 17, 0, 0, 16, 0, 0, 0, 0, 1, 25, 1, 6,
-			},
-		},
 	}
 
 	err := runBytecodeTests(t, tests)

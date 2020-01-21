@@ -39,10 +39,10 @@ func TestInstructionsString(t *testing.T) {
 	}
 
 	expected := `0000 OpAdd(1)
-0001 OpGetLocal(19) 1
+0001 OpGetLocal(20) 1
 0003 OpConstant(0) 2
 0006 OpConstant(0) 65535
-0009 OpClosure(29) 65535 255
+0009 OpClosure(30) 65535 255
 `
 	concatted := Instructions{}
 	for _, ins := range instructions {

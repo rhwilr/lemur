@@ -181,7 +181,7 @@ func (c *Compiler) Compile(node ast.Node) error {
 	case *ast.InfixExpression:
 		// The < operator is not implemented in the VM, but we can use the >
 		// operator by swapping the parameters.
-		if node.Operator == "<" {
+		if node.Operator == "<" || node.Operator == "<=" {
 			err := c.Compile(node.Right)
 			if err != nil {
 				return err
@@ -190,7 +190,13 @@ func (c *Compiler) Compile(node ast.Node) error {
 			if err != nil {
 				return err
 			}
-			c.emit(code.OpGreaterThan)
+
+			switch node.Operator {
+			case "<":
+				c.emit(code.OpGreaterThan)
+			case "<=":
+				c.emit(code.OpGreaterOrEqual)
+			}
 			return nil
 		}
 
@@ -217,6 +223,8 @@ func (c *Compiler) Compile(node ast.Node) error {
 			c.emit(code.OpGreaterThan)
 		case "==":
 			c.emit(code.OpEqual)
+		case ">=":
+			c.emit(code.OpGreaterOrEqual)
 		case "!=":
 			c.emit(code.OpNotEqual)
 		default:

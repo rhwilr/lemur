@@ -25,7 +25,7 @@ const (
 
 	// Postfix
 	MINUS_MINUS = "--"
-	PLUS_PLUS = "++"
+	PLUS_PLUS   = "++"
 
 	// Operators
 	PLUS     = "+"
@@ -35,7 +35,9 @@ const (
 	SLASH    = "/"
 
 	LT     = "<"
+	LT_EQ  = "<="
 	GT     = ">"
+	GT_EQ  = ">="
 	EQ     = "=="
 	NOT_EQ = "!="
 

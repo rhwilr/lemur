@@ -47,6 +47,10 @@ func TestBooleanExpressions(t *testing.T) {
 		{"1 > 2", false},
 		{"1 < 1", false},
 		{"1 > 1", false},
+		{"1 <= 2", true},
+		{"1 >= 2", false},
+		{"1 <= 1", true},
+		{"1 >= 1", true},
 		{"1 == 1", true},
 		{"1 != 1", false},
 		{"1 == 2", false},
@@ -76,6 +80,9 @@ func TestBooleanExpressions(t *testing.T) {
 		{`"abc123" == "abc" + "123"`, true},
 		{`"a" > "A"`, true},
 		{`"a" < "A"`, false},
+		{`"a" >= "a"`, true},
+		{`"a" <= "z"`, true},
+		{`"z" <= "z"`, true},
 	}
 
 	runVmTests(t, tests)
