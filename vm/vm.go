@@ -374,6 +374,10 @@ func (vm *VM) executeComparison(op code.Opcode) error {
 		return vm.executeIntegerComparison(op, left, right)
 	}
 
+	if left.Type() == object.STRING_OBJ || right.Type() == object.STRING_OBJ {
+		return vm.executeStringComparison(op, left, right)
+	}
+
 	switch op {
 	case code.OpEqual:
 		return vm.push(nativeBoolToBooleanObject(right == left))
@@ -387,6 +391,22 @@ func (vm *VM) executeComparison(op code.Opcode) error {
 func (vm *VM) executeIntegerComparison(op code.Opcode, left, right object.Object) error {
 	leftValue := left.(*object.Integer).Value
 	rightValue := right.(*object.Integer).Value
+
+	switch op {
+	case code.OpEqual:
+		return vm.push(nativeBoolToBooleanObject(rightValue == leftValue))
+	case code.OpNotEqual:
+		return vm.push(nativeBoolToBooleanObject(rightValue != leftValue))
+	case code.OpGreaterThan:
+		return vm.push(nativeBoolToBooleanObject(leftValue > rightValue))
+	default:
+		return fmt.Errorf("unknown operator: %d", op)
+	}
+}
+
+func (vm *VM) executeStringComparison(op code.Opcode, left, right object.Object) error {
+	leftValue := left.(*object.String).Value
+	rightValue := right.(*object.String).Value
 
 	switch op {
 	case code.OpEqual:

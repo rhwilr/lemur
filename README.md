@@ -19,6 +19,7 @@ in the book. Here are the changes I made.
 - More assignment operators such as `+=`, `-=`, `*=`, and `/=`.
 - Added prefix and postfix operators (`++i`, `--i`, `i++`, `i--`).
 - Allow accessing individual characters of a string via the index-operator.
+- Allow string comparisons via `==`, `!=`, `>`, and `<`.
 
 
 ## Development
