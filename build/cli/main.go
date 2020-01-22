@@ -201,27 +201,22 @@ func runVM() {
 	}
 	defer f.Close()
 
-	// var duration time.Duration
-
 	input, err := ioutil.ReadAll(f)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	code := compiler.Read(input)
-	machine := vm.New(code)
+	code, err := compiler.Read(input)
+	if err != nil {
+		fmt.Printf("decode error: %s\n", err)
+		return
+	}
 
-	// start := time.Now()
+	machine := vm.New(code)
 
 	err = machine.Run()
 	if err != nil {
-		fmt.Printf("vm error: %s", err)
+		fmt.Printf("vm error: %s\n", err)
 		return
 	}
-	// duration = time.Since(start)
-
-	// result := machine.LastPoppedStackElem()
-	// fmt.Printf("result=%s, duration=%s\n",
-	// 	result.Inspect(),
-	// 	duration)
 }

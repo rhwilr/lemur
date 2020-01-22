@@ -56,12 +56,17 @@ func runVM() {
 		log.Fatal(err)
 	}
 
-	code := compiler.Read(input)
+	code, err := compiler.Read(input)
+	if err != nil {
+		fmt.Printf("decode error: %s\n", err)
+		return
+	}
+
 	machine := vm.New(code)
 
 	err = machine.Run()
 	if err != nil {
-		fmt.Printf("vm error: %s", err)
+		fmt.Printf("vm error: %s\n", err)
 		return
 	}
 }

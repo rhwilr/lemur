@@ -5,9 +5,9 @@ import (
 )
 
 var (
-	Major = 1
-	Minor = 1
-	Patch = 10
+	Major byte = 0
+	Minor byte = 0
+	Patch byte = 0
 
 	// GitCommit will be overwritten automatically by the build system
 	GitCommit = "HEAD"
