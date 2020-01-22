@@ -52,8 +52,6 @@ func Start(in io.Reader, out io.Writer) {
 			line, err = term.ReadLine()
 		}
 	}
-
-	term.Write([]byte(line))
 }
 
 func evaluateLine(line string, symbolTable *compiler.SymbolTable, constants []object.Object, globals []object.Object) string {

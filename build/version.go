@@ -1,12 +1,13 @@
-package main
+package build
 
 import (
 	"fmt"
 )
 
 var (
-	// Version release version
-	Version = "0.0.1"
+	Major = 1
+	Minor = 1
+	Patch = 10
 
 	// GitCommit will be overwritten automatically by the build system
 	GitCommit = "HEAD"
@@ -14,5 +15,5 @@ var (
 
 // FullVersion returns the full version and commit hash
 func FullVersion() string {
-	return fmt.Sprintf("%s@%s", Version, GitCommit)
+	return fmt.Sprintf("%d.%d.%d@%s", Major, Minor, Patch, GitCommit)
 }

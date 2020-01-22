@@ -14,6 +14,7 @@ import (
 	"path"
 	"time"
 
+	"github.com/rhwilr/monkey/build"
 	"github.com/rhwilr/monkey/compiler"
 	"github.com/rhwilr/monkey/lexer"
 	"github.com/rhwilr/monkey/evaluator"
@@ -52,7 +53,7 @@ func main() {
 	flag.Parse()
 
 	if version {
-		fmt.Printf("%s %s\n", path.Base(os.Args[0]), FullVersion())
+		fmt.Printf("%s %s\n", path.Base(os.Args[0]), build.FullVersion())
 		os.Exit(0)
 	}
 

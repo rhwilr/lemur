@@ -20,13 +20,15 @@ test: ## Run unittests
 	@go test -short ${PKG_LIST}
 
 build: dep ## Build the binary file
-	@go build -i -o build/main $(PKG)
+	@go build -i -o dist/monkey-compiler $(PKG)/build/compiler
+	@go build -i -o dist/monkey-vm $(PKG)/build/vm
+	@go build -i -o dist/monkey $(PKG)/build/cli
 
 benchmark: dep ## Build the benchmark binary
-	@go build -o build/benchmark ./benchmark
+	@go build -o dist/benchmark ./benchmark
 
 clean: ## Remove previous build
-	@rm -f $(PROJECT_NAME)/build
+	@rm -rf dist
  
 help: ## Display this help screen
 	@grep -h -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'

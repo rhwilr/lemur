@@ -3,6 +3,7 @@ package compiler
 import (
 	"encoding/binary"
 
+	"github.com/rhwilr/monkey/build"
 	"github.com/rhwilr/monkey/code"
 	"github.com/rhwilr/monkey/object"
 )
@@ -29,10 +30,12 @@ func (c *Compiler) Bytecode() *Bytecode {
 }
 
 func (b *Bytecode) Write() []byte {
+	header := writeHeader()
 	constants := writeConstants(b.Constants)
 	instructions := b.Instructions
 
-	out := append(constants, instructions...)
+	out := append(header, constants...)
+	out = append(out, instructions...)
 
 	return out
 }
@@ -95,6 +98,23 @@ func Read(bytecode []byte) *Bytecode {
 		Constants:    constants,
 		Instructions: bytecode[offset:],
 	}
+}
+
+/*
+** Write Binary Functions
+*/
+func writeHeader() []byte {
+	out := make([]byte, 0)
+
+	signature := []byte("Monkey")
+
+	version := make([]byte, 4)
+  binary.LittleEndian.PutUint32(version, uint32(build.Major))
+
+	out = append(out, signature...)
+	out = append(out, version...)
+
+	return out
 }
 
 func writeConstants(consts []object.Object) []byte {

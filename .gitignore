@@ -12,4 +12,4 @@
 *.out
 
 # Build artifacts
-build
+dist
