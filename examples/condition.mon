@@ -1,0 +1,11 @@
+let f1 = fn() {
+  puts("f1 called\n");
+  return false;
+};
+
+let f2 = fn() {
+  puts("f2 called\n");
+  return true;
+};
+
+f1() && f2();

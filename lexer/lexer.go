@@ -222,7 +222,7 @@ func (l *Lexer) skipMultiLineComments() {
 
 func (l *Lexer) readItentifier() string {
 	position := l.position
-	for isLetter(l.ch) {
+	for isLetter(l.ch) || isDigit(l.ch) {
 		l.readChar()
 	}
 	return l.input[position:l.position]
