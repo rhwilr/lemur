@@ -233,3 +233,28 @@ type Error struct {
 
 func (e *Error) Type() ObjectType { return ERROR_OBJ }
 func (e *Error) Inspect() string  { return "ERROR: " + e.Message }
+
+/*
+** Helpers
+*/
+func ObjectToNativeBoolean(o Object) bool {
+	if r, ok := o.(*ReturnValue); ok {
+		o = r.Value
+	}
+	switch obj := o.(type) {
+	case *Boolean:
+		return obj.Value
+	case *String:
+		return obj.Value != ""
+	case *Null:
+		return false
+	case *Integer:
+		return obj.Value != 0
+	case *Array:
+		return len(obj.Elements) != 0
+	case *Hash:
+		return len(obj.Pairs) != 0
+	default:
+		return true
+	}
+}

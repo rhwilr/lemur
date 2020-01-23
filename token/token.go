@@ -13,8 +13,9 @@ const (
 	EOF     = "EOF"     // Used to signal the end of a file to the parser
 
 	// Indentifiers and literals
-	IDENT = "IDENT" // Identifier like variable names
-	INT   = "INT"   // Integers 1, 2,3, 42...
+	IDENT  = "IDENT" // Identifier like variable names
+	INT    = "INT"   // Integers 1, 2,3, 42...
+	STRING = "STRING"
 
 	// Assignments
 	ASSIGN          = "="
@@ -41,6 +42,9 @@ const (
 	EQ     = "=="
 	NOT_EQ = "!="
 
+	AND = "&&"
+	OR  = "||"
+
 	// Delimiters
 	COMMA     = ","
 	SEMICOLON = ";"
@@ -62,9 +66,6 @@ const (
 	IF       = "IF"
 	ELSE     = "ELSE"
 	RETURN   = "RETURN"
-
-	// String, Array and Hash
-	STRING = "STRING"
 )
 
 var keywords = map[string]TokenType{

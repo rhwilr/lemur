@@ -210,6 +210,10 @@ func evalPrefixExpression(operator string, right object.Object) object.Object {
 
 func evalInfixExpression(operator string, left, right object.Object) object.Object {
 	switch {
+	case operator == "&&":
+		return nativeBoolToBooleanObject(object.ObjectToNativeBoolean(left) && object.ObjectToNativeBoolean(right))
+	case operator == "||":
+		return nativeBoolToBooleanObject(object.ObjectToNativeBoolean(left) || object.ObjectToNativeBoolean(right))
 	case left.Type() == object.INTEGER_OBJ && right.Type() == object.INTEGER_OBJ:
 		return evalIntegerInfixExpression(operator, left, right)
 	case left.Type() == object.STRING_OBJ && right.Type() == object.STRING_OBJ:

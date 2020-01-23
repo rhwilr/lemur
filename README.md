@@ -21,6 +21,7 @@ in the book. Here are the changes I made.
 - Allow accessing individual characters of a string via the index-operator.
 - Allow string comparisons via `==`, `!=`, `<`, `>`, `<=`, and `>=`.
 - Implemented `<=`, and `>=` comparisons for integers.
+- Added support for boolean operators `&&` and `||`.
 
 ## Development
 

@@ -34,7 +34,11 @@ if (5 < 10) {
 4 -= 1;
 4 /= 2;
 4 *= 2;
+&&
+||
 $
+&
+|
 ++
 --
 "foobar"
@@ -157,7 +161,12 @@ $
 		{token.SEMICOLON, ";"},
 
 
+		{token.AND, "&&"},
+		{token.OR, "||"},
+
 		{token.ILLEGAL, "$"},
+		{token.ILLEGAL, "&"},
+		{token.ILLEGAL, "|"},
 
 		{token.PLUS_PLUS, "++"},
 		{token.MINUS_MINUS, "--"},

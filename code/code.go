@@ -26,6 +26,8 @@ const (
 	OpTrue
 	OpFalse
 	OpBang
+	OpAnd
+	OpOr
 	OpEqual
 	OpNotEqual
 	OpGreaterThan
@@ -62,6 +64,8 @@ var definitions = map[Opcode]*Definition{
 	OpTrue:           {"OpTrue", []int{}},
 	OpFalse:          {"OpFalse", []int{}},
 	OpBang:           {"OpBang", []int{}},
+	OpAnd:            {"OpAnd", []int{}},
+	OpOr:             {"OpOr", []int{}},
 	OpEqual:          {"OpEqual", []int{}},
 	OpNotEqual:       {"OpNotEqual", []int{}},
 	OpGreaterThan:    {"OpGreaterThan", []int{}},
@@ -177,11 +181,11 @@ func (ins Instructions) fmtInstruction(opcode byte, def *Definition, operands []
 
 	switch operandCount {
 	case 0:
-		return fmt.Sprintf("%s(%d)", def.Name, opcode)
+		return fmt.Sprintf("%s", def.Name)
 	case 1:
-		return fmt.Sprintf("%s(%d) %d", def.Name, opcode, operands[0])
+		return fmt.Sprintf("%s %d", def.Name, operands[0])
 	case 2:
-		return fmt.Sprintf("%s(%d) %d %d", def.Name, opcode, operands[0], operands[1])
+		return fmt.Sprintf("%s %d %d", def.Name, operands[0], operands[1])
 	}
 
 	return fmt.Sprintf("ERROR: unhandled operandCount for %s\n", def.Name)

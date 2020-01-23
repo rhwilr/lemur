@@ -38,11 +38,11 @@ func TestInstructionsString(t *testing.T) {
 		Make(OpClosure, 65535, 255),
 	}
 
-	expected := `0000 OpAdd(1)
-0001 OpGetLocal(20) 1
-0003 OpConstant(0) 2
-0006 OpConstant(0) 65535
-0009 OpClosure(30) 65535 255
+	expected := `0000 OpAdd
+0001 OpGetLocal 1
+0003 OpConstant 2
+0006 OpConstant 65535
+0009 OpClosure 65535 255
 `
 	concatted := Instructions{}
 	for _, ins := range instructions {

@@ -83,6 +83,15 @@ func TestBooleanExpressions(t *testing.T) {
 		{`"a" >= "a"`, true},
 		{`"a" <= "z"`, true},
 		{`"z" <= "z"`, true},
+		{`true && true`, true},
+		{`true && false`, false},
+		{`false && true`, false},
+		{`true || false`, true},
+		{`false || true`, true},
+		{`1 || 0`, true},
+		{`0 || 5`, true},
+		{`6 && 5`, true},
+		{`12 && 0`, false},
 	}
 
 	runVmTests(t, tests)
@@ -110,6 +119,9 @@ func TestConditionals(t *testing.T) {
 		{"if (1 > 2) { 10 }", Null},
 		{"if (false) { 10 }", Null},
 		{"if ((if (false) { 10 })) { 10 } else { 20 }", 20},
+		{"if (true && 1) { 10 }", 10},
+		{"if (false && true) { 10 }", Null},
+		{"if (false || true) { 10 }", 10},
 	}
 
 	runVmTests(t, tests)

@@ -78,6 +78,15 @@ func TestEvalBooleanExpression(t *testing.T) {
 		{`"abc123" == "abc" + "123"`, true},
 		{`"a" > "A"`, true},
 		{`"a" < "A"`, false},
+		{`true && true`, true},
+		{`true && false`, false},
+		{`false && true`, false},
+		{`true || false`, true},
+		{`false || true`, true},
+		{`1 || 0`, true},
+		{`0 || 5`, true},
+		{`6 && 5`, true},
+		{`12 && 0`, false},
 	}
 
 	for _, tt := range tests {
@@ -114,6 +123,9 @@ func TestIfElseExpressions(t *testing.T) {
 	}{
 		{"if (true) { 10 }", 10},
 		{"if (false) { 10 }", nil},
+		{"if (true && 1) { 10 }", 10},
+		{"if (false && true) { 10 }", nil},
+		{"if (false || true) { 10 }", 10},
 		{"if (1) { 10 }", 10},
 		{"if (1 < 2) { 10 }", 10},
 		{"if (1 > 2) { 10 }", nil},

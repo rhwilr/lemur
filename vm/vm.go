@@ -111,6 +111,12 @@ func (vm *VM) Run() error {
 				return err
 			}
 
+		case code.OpAnd, code.OpOr:
+			err := vm.executeBooleanOperation(op)
+			if err != nil {
+				return err
+			}
+
 		case code.OpBang:
 			err := vm.executeBangOperator()
 			if err != nil {
@@ -274,8 +280,8 @@ func (vm *VM) Run() error {
 		case code.OpGetFree:
 			freeIndex := code.ReadUint8(ins[ip+1:])
 			vm.currentFrame().ip += 1
-			
-			currentClosure := vm.currentFrame().cl			
+
+			currentClosure := vm.currentFrame().cl
 			err := vm.push(currentClosure.Free[freeIndex])
 			if err != nil {
 				return err
@@ -283,7 +289,7 @@ func (vm *VM) Run() error {
 
 		case code.OpCurrentClosure:
 			currentClosure := vm.currentFrame().cl
-			
+
 			err := vm.push(currentClosure)
 			if err != nil {
 				return err
@@ -423,6 +429,20 @@ func (vm *VM) executeBooleanComparison(op code.Opcode, left, right object.Object
 		return vm.push(nativeBoolToBooleanObject(right == left))
 	case code.OpNotEqual:
 		return vm.push(nativeBoolToBooleanObject(right != left))
+	default:
+		return fmt.Errorf("unknown operator: %d (%s %s)", op, left.Type(), right.Type())
+	}
+}
+
+func (vm *VM) executeBooleanOperation(op code.Opcode) error {
+	right := vm.pop()
+	left := vm.pop()
+
+	switch op {
+	case code.OpAnd:
+		return vm.push(nativeBoolToBooleanObject(object.ObjectToNativeBoolean(left) && object.ObjectToNativeBoolean(right)))
+	case code.OpOr:
+		return vm.push(nativeBoolToBooleanObject(object.ObjectToNativeBoolean(left) || object.ObjectToNativeBoolean(right)))
 	default:
 		return fmt.Errorf("unknown operator: %d (%s %s)", op, left.Type(), right.Type())
 	}
