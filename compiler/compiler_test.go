@@ -435,6 +435,64 @@ func TestConditionals(t *testing.T) {
 			},
 		},
 	}
+
+	runCompilerTests(t, tests)
+}
+
+
+func TestWhileLoopExpression(t *testing.T) {
+	tests := []compilerTestCase{
+		{
+			input: `
+			while (true) { 10 }; 3333;
+			`,
+			expectedConstants: []interface{}{10, 3333},
+			expectedInstructions: []code.Instructions{
+				// 0000
+				code.Make(code.OpTrue),
+				// 0001
+				code.Make(code.OpJumpNotTruthy, 10),
+				// 0004
+				code.Make(code.OpConstant, 0),
+				// 0007
+				code.Make(code.OpJump, 0),
+				// 0010
+				code.Make(code.OpPop),
+				// 0011
+				code.Make(code.OpConstant, 1),
+				// 0014
+				code.Make(code.OpPop),
+			},
+		},
+		{
+			input: `
+			let x = 1;
+			while (x) { 10 }; 3333;
+			`,
+			expectedConstants: []interface{}{1, 10, 3333},
+			expectedInstructions: []code.Instructions{
+				// 0000
+				code.Make(code.OpConstant, 0),
+				// 0003
+				code.Make(code.OpSetGlobal, 0),
+				// 0006
+				code.Make(code.OpGetGlobal, 0),
+				// 0009
+				code.Make(code.OpJumpNotTruthy, 18),
+				// 0012
+				code.Make(code.OpConstant, 1),
+				// 0015
+				code.Make(code.OpJump, 6),
+				// 0018
+				code.Make(code.OpPop),
+				// 0019
+				code.Make(code.OpConstant, 2),
+				// 0022
+				code.Make(code.OpPop),
+			},
+		},
+	}
+
 	runCompilerTests(t, tests)
 }
 

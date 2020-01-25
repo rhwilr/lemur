@@ -48,7 +48,7 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 		return evalPrefixExpression(node.Operator, right)
 	case *ast.InfixExpression:
 		// Boolean operators
-		if (node.Operator == "&&" || node.Operator == "||") {
+		if node.Operator == "&&" || node.Operator == "||" {
 			return evalBooleanInfixExpression(node.Operator, node, env)
 		}
 
@@ -137,6 +137,8 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 
 	case *ast.AssignStatement:
 		return evalAssignStatement(node, env)
+	case *ast.WhileLoopExpression:
+		return evalWhileLoopExpression(node, env)
 	}
 
 	return nil
@@ -237,7 +239,7 @@ func evalBooleanInfixExpression(operator string, node *ast.InfixExpression, env 
 	}
 	// AND operator
 	if operator == "&&" {
-		if (!object.ObjectToNativeBoolean(left)) {
+		if !object.ObjectToNativeBoolean(left) {
 			return nativeBoolToBooleanObject(false)
 		}
 
@@ -251,7 +253,7 @@ func evalBooleanInfixExpression(operator string, node *ast.InfixExpression, env 
 
 	// OR operator
 	if operator == "||" {
-		if (object.ObjectToNativeBoolean(left)) {
+		if object.ObjectToNativeBoolean(left) {
 			return nativeBoolToBooleanObject(true)
 		}
 
@@ -557,6 +559,30 @@ func evalAssignStatement(a *ast.AssignStatement, env *object.Environment) (val o
 		}
 	}
 	return evaluated
+}
+
+func evalWhileLoopExpression(fle *ast.WhileLoopExpression, env *object.Environment) object.Object {
+	rt := &object.Boolean{Value: true}
+
+	for {
+		condition := Eval(fle.Condition, env)
+
+		if isError(condition) {
+			return condition
+		}
+
+		if isTruthy(condition) {
+			rt := Eval(fle.Consequence, env)
+
+			if !isError(rt) && (rt.Type() == object.RETURN_VALUE_OBJ || rt.Type() == object.ERROR_OBJ) {
+				return rt
+			}
+		} else {
+			break
+		}
+	}
+
+	return rt
 }
 
 /*

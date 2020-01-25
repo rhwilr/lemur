@@ -454,3 +454,27 @@ func (pe *PostfixExpression) String() string {
 	out.WriteString(pe.Operator)
 	return out.String()
 }
+
+/*
+** WhileLoopExpression
+ */
+ type WhileLoopExpression struct {
+	Token       token.Token // The 'for' token
+	Condition   Expression
+	Consequence *BlockStatement
+}
+
+func (ie *WhileLoopExpression) expressionNode()      {}
+func (ie *WhileLoopExpression) TokenLiteral() string { return ie.Token.Literal }
+func (ie *WhileLoopExpression) String() string {
+	var out bytes.Buffer
+
+	out.WriteString("for (")
+	out.WriteString(ie.Condition.String())
+	out.WriteString(") {")
+	out.WriteString(ie.Consequence.String())
+	out.WriteString("}")
+
+	return out.String()
+}
+

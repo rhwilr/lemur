@@ -678,6 +678,28 @@ func TestRecursiveFibonacci(t *testing.T) {
 	runVmTests(t, tests)
 }
 
+func TestWhileLoopExpression(t *testing.T) {
+	tests := []vmTestCase{
+		{
+			input: `
+			let x = 1;
+			let sum = 0;
+			let up = 10;
+
+			while (x < up) {
+				sum += x;
+				x++;
+			}
+
+			sum
+			`,
+			expected: 45,
+		},
+	}
+
+	runVmTests(t, tests)
+}
+
 func TestAssignmentStatements(t *testing.T) {
 	tests := []vmTestCase{
 		{"let a = 5; a += 1;", 6},

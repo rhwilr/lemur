@@ -1,0 +1,13 @@
+let sum = fn(x) {
+  let i = 1;
+  let sum = 0;
+
+  while (i < x) {
+      sum += i;
+      i++;
+  }
+
+  return sum;
+};
+
+puts(sum(100));

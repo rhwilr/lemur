@@ -133,6 +133,33 @@ func (c *Compiler) Compile(node ast.Node) error {
 		afterAlternativePos := len(c.currentInstructions())
 		c.changeOperand(jumpPos, afterAlternativePos)
 
+	case *ast.WhileLoopExpression:
+		beforeConditionPos := len(c.currentInstructions())
+
+		err := c.Compile(node.Condition)
+		if err != nil {
+			return err
+		}
+
+		// Emit an `OpJumpNotTruthy` with a bogus value
+		jumpNotTruthyPos := c.emit(code.OpJumpNotTruthy, 9999)
+
+		err = c.Compile(node.Consequence)
+		if err != nil {
+			return err
+		}
+
+		// Remove the last pop, so the last value of the consequence is returned.
+		if c.lastInstructionIs(code.OpPop) {
+			c.removeLastPop()
+		}
+
+		// Emit an `OpJump` with a bogus value
+		c.emit(code.OpJump, beforeConditionPos)
+
+		afterJumpPos := len(c.currentInstructions())
+		c.changeOperand(jumpNotTruthyPos, afterJumpPos)
+
 	case *ast.PrefixExpression:
 		err := c.Compile(node.Right)
 		if err != nil {

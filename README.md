@@ -22,6 +22,7 @@ in the book. Here are the changes I made.
 - Allow string comparisons via `==`, `!=`, `<`, `>`, `<=`, and `>=`.
 - Implemented `<=`, and `>=` comparisons for integers.
 - Added support for boolean operators `&&` and `||`.
+- Implemented `while` loops.
 
 ## Development
 

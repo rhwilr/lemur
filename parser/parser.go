@@ -91,6 +91,7 @@ func New(l *lexer.Lexer) *Parser {
 	p.registerPrefix(token.PLUS_PLUS, p.parsePrefixAssignmentExpression)
 	p.registerPrefix(token.TRUE, p.parseBoolean)
 	p.registerPrefix(token.FALSE, p.parseBoolean)
+	p.registerPrefix(token.WHILE, p.parseWhileLoopExpression)
 	p.registerPrefix(token.STRING, p.parseString)
 	p.registerPrefix(token.LBRACKET, p.parseArrayLiteral)
 	p.registerPrefix(token.LBRACE, p.parseHashLiteral)
@@ -514,6 +515,29 @@ func (p *Parser) parseFunctionLiteral() ast.Expression {
 	}
 
 	return lit
+}
+
+func (p *Parser) parseWhileLoopExpression() ast.Expression {
+	expression := &ast.WhileLoopExpression{Token: p.curToken}
+
+	if !p.expectPeek(token.LPAREN) {
+		return nil
+	}
+
+	p.nextToken()
+
+	expression.Condition = p.parseExpression(LOWEST)
+	if !p.expectPeek(token.RPAREN) {
+		return nil
+	}
+
+	if !p.expectPeek(token.LBRACE) {
+		return nil
+	}
+
+	expression.Consequence = p.parseBlockStatement()
+
+	return expression
 }
 
 func (p *Parser) parseFunctionParameters() []*ast.Identifier {

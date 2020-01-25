@@ -27,6 +27,9 @@ if (5 < 10) {
 	return false;
 }
 
+while (i < 10) {
+}
+
 10 == 10;
 10 != 9;
 10 <= 9;
@@ -112,6 +115,7 @@ $
 		{token.GT, ">"},
 		{token.INT, "5"},
 		{token.SEMICOLON, ";"},
+
 		{token.IF, "if"},
 		{token.LPAREN, "("},
 		{token.INT, "5"},
@@ -128,6 +132,15 @@ $
 		{token.RETURN, "return"},
 		{token.FALSE, "false"},
 		{token.SEMICOLON, ";"},
+		{token.RBRACE, "}"},
+
+		{token.WHILE, "while"},
+		{token.LPAREN, "("},
+		{token.IDENT, "i"},
+		{token.LT, "<"},
+		{token.INT, "10"},
+		{token.RPAREN, ")"},
+		{token.LBRACE, "{"},
 		{token.RBRACE, "}"},
 
 		{token.INT, "10"},
