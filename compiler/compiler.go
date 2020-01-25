@@ -179,6 +179,12 @@ func (c *Compiler) Compile(node ast.Node) error {
 		c.emit(code.OpPop)
 
 	case *ast.InfixExpression:
+		// The boolean operators AND and OR need special opcodes, since they should
+		// only evaluate the second argument it the first did not short circuit.
+		if node.Operator == "&&" || node.Operator == "||" {
+			return c.compileBooleanInfixExpression(node)
+		}
+
 		// The < operator is not implemented in the VM, but we can use the >
 		// operator by swapping the parameters.
 		if node.Operator == "<" || node.Operator == "<=" {
@@ -227,10 +233,6 @@ func (c *Compiler) Compile(node ast.Node) error {
 			c.emit(code.OpGreaterOrEqual)
 		case "!=":
 			c.emit(code.OpNotEqual)
-		case "&&":
-			c.emit(code.OpAnd)
-		case "||":
-			c.emit(code.OpOr)
 		default:
 			return fmt.Errorf("unknown operator %s", node.Operator)
 		}
@@ -429,6 +431,52 @@ func (c *Compiler) Compile(node ast.Node) error {
 
 		c.emit(code.OpCall, len(node.Arguments))
 	}
+
+	return nil
+}
+
+
+func (c *Compiler) compileBooleanInfixExpression(node *ast.InfixExpression) error {
+	exp := &ast.IfExpression{}
+
+	exp.Condition = node.Left
+
+	// AND Expression
+	if (node.Operator == "&&") {
+		consequenceBlock := &ast.BlockStatement{}
+		consequenceBlock.Statements = []ast.Statement{
+			&ast.ExpressionStatement{Expression: node.Right},
+		}
+		exp.Consequence = consequenceBlock
+	
+		alternativeBlock := &ast.BlockStatement{}
+		alternativeBlock.Statements = []ast.Statement{
+			&ast.ExpressionStatement{Expression: &ast.Boolean{Value: false}},
+		}
+		exp.Alternative = alternativeBlock
+	}
+
+	// OR Expression
+	if (node.Operator == "||") {
+		consequenceBlock := &ast.BlockStatement{}
+		consequenceBlock.Statements = []ast.Statement{
+			&ast.ExpressionStatement{Expression: &ast.Boolean{Value: true}},
+		}
+		exp.Consequence = consequenceBlock
+	
+		alternativeBlock := &ast.BlockStatement{}
+		alternativeBlock.Statements = []ast.Statement{
+			&ast.ExpressionStatement{Expression: node.Right},
+		}
+		exp.Alternative = alternativeBlock
+	}
+
+	err := c.Compile(exp)
+	if err != nil {
+		return err
+	}
+
+	c.emit(code.OpCastToBool)
 
 	return nil
 }

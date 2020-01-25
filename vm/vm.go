@@ -111,14 +111,14 @@ func (vm *VM) Run() error {
 				return err
 			}
 
-		case code.OpAnd, code.OpOr:
-			err := vm.executeBooleanOperation(op)
-			if err != nil {
-				return err
-			}
-
 		case code.OpBang:
 			err := vm.executeBangOperator()
+			if err != nil {
+				return err
+			}		
+		
+		case code.OpCastToBool:
+			err := vm.executeCastToBoolOperator()
 			if err != nil {
 				return err
 			}
@@ -434,19 +434,19 @@ func (vm *VM) executeBooleanComparison(op code.Opcode, left, right object.Object
 	}
 }
 
-func (vm *VM) executeBooleanOperation(op code.Opcode) error {
-	right := vm.pop()
-	left := vm.pop()
+// func (vm *VM) executeBooleanOperation(op code.Opcode) error {
+// 	right := vm.pop()
+// 	left := vm.pop()
 
-	switch op {
-	case code.OpAnd:
-		return vm.push(nativeBoolToBooleanObject(object.ObjectToNativeBoolean(left) && object.ObjectToNativeBoolean(right)))
-	case code.OpOr:
-		return vm.push(nativeBoolToBooleanObject(object.ObjectToNativeBoolean(left) || object.ObjectToNativeBoolean(right)))
-	default:
-		return fmt.Errorf("unknown operator: %d (%s %s)", op, left.Type(), right.Type())
-	}
-}
+// 	switch op {
+// 	case code.OpAnd:
+// 		return vm.push(nativeBoolToBooleanObject(object.ObjectToNativeBoolean(left) && object.ObjectToNativeBoolean(right)))
+// 	case code.OpOr:
+// 		return vm.push(nativeBoolToBooleanObject(object.ObjectToNativeBoolean(left) || object.ObjectToNativeBoolean(right)))
+// 	default:
+// 		return fmt.Errorf("unknown operator: %d (%s %s)", op, left.Type(), right.Type())
+// 	}
+// }
 
 func nativeBoolToBooleanObject(input bool) *object.Boolean {
 	if input {
@@ -466,9 +466,32 @@ func (vm *VM) executeBangOperator() error {
 	case Null:
 		return vm.push(True)
 	default:
+		if operand.Type() == object.INTEGER_OBJ && operand.(*object.Integer).Value == 0 {
+			return vm.push(True)
+		}
+
 		return vm.push(False)
 	}
 }
+
+func (vm *VM) executeCastToBoolOperator() error {
+	operand := vm.pop()
+	switch operand {
+	case True:
+		return vm.push(True)
+	case False:
+		return vm.push(False)
+	case Null:
+		return vm.push(False)
+	default:
+		if operand.Type() == object.INTEGER_OBJ && operand.(*object.Integer).Value == 0 {
+			return vm.push(False)
+		}
+
+		return vm.push(True)
+	}
+}
+
 
 func (vm *VM) executeMinusOperator() error {
 	operand := vm.pop()

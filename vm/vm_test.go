@@ -70,6 +70,7 @@ func TestBooleanExpressions(t *testing.T) {
 		{"!!true", true},
 		{"!!false", false},
 		{"!!5", true},
+		{"!!0", false},
 		{"!(if (false) { 5; })", true},
 		{`"string" == "string"`, true},
 		{`"string" == "String"`, false},
@@ -83,6 +84,13 @@ func TestBooleanExpressions(t *testing.T) {
 		{`"a" >= "a"`, true},
 		{`"a" <= "z"`, true},
 		{`"z" <= "z"`, true},
+	}
+
+	runVmTests(t, tests)
+}
+
+func TestBooleanExpressionsWithShortCircuit(t *testing.T) {
+	tests := []vmTestCase{
 		{`true && true`, true},
 		{`true && false`, false},
 		{`false && true`, false},
@@ -92,6 +100,8 @@ func TestBooleanExpressions(t *testing.T) {
 		{`0 || 5`, true},
 		{`6 && 5`, true},
 		{`12 && 0`, false},
+		{`if(true && true) { "a" }`, "a"},
+		{`if(false && true) { "a" } else { "b" } `, "b"},
 	}
 
 	runVmTests(t, tests)

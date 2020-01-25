@@ -69,6 +69,7 @@ func TestEvalBooleanExpression(t *testing.T) {
 		{"!!true", true},
 		{"!!false", false},
 		{"!!5", true},
+		{"!!0", false},
 		{`"string" == "string"`, true},
 		{`"string" == "String"`, false},
 		{`"string" == "word"`, false},

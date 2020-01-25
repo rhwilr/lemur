@@ -47,6 +47,11 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 
 		return evalPrefixExpression(node.Operator, right)
 	case *ast.InfixExpression:
+		// Boolean operators
+		if (node.Operator == "&&" || node.Operator == "||") {
+			return evalBooleanInfixExpression(node.Operator, node, env)
+		}
+
 		left := Eval(node.Left, env)
 		if isError(left) {
 			return left
@@ -210,10 +215,6 @@ func evalPrefixExpression(operator string, right object.Object) object.Object {
 
 func evalInfixExpression(operator string, left, right object.Object) object.Object {
 	switch {
-	case operator == "&&":
-		return nativeBoolToBooleanObject(object.ObjectToNativeBoolean(left) && object.ObjectToNativeBoolean(right))
-	case operator == "||":
-		return nativeBoolToBooleanObject(object.ObjectToNativeBoolean(left) || object.ObjectToNativeBoolean(right))
 	case left.Type() == object.INTEGER_OBJ && right.Type() == object.INTEGER_OBJ:
 		return evalIntegerInfixExpression(operator, left, right)
 	case left.Type() == object.STRING_OBJ && right.Type() == object.STRING_OBJ:
@@ -227,6 +228,42 @@ func evalInfixExpression(operator string, left, right object.Object) object.Obje
 	default:
 		return newError("unknown operator: %s %s %s", left.Type(), operator, right.Type())
 	}
+}
+
+func evalBooleanInfixExpression(operator string, node *ast.InfixExpression, env *object.Environment) object.Object {
+	left := Eval(node.Left, env)
+	if isError(left) {
+		return left
+	}
+	// AND operator
+	if operator == "&&" {
+		if (!object.ObjectToNativeBoolean(left)) {
+			return nativeBoolToBooleanObject(false)
+		}
+
+		right := Eval(node.Right, env)
+		if isError(right) {
+			return right
+		}
+
+		return nativeBoolToBooleanObject(object.ObjectToNativeBoolean(right))
+	}
+
+	// OR operator
+	if operator == "||" {
+		if (object.ObjectToNativeBoolean(left)) {
+			return nativeBoolToBooleanObject(true)
+		}
+
+		right := Eval(node.Right, env)
+		if isError(right) {
+			return right
+		}
+
+		return nativeBoolToBooleanObject(object.ObjectToNativeBoolean(right))
+	}
+
+	return newError("unknown boolean operator: %s", operator)
 }
 
 func evalPostfixExpression(env *object.Environment, operator string, node *ast.PostfixExpression) object.Object {
