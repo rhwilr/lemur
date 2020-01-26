@@ -16,8 +16,8 @@ import (
 
 	"github.com/rhwilr/monkey/build"
 	"github.com/rhwilr/monkey/compiler"
-	"github.com/rhwilr/monkey/lexer"
 	"github.com/rhwilr/monkey/evaluator"
+	"github.com/rhwilr/monkey/lexer"
 	"github.com/rhwilr/monkey/object"
 	"github.com/rhwilr/monkey/parser"
 	"github.com/rhwilr/monkey/repl"
@@ -29,7 +29,8 @@ var (
 	output      string
 	interactive bool
 	compile     bool
-	script     bool
+	script      bool
+	execute     bool
 	version     bool
 )
 
@@ -44,7 +45,7 @@ func init() {
 	flag.BoolVar(&compile, "c", false, "compile input to bytecode")
 
 	flag.BoolVar(&interactive, "i", false, "enable interactive mode")
-	flag.BoolVar(&script, "s", false, "interpret .mon script")
+	flag.BoolVar(&execute, "v", false, "execute a compiled file using the monkey-vm")
 	flag.StringVar(&engine, "e", "vm", "engine to use (eval or vm), only supported with scripts")
 	flag.StringVar(&output, "o", "a.out", "name of the output file")
 }
@@ -60,26 +61,25 @@ func main() {
 	if compile {
 		runCompiler()
 		os.Exit(0)
-	} 
+	}
+
 	if interactive {
 		runRepl()
-		
 		os.Exit(0)
 	}
 
-	if script {
-		runEvaluator()
-
+	if execute {
+		runVM()
 		os.Exit(0)
 	}
-	
-	runVM()
+
+	runEvaluator()
 	os.Exit(0)
 }
 
 func runRepl() {
 	user, err := user.Current()
-	if (err != nil) {
+	if err != nil {
 		panic(err)
 	}
 
@@ -150,7 +150,7 @@ func runCompiler() {
 	if len(args) < 1 {
 		log.Fatal("no source file given to compile")
 	}
-	
+
 	f, err := os.Open(args[0])
 	if err != nil {
 		log.Fatal(err)
@@ -177,7 +177,6 @@ func runCompiler() {
 	}
 
 	code := c.Bytecode()
-
 
 	bytecode := code.Write()
 	f2, err := os.Create(output)

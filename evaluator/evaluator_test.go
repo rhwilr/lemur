@@ -79,6 +79,8 @@ func TestEvalBooleanExpression(t *testing.T) {
 		{`"abc123" == "abc" + "123"`, true},
 		{`"a" > "A"`, true},
 		{`"a" < "A"`, false},
+		{`"a" >= "A"`, true},
+		{`"a" <= "A"`, false},
 		{`true && true`, true},
 		{`true && false`, false},
 		{`false && true`, false},
