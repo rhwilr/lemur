@@ -36,6 +36,11 @@ cd monkey
 make
 ```
 
+The latest binary can also be downloaded from
+[Actions](https://github.com/rhwilr/monkey/actions) by clicking on the latest
+build and downloading the artifacts.
+
+
 ## Usage
 
 ### Evaluator
