@@ -89,7 +89,7 @@ func TestBooleanExpressions(t *testing.T) {
 	runVmTests(t, tests)
 }
 
-func TestBooleanExpressionsWithShortCircuit(t *testing.T) {
+func TestLogicalExpressionsWithShortCircuit(t *testing.T) {
 	tests := []vmTestCase{
 		{`true && true`, true},
 		{`true && false`, false},

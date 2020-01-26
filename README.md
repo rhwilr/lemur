@@ -21,7 +21,7 @@ in the book. Here are the changes I made.
 - Allow accessing individual characters of a string via the index-operator.
 - Allow string comparisons via `==`, `!=`, `<`, `>`, `<=`, and `>=`.
 - Implemented `<=`, and `>=` comparisons for integers.
-- Added support for boolean operators `&&` and `||`. This also adds support for
+- Added support for logical operators `&&` and `||`. This also adds support for
   more complex conditionals like `if (i <= 10 && containsNumber(string))...`.
 - Implemented `while` loops.
 

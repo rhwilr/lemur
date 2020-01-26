@@ -434,20 +434,6 @@ func (vm *VM) executeBooleanComparison(op code.Opcode, left, right object.Object
 	}
 }
 
-// func (vm *VM) executeBooleanOperation(op code.Opcode) error {
-// 	right := vm.pop()
-// 	left := vm.pop()
-
-// 	switch op {
-// 	case code.OpAnd:
-// 		return vm.push(nativeBoolToBooleanObject(object.ObjectToNativeBoolean(left) && object.ObjectToNativeBoolean(right)))
-// 	case code.OpOr:
-// 		return vm.push(nativeBoolToBooleanObject(object.ObjectToNativeBoolean(left) || object.ObjectToNativeBoolean(right)))
-// 	default:
-// 		return fmt.Errorf("unknown operator: %d (%s %s)", op, left.Type(), right.Type())
-// 	}
-// }
-
 func nativeBoolToBooleanObject(input bool) *object.Boolean {
 	if input {
 		return True

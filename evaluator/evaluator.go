@@ -49,7 +49,7 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 	case *ast.InfixExpression:
 		// Boolean operators
 		if node.Operator == "&&" || node.Operator == "||" {
-			return evalBooleanInfixExpression(node.Operator, node, env)
+			return evalLogicalInfixExpression(node.Operator, node, env)
 		}
 
 		left := Eval(node.Left, env)
@@ -232,7 +232,7 @@ func evalInfixExpression(operator string, left, right object.Object) object.Obje
 	}
 }
 
-func evalBooleanInfixExpression(operator string, node *ast.InfixExpression, env *object.Environment) object.Object {
+func evalLogicalInfixExpression(operator string, node *ast.InfixExpression, env *object.Environment) object.Object {
 	left := Eval(node.Left, env)
 	if isError(left) {
 		return left

@@ -209,7 +209,7 @@ func (c *Compiler) Compile(node ast.Node) error {
 		// The boolean operators AND and OR need special opcodes, since they should
 		// only evaluate the second argument it the first did not short circuit.
 		if node.Operator == "&&" || node.Operator == "||" {
-			return c.compileBooleanInfixExpression(node)
+			return c.compileLogicalInfixExpression(node)
 		}
 
 		// The < operator is not implemented in the VM, but we can use the >
@@ -463,7 +463,7 @@ func (c *Compiler) Compile(node ast.Node) error {
 }
 
 
-func (c *Compiler) compileBooleanInfixExpression(node *ast.InfixExpression) error {
+func (c *Compiler) compileLogicalInfixExpression(node *ast.InfixExpression) error {
 	exp := &ast.IfExpression{}
 
 	exp.Condition = node.Left
