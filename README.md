@@ -124,10 +124,10 @@ Monkey supports all the basic arithmetic operations of Integer types.
 let a = 4;
 let b = 2;
 
-puts( a + b  );  // Outputs: 6
-puts( a - b  );  // Outputs: 2
-puts( a * b  );  // Outputs: 8
-puts( a / b  );  // Outputs: 2
+puts( a + b );  // Outputs: 6
+puts( a - b );  // Outputs: 2
+puts( a * b );  // Outputs: 8
+puts( a / b );  // Outputs: 2
 ```
 
 
