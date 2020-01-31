@@ -30,7 +30,7 @@ in the book. Here are the changes I made.
 
 To use the most recent version, clone the source repository and run the make command to build the cli, compiler and vm:
 
-```
+```sh
 git clone https://github.com/rhwilr/monkey.git
 cd monkey
 make
@@ -47,7 +47,7 @@ build and downloading the artifacts.
 
 To execute a script directly, use the `monkey` command line and pass the path to the script.
 
-```
+```sh
 monkey examples/helo-world.mon
 ```
 
@@ -56,7 +56,7 @@ monkey examples/helo-world.mon
 The `monke` executable can also be used to compile scripts with the `-c` flag.
 However, there is also the `monkey-compiler` binary that does just that.
 
-```
+```sh
 monkey-compiler examples/helo-world.mon
 ```
 
@@ -67,7 +67,7 @@ output file name can be changed with the `-o` parameter.
 
 To execute the binary file, pass it to the `monkey-vm`:
 
-```
+```sh
 monkey-vm a.out
 ```
 
@@ -120,7 +120,7 @@ number += 5;    // Adds 5 to the number
 
 Monkey supports all the basic arithmetic operations of Integer types.
 
-```
+```js
 let a = 4;
 let b = 2;
 
