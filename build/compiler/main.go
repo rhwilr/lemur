@@ -16,8 +16,8 @@ import (
 )
 
 var (
-	output      string
-	version     bool
+	output  string
+	version bool
 )
 
 func init() {
@@ -51,7 +51,7 @@ func runCompiler() {
 	if len(args) < 1 {
 		log.Fatal("no source file given to compile")
 	}
-	
+
 	f, err := os.Open(args[0])
 	if err != nil {
 		log.Fatal(err)
@@ -78,7 +78,6 @@ func runCompiler() {
 	}
 
 	code := c.Bytecode()
-
 
 	bytecode := code.Write()
 	f2, err := os.Create(output)

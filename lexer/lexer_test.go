@@ -177,7 +177,6 @@ $
 		{token.INT, "2"},
 		{token.SEMICOLON, ";"},
 
-
 		{token.AND, "&&"},
 		{token.OR, "||"},
 
@@ -224,7 +223,6 @@ $
 		}
 	}
 }
-
 
 func TestSimpleComment(t *testing.T) {
 	input := `5; // This is a single line comment

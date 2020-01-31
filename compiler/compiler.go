@@ -466,20 +466,19 @@ func (c *Compiler) Compile(node ast.Node) error {
 	return nil
 }
 
-
 func (c *Compiler) compileLogicalInfixExpression(node *ast.InfixExpression) error {
 	exp := &ast.IfExpression{}
 
 	exp.Condition = node.Left
 
 	// AND Expression
-	if (node.Operator == "&&") {
+	if node.Operator == "&&" {
 		consequenceBlock := &ast.BlockStatement{}
 		consequenceBlock.Statements = []ast.Statement{
 			&ast.ExpressionStatement{Expression: node.Right},
 		}
 		exp.Consequence = consequenceBlock
-	
+
 		alternativeBlock := &ast.BlockStatement{}
 		alternativeBlock.Statements = []ast.Statement{
 			&ast.ExpressionStatement{Expression: &ast.Boolean{Value: false}},
@@ -488,13 +487,13 @@ func (c *Compiler) compileLogicalInfixExpression(node *ast.InfixExpression) erro
 	}
 
 	// OR Expression
-	if (node.Operator == "||") {
+	if node.Operator == "||" {
 		consequenceBlock := &ast.BlockStatement{}
 		consequenceBlock.Statements = []ast.Statement{
 			&ast.ExpressionStatement{Expression: &ast.Boolean{Value: true}},
 		}
 		exp.Consequence = consequenceBlock
-	
+
 		alternativeBlock := &ast.BlockStatement{}
 		alternativeBlock.Statements = []ast.Statement{
 			&ast.ExpressionStatement{Expression: node.Right},

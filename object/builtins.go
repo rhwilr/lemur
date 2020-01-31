@@ -113,7 +113,7 @@ var Builtins = []struct {
 			newElements := make([]Object, length+1, length+1)
 			copy(newElements, arr.Elements)
 			newElements[length] = args[1]
-			
+
 			return &Array{Elements: newElements}
 		},
 		},

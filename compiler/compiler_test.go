@@ -80,7 +80,6 @@ func TestCompilerScopes(t *testing.T) {
 	}
 }
 
-
 func TestErrorHandling(t *testing.T) {
 	tests := []struct {
 		input           string
@@ -455,7 +454,6 @@ func TestConditionals(t *testing.T) {
 	runCompilerTests(t, tests)
 }
 
-
 func TestWhileLoopExpression(t *testing.T) {
 	tests := []compilerTestCase{
 		{
@@ -559,7 +557,6 @@ func TestGlobalLetStatements(t *testing.T) {
 	}
 	runCompilerTests(t, tests)
 }
-
 
 func TestGlobalConstantsStatements(t *testing.T) {
 	tests := []compilerTestCase{
@@ -1286,7 +1283,7 @@ func TestAssignmentStatements(t *testing.T) {
 			},
 		},
 		{
-			input: `let a = 5; a += 1;`,
+			input:             `let a = 5; a += 1;`,
 			expectedConstants: []interface{}{5, 1},
 			expectedInstructions: []code.Instructions{
 				code.Make(code.OpConstant, 0),
@@ -1299,7 +1296,7 @@ func TestAssignmentStatements(t *testing.T) {
 			},
 		},
 		{
-			input: `let a = 5; a -= 1;`,
+			input:             `let a = 5; a -= 1;`,
 			expectedConstants: []interface{}{5, 1},
 			expectedInstructions: []code.Instructions{
 				code.Make(code.OpConstant, 0),
@@ -1312,7 +1309,7 @@ func TestAssignmentStatements(t *testing.T) {
 			},
 		},
 		{
-			input: `let a = 6; a *= 2;`,
+			input:             `let a = 6; a *= 2;`,
 			expectedConstants: []interface{}{6, 2},
 			expectedInstructions: []code.Instructions{
 				code.Make(code.OpConstant, 0),
@@ -1325,7 +1322,7 @@ func TestAssignmentStatements(t *testing.T) {
 			},
 		},
 		{
-			input: `let a = 6; a /= 2;`,
+			input:             `let a = 6; a /= 2;`,
 			expectedConstants: []interface{}{6, 2},
 			expectedInstructions: []code.Instructions{
 				code.Make(code.OpConstant, 0),
@@ -1342,11 +1339,10 @@ func TestAssignmentStatements(t *testing.T) {
 	runCompilerTests(t, tests)
 }
 
-
 func TestPrefixAndPostfixStatements(t *testing.T) {
 	tests := []compilerTestCase{
 		{
-			input: "let a = 5; ++a;",
+			input:             "let a = 5; ++a;",
 			expectedConstants: []interface{}{5, 1},
 			expectedInstructions: []code.Instructions{
 				code.Make(code.OpConstant, 0),
@@ -1359,7 +1355,7 @@ func TestPrefixAndPostfixStatements(t *testing.T) {
 			},
 		},
 		{
-			input: "let a = 5; --a;",
+			input:             "let a = 5; --a;",
 			expectedConstants: []interface{}{5, 1},
 			expectedInstructions: []code.Instructions{
 				code.Make(code.OpConstant, 0),
@@ -1372,7 +1368,7 @@ func TestPrefixAndPostfixStatements(t *testing.T) {
 			},
 		},
 		{
-			input: "let a = 5; a++;",
+			input:             "let a = 5; a++;",
 			expectedConstants: []interface{}{5, 1},
 			expectedInstructions: []code.Instructions{
 				code.Make(code.OpConstant, 0),
@@ -1387,7 +1383,7 @@ func TestPrefixAndPostfixStatements(t *testing.T) {
 			},
 		},
 		{
-			input: "let a = 5; a--;",
+			input:             "let a = 5; a--;",
 			expectedConstants: []interface{}{5, 1},
 			expectedInstructions: []code.Instructions{
 				code.Make(code.OpConstant, 0),

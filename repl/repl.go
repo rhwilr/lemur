@@ -2,8 +2,8 @@ package repl
 
 import (
 	"fmt"
-	"strings"
 	"io"
+	"strings"
 
 	"github.com/rhwilr/monkey/compiler"
 	"github.com/rhwilr/monkey/lexer"
@@ -20,7 +20,7 @@ func Start(in io.Reader, out io.Writer) {
 	// Init monkey parser and vm
 	constants := []object.Object{}
 	globals := make([]object.Object, vm.GlobalsSize)
-	
+
 	symbolTable := compiler.NewSymbolTable()
 	for i, v := range object.Builtins {
 		symbolTable.DefineBuiltin(i, v.Name)
@@ -31,12 +31,12 @@ func Start(in io.Reader, out io.Writer) {
 	if err != nil {
 		panic(err)
 	}
-	defer term.ReleaseFromStdInOut() // defer this  
+	defer term.ReleaseFromStdInOut() // defer this
 
 	fmt.Println("Press Ctrl-D to break")
 	term.SetPrompt(PROMPT)
 
-	line, err:= term.ReadLine()
+	line, err := term.ReadLine()
 	for {
 		if err == io.EOF {
 			fmt.Println()
@@ -48,7 +48,7 @@ func Start(in io.Reader, out io.Writer) {
 		} else {
 			out := evaluateLine(line, symbolTable, constants, globals)
 
-			term.Write([]byte(out+"\r\n"))
+			term.Write([]byte(out + "\r\n"))
 			line, err = term.ReadLine()
 		}
 	}
@@ -89,9 +89,8 @@ func evaluateLine(line string, symbolTable *compiler.SymbolTable, constants []ob
 }
 
 func printParserErrors(errors []string) {
-	fmt.Printf("Woops! We ran into some monkey business here!\n")
-	fmt.Printf(" parser errors:\n")
+	fmt.Printf("Woops! We encountered a parse errors:\n")
 	for _, msg := range errors {
-		fmt.Printf("\t"+msg+"\n")
+		fmt.Printf("\t" + msg + "\n")
 	}
 }

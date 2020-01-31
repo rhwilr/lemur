@@ -102,15 +102,15 @@ func (ls *LetStatement) String() string {
  */
 type ConstStatement struct {
 	Token token.Token // token.CONST
-	Name *Identifier
+	Name  *Identifier
 	Value Expression
 }
 
-func (ls *ConstStatement) statementNode() {}
+func (ls *ConstStatement) statementNode()       {}
 func (ls *ConstStatement) TokenLiteral() string { return ls.Token.Literal }
 func (ls *ConstStatement) String() string {
 	var out bytes.Buffer
-	
+
 	out.WriteString(ls.TokenLiteral() + " ")
 	out.WriteString(ls.Name.TokenLiteral())
 	out.WriteString(" = ")
@@ -458,7 +458,7 @@ func (pe *PostfixExpression) String() string {
 /*
 ** WhileLoopExpression
  */
- type WhileLoopExpression struct {
+type WhileLoopExpression struct {
 	Token       token.Token // The 'for' token
 	Condition   Expression
 	Consequence *BlockStatement
@@ -477,4 +477,3 @@ func (ie *WhileLoopExpression) String() string {
 
 	return out.String()
 }
-

@@ -115,8 +115,8 @@ func (vm *VM) Run() error {
 			err := vm.executeBangOperator()
 			if err != nil {
 				return err
-			}		
-		
+			}
+
 		case code.OpCastToBool:
 			err := vm.executeCastToBoolOperator()
 			if err != nil {
@@ -477,7 +477,6 @@ func (vm *VM) executeCastToBoolOperator() error {
 		return vm.push(True)
 	}
 }
-
 
 func (vm *VM) executeMinusOperator() error {
 	operand := vm.pop()

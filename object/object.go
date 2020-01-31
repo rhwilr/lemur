@@ -236,7 +236,7 @@ func (e *Error) Inspect() string  { return "ERROR: " + e.Message }
 
 /*
 ** Helpers
-*/
+ */
 func ObjectToNativeBoolean(o Object) bool {
 	if r, ok := o.(*ReturnValue); ok {
 		o = r.Value

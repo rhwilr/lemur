@@ -61,7 +61,6 @@ func TestDefineForVariables(t *testing.T) {
 	expectError(t, err, expectedError["a"])
 }
 
-
 func expectError(t *testing.T, err error, expectedError string) {
 	if err == nil {
 		t.Errorf("no error object returned. expected=%q", expectedError)

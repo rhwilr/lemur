@@ -18,7 +18,7 @@ import (
 )
 
 var (
-	version     bool
+	version bool
 )
 
 func init() {

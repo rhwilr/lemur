@@ -566,7 +566,6 @@ func TestIfElseExpression(t *testing.T) {
 	}
 }
 
-
 func TestWhileLoopExpression(t *testing.T) {
 	input := `while(x<y) { x++; }`
 
@@ -1060,8 +1059,8 @@ func TestMutators(t *testing.T) {
 
 func TestSyntaxErrors(t *testing.T) {
 	tests := []struct {
-		input         string
-		expectedErrors  []string
+		input          string
+		expectedErrors []string
 	}{
 		{
 			input: `
