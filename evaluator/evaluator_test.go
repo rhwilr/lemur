@@ -1,9 +1,9 @@
 package evaluator
 
 import (
-	"github.com/rhwilr/monkey/lexer"
-	"github.com/rhwilr/monkey/object"
-	"github.com/rhwilr/monkey/parser"
+	"github.com/rhwilr/lemur/lexer"
+	"github.com/rhwilr/lemur/object"
+	"github.com/rhwilr/lemur/parser"
 	"testing"
 )
 
@@ -250,7 +250,7 @@ if (10 > 1) {
 			"unknown operator: STRING - STRING",
 		},
 		{
-			`{"name": "Monkey"}[fn(x) { x }];`,
+			`{"name": "Lemur"}[fn(x) { x }];`,
 			"unusable as hash key: FUNCTION",
 		},
 		{

@@ -3,8 +3,8 @@ package object
 import (
 	"bytes"
 	"fmt"
-	"github.com/rhwilr/monkey/ast"
-	"github.com/rhwilr/monkey/code"
+	"github.com/rhwilr/lemur/ast"
+	"github.com/rhwilr/lemur/code"
 	"hash/fnv"
 	"strings"
 )

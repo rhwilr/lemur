@@ -9,10 +9,10 @@ import (
 	"path"
 	"time"
 
-	"github.com/rhwilr/monkey/build"
-	"github.com/rhwilr/monkey/compiler"
-	"github.com/rhwilr/monkey/lexer"
-	"github.com/rhwilr/monkey/parser"
+	"github.com/rhwilr/lemur/build"
+	"github.com/rhwilr/lemur/compiler"
+	"github.com/rhwilr/lemur/lexer"
+	"github.com/rhwilr/lemur/parser"
 )
 
 var (

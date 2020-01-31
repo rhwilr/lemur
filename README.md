@@ -1,6 +1,6 @@
-# Monkey
+# Lemur
 
-This repository contains an interpreter and compiler for the "Monkey"
+This repository contains an interpreter and compiler for the "Lemur"
 programming language, as described in [Write an Interpreter in Go][1] and
 [Writing A Compiler In Go][2] by Thorsten Ball.
 
@@ -31,13 +31,13 @@ in the book. Here are the changes I made.
 To use the most recent version, clone the source repository and run the make command to build the cli, compiler and vm:
 
 ```sh
-git clone https://github.com/rhwilr/monkey.git
-cd monkey
+git clone https://github.com/rhwilr/lemur.git
+cd lemur
 make
 ```
 
 The latest binary can also be downloaded from
-[Actions](https://github.com/rhwilr/monkey/actions) by clicking on the latest
+[Actions](https://github.com/rhwilr/lemur/actions) by clicking on the latest
 build and downloading the artifacts.
 
 
@@ -45,19 +45,19 @@ build and downloading the artifacts.
 
 ### Evaluator
 
-To execute a script directly, use the `monkey` command line and pass the path to the script.
+To execute a script directly, use the `lemur` command line and pass the path to the script.
 
 ```sh
-monkey examples/helo-world.mon
+lemur examples/helo-world.mon
 ```
 
 ### Compiler
 
 The `monke` executable can also be used to compile scripts with the `-c` flag.
-However, there is also the `monkey-compiler` binary that does just that.
+However, there is also the `lemur-compiler` binary that does just that.
 
 ```sh
-monkey-compiler examples/helo-world.mon
+lemur-compiler examples/helo-world.mon
 ```
 
 This will produce a binary file with the name `a.out` in the current folder. The
@@ -65,10 +65,10 @@ output file name can be changed with the `-o` parameter.
 
 ### VM
 
-To execute the binary file, pass it to the `monkey-vm`:
+To execute the binary file, pass it to the `lemur-vm`:
 
 ```sh
-monkey-vm a.out
+lemur-vm a.out
 ```
 
 
@@ -80,7 +80,7 @@ folder.
 
 ## Data Types
 
-Monkey has support for the following data types:
+Lemur has support for the following data types:
 - Integer
 - Boolen
 - String
@@ -118,7 +118,7 @@ number += 5;    // Adds 5 to the number
 
 ### Arithmetic operations
 
-Monkey supports all the basic arithmetic operations of Integer types.
+Lemur supports all the basic arithmetic operations of Integer types.
 
 ```js
 let a = 4;
@@ -133,7 +133,7 @@ puts( a / b );  // Outputs: 2
 
 ### Builtin functions
 
-These core primitives are part of the monkey language:
+These core primitives are part of the lemur language:
 
 - `len`
 - `first`
@@ -162,4 +162,4 @@ To set up the development environment for this repository you need `golang` inst
 | Command      | Description                 |
 | :----------- | :-------------------------- |
 | `make test`  | Runs all tests.             |
-| `make build` | Compiles the Monkey binary. |
+| `make build` | Compiles the Lemur binary. |

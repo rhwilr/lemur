@@ -1,7 +1,7 @@
 package evaluator
 
 import (
-	"github.com/rhwilr/monkey/object"
+	"github.com/rhwilr/lemur/object"
 )
 
 var builtins = map[string]*object.Builtin{

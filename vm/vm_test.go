@@ -4,11 +4,11 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/rhwilr/monkey/ast"
-	"github.com/rhwilr/monkey/compiler"
-	"github.com/rhwilr/monkey/lexer"
-	"github.com/rhwilr/monkey/object"
-	"github.com/rhwilr/monkey/parser"
+	"github.com/rhwilr/lemur/ast"
+	"github.com/rhwilr/lemur/compiler"
+	"github.com/rhwilr/lemur/lexer"
+	"github.com/rhwilr/lemur/object"
+	"github.com/rhwilr/lemur/parser"
 )
 
 type vmTestCase struct {
@@ -109,9 +109,9 @@ func TestLogicalExpressionsWithShortCircuit(t *testing.T) {
 
 func TestStringExpressions(t *testing.T) {
 	tests := []vmTestCase{
-		{`"monkey"`, "monkey"},
-		{`"mon" + "key"`, "monkey"},
-		{`"mon" + "key" + "banana"`, "monkeybanana"},
+		{`"lemur"`, "lemur"},
+		{`"mon" + "key"`, "lemur"},
+		{`"mon" + "key" + "banana"`, "lemurbanana"},
 	}
 
 	runVmTests(t, tests)

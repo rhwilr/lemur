@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"sort"
 
-	"github.com/rhwilr/monkey/ast"
-	"github.com/rhwilr/monkey/code"
-	"github.com/rhwilr/monkey/object"
+	"github.com/rhwilr/lemur/ast"
+	"github.com/rhwilr/lemur/code"
+	"github.com/rhwilr/lemur/object"
 )
 
 type EmittedInstruction struct {

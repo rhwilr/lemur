@@ -3,7 +3,7 @@ package ast
 import (
 	"bytes"
 	"fmt"
-	"github.com/rhwilr/monkey/token"
+	"github.com/rhwilr/lemur/token"
 	"strings"
 )
 

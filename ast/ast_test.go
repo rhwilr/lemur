@@ -1,7 +1,7 @@
 package ast
 
 import (
-	"github.com/rhwilr/monkey/token"
+	"github.com/rhwilr/lemur/token"
 	"testing"
 )
 

@@ -1,8 +1,8 @@
 package vm
 
 import (
-	"github.com/rhwilr/monkey/code"
-	"github.com/rhwilr/monkey/object"
+	"github.com/rhwilr/lemur/code"
+	"github.com/rhwilr/lemur/object"
 )
 
 type Frame struct {

@@ -3,9 +3,9 @@ package vm
 import (
 	"fmt"
 
-	"github.com/rhwilr/monkey/code"
-	"github.com/rhwilr/monkey/compiler"
-	"github.com/rhwilr/monkey/object"
+	"github.com/rhwilr/lemur/code"
+	"github.com/rhwilr/lemur/compiler"
+	"github.com/rhwilr/lemur/object"
 )
 
 const StackSize = 2048

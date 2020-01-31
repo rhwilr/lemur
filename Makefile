@@ -1,4 +1,4 @@
-PROJECT_NAME := "monkey"
+PROJECT_NAME := "lemur"
 PKG := "github.com/rhwilr/$(PROJECT_NAME)"
 PKG_LIST := $(shell go list ${PKG}/... | grep -v /vendor/)
 GO_FILES := $(shell find . -name '*.go' | grep -v /vendor/ | grep -v _test.go)
@@ -20,9 +20,9 @@ test: ## Run unittests
 	@go test -short ${PKG_LIST}
 
 build: dep ## Build the binary file
-	@go build -i -o dist/monkey-compiler $(PKG)/build/compiler
-	@go build -i -o dist/monkey-vm $(PKG)/build/vm
-	@go build -i -o dist/monkey $(PKG)/build/cli
+	@go build -i -o dist/lemur-compiler $(PKG)/build/compiler
+	@go build -i -o dist/lemur-vm $(PKG)/build/vm
+	@go build -i -o dist/lemur $(PKG)/build/cli
 
 benchmark: dep ## Build the benchmark binary
 	@go build -o dist/benchmark ./benchmark

@@ -5,12 +5,12 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/rhwilr/monkey/compiler"
-	"github.com/rhwilr/monkey/evaluator"
-	"github.com/rhwilr/monkey/lexer"
-	"github.com/rhwilr/monkey/object"
-	"github.com/rhwilr/monkey/parser"
-	"github.com/rhwilr/monkey/vm"
+	"github.com/rhwilr/lemur/compiler"
+	"github.com/rhwilr/lemur/evaluator"
+	"github.com/rhwilr/lemur/lexer"
+	"github.com/rhwilr/lemur/object"
+	"github.com/rhwilr/lemur/parser"
+	"github.com/rhwilr/lemur/vm"
 )
 
 var engine = flag.String("engine", "vm", "use 'vm' or 'eval'")

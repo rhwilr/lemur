@@ -5,11 +5,11 @@ import (
 	"io"
 	"strings"
 
-	"github.com/rhwilr/monkey/compiler"
-	"github.com/rhwilr/monkey/lexer"
-	"github.com/rhwilr/monkey/object"
-	"github.com/rhwilr/monkey/parser"
-	"github.com/rhwilr/monkey/vm"
+	"github.com/rhwilr/lemur/compiler"
+	"github.com/rhwilr/lemur/lexer"
+	"github.com/rhwilr/lemur/object"
+	"github.com/rhwilr/lemur/parser"
+	"github.com/rhwilr/lemur/vm"
 
 	"github.com/carmark/pseudo-terminal-go/terminal"
 )
@@ -17,7 +17,7 @@ import (
 const PROMPT = ">> "
 
 func Start(in io.Reader, out io.Writer) {
-	// Init monkey parser and vm
+	// Init lemur parser and vm
 	constants := []object.Object{}
 	globals := make([]object.Object, vm.GlobalsSize)
 

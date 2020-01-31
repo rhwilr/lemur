@@ -4,12 +4,12 @@ import (
 	"encoding/binary"
 	"fmt"
 
-	"github.com/rhwilr/monkey/build"
-	"github.com/rhwilr/monkey/code"
-	"github.com/rhwilr/monkey/object"
+	"github.com/rhwilr/lemur/build"
+	"github.com/rhwilr/lemur/code"
+	"github.com/rhwilr/lemur/object"
 )
 
-const Signature = "rhwilr/monkey"
+const Signature = "rhwilr/lemur"
 
 type Bytecode struct {
 	Instructions code.Instructions

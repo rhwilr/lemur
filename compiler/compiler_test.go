@@ -4,11 +4,11 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/rhwilr/monkey/ast"
-	"github.com/rhwilr/monkey/code"
-	"github.com/rhwilr/monkey/lexer"
-	"github.com/rhwilr/monkey/object"
-	"github.com/rhwilr/monkey/parser"
+	"github.com/rhwilr/lemur/ast"
+	"github.com/rhwilr/lemur/code"
+	"github.com/rhwilr/lemur/lexer"
+	"github.com/rhwilr/lemur/object"
+	"github.com/rhwilr/lemur/parser"
 )
 
 type compilerTestCase struct {
@@ -609,8 +609,8 @@ func TestGlobalConstantsStatements(t *testing.T) {
 func TestStringExpressions(t *testing.T) {
 	tests := []compilerTestCase{
 		{
-			input:             `"monkey"`,
-			expectedConstants: []interface{}{"monkey"},
+			input:             `"lemur"`,
+			expectedConstants: []interface{}{"lemur"},
 			expectedInstructions: []code.Instructions{
 				code.Make(code.OpConstant, 0),
 				code.Make(code.OpPop),

@@ -12,9 +12,9 @@ import (
 	"os"
 	"path"
 
-	"github.com/rhwilr/monkey/build"
-	"github.com/rhwilr/monkey/compiler"
-	"github.com/rhwilr/monkey/vm"
+	"github.com/rhwilr/lemur/build"
+	"github.com/rhwilr/lemur/compiler"
+	"github.com/rhwilr/lemur/vm"
 )
 
 var (

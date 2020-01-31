@@ -1,4 +1,4 @@
-module github.com/rhwilr/monkey
+module github.com/rhwilr/lemur
 
 go 1.13
 
