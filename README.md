@@ -72,6 +72,88 @@ monkey-vm a.out
 ```
 
 
+## Syntax
+
+**Note:** You can find some example programms in the [examples](examples/)
+folder.
+
+
+## Data Types
+
+Monkey has support for the following data types:
+- Integer
+- Boolen
+- String
+- Array
+- Hash
+- Null
+- Functions
+
+Yes, functions are a first class citizen and can be passed as arguments or
+returned from other functions.
+
+
+### Definitions
+
+We have support for constants and variables:
+
+```js
+const a = 3;
+let number = 7;
+```
+
+Variables can be updated using asignments. Constants can not be updated.
+
+```js
+number = 8;
+
+// prefix and postfix operators
+// -- is also supported
+number++;       // returns the current value, then increments number by 1
+++number;       // increments number by 1, then returns the new value
+
+number += 5;    // Adds 5 to the number
+```
+
+
+### Arithmetic operations
+
+Monkey supports all the basic arithmetic operations of Integer types.
+
+```
+let a = 4;
+let b = 2;
+
+puts( a + b  );  // Outputs: 6
+puts( a - b  );  // Outputs: 2
+puts( a * b  );  // Outputs: 8
+puts( a / b  );  // Outputs: 2
+```
+
+
+### Builtin functions
+
+These core primitives are part of the monkey language:
+
+- `len`
+- `first`
+- `last`
+- `rest`
+- `push`
+- `puts`
+
+
+### Container Datatypes
+
+### Conditionals
+
+### While-loops
+
+### Comments
+
+### Functions
+
+
 
 ## Development
 
