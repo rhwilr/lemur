@@ -29,7 +29,6 @@ var (
 	output      string
 	interactive bool
 	compile     bool
-	script      bool
 	execute     bool
 	version     bool
 )
@@ -45,7 +44,7 @@ func init() {
 	flag.BoolVar(&compile, "c", false, "compile input to bytecode")
 
 	flag.BoolVar(&interactive, "i", false, "enable interactive mode")
-	flag.BoolVar(&execute, "v", false, "execute a compiled file using the monkey-vm")
+	flag.BoolVar(&execute, "b", false, "execute a compiled file using the monkey-vm")
 	flag.StringVar(&engine, "e", "vm", "engine to use (eval or vm), only supported with scripts")
 	flag.StringVar(&output, "o", "a.out", "name of the output file")
 }
