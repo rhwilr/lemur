@@ -1,8 +1,9 @@
 # Lemur
 
-This repository contains an interpreter and compiler for the "Lemur"
-programming language, as described in [Write an Interpreter in Go][1] and
-[Writing A Compiler In Go][2] by Thorsten Ball.
+This repository contains an interpreter and compiler for the "Lemur" programming
+language. This is my own implementation of the Monkey programming language
+designed in [Write an Interpreter in Go][1] and [Writing A Compiler In Go][2] by
+Thorsten Ball.
 
 [1]: https://interpreterbook.com/
 [2]: https://compilerbook.com/
@@ -24,6 +25,8 @@ in the book. Here are the changes I made.
 - Added support for logical operators `&&` and `||`. This also adds support for
   more complex conditionals like `if (i <= 10 && containsNumber(string))...`.
 - Implemented `while` loops.
+- Defined my own binary format to save compiled code to file and read binary
+  files in the vm.
 
 
 ## Installation
@@ -153,6 +156,8 @@ These core primitives are part of the lemur language:
 
 ### Functions
 
+
+## Binary Format
 
 
 ## Development
