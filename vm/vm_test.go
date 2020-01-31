@@ -110,8 +110,8 @@ func TestLogicalExpressionsWithShortCircuit(t *testing.T) {
 func TestStringExpressions(t *testing.T) {
 	tests := []vmTestCase{
 		{`"lemur"`, "lemur"},
-		{`"mon" + "key"`, "lemur"},
-		{`"mon" + "key" + "banana"`, "lemurbanana"},
+		{`"le" + "mur"`, "lemur"},
+		{`"le" + "mur" + "banana"`, "lemurbanana"},
 	}
 
 	runVmTests(t, tests)
