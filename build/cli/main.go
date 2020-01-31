@@ -106,23 +106,23 @@ func runEvaluator() {
 	l := lexer.New(string(input))
 	p := parser.New(l)
 	program := p.ParseProgram()
+	if len(p.Errors()) != 0 {
+		log.Fatalf("parse error: %s", p.Errors())
+	}
 
 	if engine == "vm" {
 		comp := compiler.New()
 		err := comp.Compile(program)
 		if err != nil {
-			fmt.Printf("compiler error: %s", err)
-			return
+			log.Fatalf("compiler error: %s", err)
 		}
 
 		machine := vm.New(comp.Bytecode())
-
 		start := time.Now()
 
 		err = machine.Run()
 		if err != nil {
-			fmt.Printf("vm error: %s", err)
-			return
+			log.Fatalf("vm error: %s", err)
 		}
 
 		duration = time.Since(start)
@@ -166,13 +166,13 @@ func runCompiler() {
 
 	program := p.ParseProgram()
 	if len(p.Errors()) != 0 {
-		log.Fatal(p.Errors())
+		log.Fatalf("parse error: %s", p.Errors())
 	}
 
 	c := compiler.New()
 	err = c.Compile(program)
 	if err != nil {
-		log.Fatal(err)
+		log.Fatalf("compiler error: %s", err)
 	}
 
 	code := c.Bytecode()
@@ -180,7 +180,7 @@ func runCompiler() {
 	bytecode := code.Write()
 	f2, err := os.Create(output)
 	if err != nil {
-		fmt.Printf("vm error: %s", err)
+		log.Fatalf("compiler error: %s", err)
 		return
 	}
 
@@ -206,15 +206,13 @@ func runVM() {
 
 	code, err := compiler.Read(input)
 	if err != nil {
-		fmt.Printf("decode error: %s\n", err)
-		return
+		log.Fatalf("decode error: %s\n", err)
 	}
 
 	machine := vm.New(code)
 
 	err = machine.Run()
 	if err != nil {
-		fmt.Printf("vm error: %s\n", err)
-		return
+		log.Fatalf("vm error: %s\n", err)
 	}
 }

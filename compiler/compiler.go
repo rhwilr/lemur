@@ -183,8 +183,12 @@ func (c *Compiler) Compile(node ast.Node) error {
 
 		symbol, ok := c.symbolTable.Resolve(node.Name.Value)
 		if !ok {
-			return fmt.Errorf("undefined variable %s", node.Name.Value)
+			return fmt.Errorf("identifier not found: %s", node.Name.Value)
 		}
+		if symbol.Type == ConstantType {
+			return fmt.Errorf("assignment to constant variable: %s", node.Name.Value)
+		}
+
 		c.loadSymbol(symbol)
 
 		switch node.Operator {
@@ -310,10 +314,10 @@ func (c *Compiler) Compile(node ast.Node) error {
 	case *ast.AssignStatement:
 		symbol, ok := c.symbolTable.Resolve(node.Name.Value)
 		if !ok {
-			return fmt.Errorf("assignment to undeclared variable '%s'", node.Name.Value)
+			return fmt.Errorf("identifier not found: %s", node.Name.Value)
 		}
 		if symbol.Type == ConstantType {
-			return fmt.Errorf("assignment to constant variable '%s'", node.Name.Value)
+			return fmt.Errorf("assignment to constant variable: %s", node.Name.Value)
 		}
 
 		c.loadSymbol(symbol)
@@ -343,7 +347,7 @@ func (c *Compiler) Compile(node ast.Node) error {
 	case *ast.Identifier:
 		symbol, ok := c.symbolTable.Resolve(node.Value)
 		if !ok {
-			return fmt.Errorf("undefined variable %s", node.Value)
+			return fmt.Errorf("identifier not found: %s", node.Value)
 		}
 
 		c.loadSymbol(symbol)

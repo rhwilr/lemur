@@ -92,11 +92,11 @@ func TestErrorHandling(t *testing.T) {
 		},
 		{
 			"foobar = 5;",
-			"assignment to undeclared variable 'foobar'",
+			"identifier not found: foobar",
 		},
 		{
 			"foobar += 5;",
-			"assignment to undeclared variable 'foobar'",
+			"identifier not found: foobar",
 		},
 		{
 			"const foobar = 5; const foobar = 6;",
@@ -104,7 +104,23 @@ func TestErrorHandling(t *testing.T) {
 		},
 		{
 			"const foobar = 5; foobar = 6;",
-			"assignment to constant variable 'foobar'",
+			"assignment to constant variable: foobar",
+		},
+		{
+			"const i = 5; i++;",
+			"assignment to constant variable: i",
+		},
+		{
+			"const i = 5; --i;",
+			"assignment to constant variable: i",
+		},
+		{
+			"i++;",
+			"identifier not found: i",
+		},
+		{
+			"++i;",
+			"identifier not found: i",
 		},
 	}
 

@@ -273,6 +273,14 @@ if (10 > 1) {
 			"const foobar = 5; foobar = 6;",
 			"assignment to constant variable 'foobar'",
 		},
+		{
+			"const i = 5; i++;",
+			"assignment to constant variable 'i'",
+		},
+		{
+			"const i = 5; --i;",
+			"assignment to constant variable 'i'",
+		},
 	}
 
 	for _, tt := range tests {
