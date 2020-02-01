@@ -31,7 +31,8 @@ in the book. Here are the changes I made.
 
 ## Installation
 
-To use the most recent version, clone the source repository and run the make command to build the cli, compiler and vm:
+To use the most recent version, clone the source repository and run the make
+command to build the cli, compiler and vm:
 
 ```sh
 git clone https://github.com/rhwilr/lemur.git
@@ -48,19 +49,20 @@ build and downloading the artifacts.
 
 ### Evaluator
 
-To execute a script directly, use the `lemur` command line and pass the path to the script.
+To execute a script directly, use the `lemur` command line and pass the path to
+the script.
 
 ```sh
-lemur examples/helo-world.mon
+lemur examples/helo-world.lem
 ```
 
 ### Compiler
 
-The `monke` executable can also be used to compile scripts with the `-c` flag.
+The `lemur` executable can also be used to compile scripts with the `-c` flag.
 However, there is also the `lemur-compiler` binary that does just that.
 
 ```sh
-lemur-compiler examples/helo-world.mon
+lemur-compiler examples/helo-world.lem
 ```
 
 This will produce a binary file with the name `a.out` in the current folder. The
@@ -84,16 +86,15 @@ folder.
 ## Data Types
 
 Lemur has support for the following data types:
-- Integer
-- Boolen
-- String
-- Array
-- Hash
-- Null
-- Functions
 
-Yes, functions are a first class citizen and can be passed as arguments or
-returned from other functions.
+| Type    | Syntax                                        | Commenta |
+| ------- | --------------------------------------------- | -------- |
+| Null    | `null`                                        |          |
+| Boolen  | `true` `false`                                |          |
+| Integer | `2` `4` `157954` `-9`                         |          |
+| String  | `""` `"Helo World"`                           |          |
+| Array   | `[]` `[3, 6, 9]` `["hi", 5]`                  |          |
+| Hash    | `{}` `{"a": 5}` `{"name": "Mark", "age": 12}` |          |
 
 
 ### Definitions
@@ -146,25 +147,182 @@ These core primitives are part of the lemur language:
 - `puts`
 
 
-### Container Datatypes
-
 ### Conditionals
+
+Lemur has support for `if` and `if else` expressions:
+
+```js
+let a = 4;
+
+if (a > 10) {
+  puts("a is larger than 10");
+} else {
+  puts("a is smaller or equal to 10");
+}
+
+```
+
 
 ### While-loops
 
+Lemur has only support for one looping construct, the `while` loop:
+
+```js
+let i = 3;
+
+while (i > 0) {
+    puts(i);
+    i--;
+}
+// Outputs:
+// 3
+// 2
+// 1
+```
+Lemur does not have a `break` or `continue` statement. However, `return` can be
+used as one way of breaking out of a loop early inside a function.
+
+
 ### Comments
 
+Comments were already used a few times in the examples. Lemur has support for
+both single-line and multi-line comments.
+
+```js
+// Defining a variable
+let number = 6;
+
+/*
+** The following line will print the number to the terminal.
+** The two stars at the beginning of this line are not required,
+** they are just there to make the text align.
+*/
+puts(number);
+```
+
 ### Functions
+
+Functions are first class citizens in lemur. This means they can be passed as
+arguments and returned by other functions like any other value.
+
+```js
+let fibonacci = fn(x) {
+  if (x == 0) { return 0; }
+  if (x == 1) { return 1; }
+
+  fibonacci(x - 1) + fibonacci(x - 2);
+};
+
+fibonacci(16);
+// Outputs: 987
+```
+
+This example shows how to define functions, as well as that lemur has support
+for recursive function calls. In addition to this, we also support closures, a
+function inside another function that references a variable from the outer
+scope:
+
+```js
+let first = 10;
+let second = 10;
+
+let ourFunction = fn(first) {
+  first + second;
+};
+
+ourFunction(20);
+// Outputs: 30
+```
+
+A function always produces a value. `return` can be used to explicitally return
+a value. If nothing is returned in the function, the result of the last
+expression will be returned. This can also be `null` if the expression does not
+produce a value.
 
 
 ## Binary Format
 
+When compiling a programm, the compiler will write the output to a binary file.
+To explain the binary format we compile the following simple programm:
+
+```js
+// example.lem
+// Define a variable and mutiply it by 2
+let number = 5;
+number * 2;
+
+// Then output a string to stdout.
+puts("Helo World!");
+```
+
+Compiling the programm with `lemur-compiler example.lem` will produce the
+following binary file:
+
+![Binary File](./.github/images/bin_overview.png)
+
+The file has 3 sections: `Header`, `Constant Pool`, and `Instructions`. Let's
+first look at the header:
+
+### Header
+
+The header provides important information to the vm on how to interpret the
+following bytes to correctly read the file.
+
+| Bytes                                 | Description                                                                                                                |
+| :------------------------------------ | :------------------------------------------------------------------------------------------------------------------------- |
+| `72 68 77 69 6C 72 2F 6C 65 6D 75 72` | Signature. Used to identiy out binary format. The Vm will only execute files with this signature.                          |
+| `00 09 00`                            | Compiler version used to compile this files. Currently, the VM will denie execution if the version does not match exactly. |
+| `00 03`                               | The number of constants in the constant pool.                                                                              |
+| `00 16`                               | The length in bytes of the instructions section.                                                                           |
+
+
+### Constant Pool
+
+The constant pool contains all the primitive types contained in the sourcecode.
+This includes `Integers`, `Strings`, and `Functions`. 
+
+| Bytes                             | Description                                                                                                       |
+| :-------------------------------- | :---------------------------------------------------------------------------------------------------------------- |
+| `00` `00 00 00 00 00 00 00 05`    | The first byte (`00`) defines the type of the following constant, followed by the 8 byte uint64 for the number 5. |
+| `00` `00 00 00 00 00 00 00 02`    | Same as before, this time for the number 2.                                                                       |
+| `01` `00 00 00 0B` `48 ... 64 21` | Type for String, then the length (11), followed by the UTF-8 encoding of "Helo World!".                           |
+
+
+
+| Byte | Type     | Parameters                                                                    | Encoding              |
+| :--- | :------- | :---------------------------------------------------------------------------- | :-------------------- |
+| `00` | Integer  | -                                                                             | `uint64 BE`           |
+| `01` | String   | Lenght(`uint32 BE`)                                                           | `UTF-8`               |
+| `02` | Function | Instructions(`uint32 BE`), NumLocals(`uint32 BE`), NumParameters(`uint32 BE`) | Instructions bytecode |
+
+`BE` = BigEndian
+
+
+### Instructions
+
+The last section contains the raw bytecode to execute the program. An
+instruction is a 1 byte opcode, followed by a variable amount of operands. How
+many operands there are defines the opcode.
+
+Opcodes are defined in [code.go](code/code.go).
+
+| Bytes        | Description                                                                                              |
+| :----------- | :------------------------------------------------------------------------------------------------------- |
+| `00` `00 00` | `OpConstant` loads a constant from the constant pool onto the stack. In this case it loads constant `0`. |
+| `13` `00 00` | `OpSetGlobal` registers the current value on the stack as variable `0`.                                  |
+| `12` `00 00` | `OpGetGlobal` loads the variable back on the stack.                                                      |
+| `00` `00 01` | `OpConstant` loads constant `1` onto the stack. Constant `1` has the value 2.                            |
+| `03`         | `OpMul` multiplies the top 2 values from the stack together and puts the value back onto the stack.      |
+| ...          |                                                                                                          |
+
+
 
 ## Development
 
-To set up the development environment for this repository you need `golang` installed. A `Makefile` is configured to run the most common tasks:
+To set up the development environment for this repository you need `golang`
+installed. A `Makefile` is configured to run the most common tasks:
 
-| Command      | Description                 |
-| :----------- | :-------------------------- |
-| `make test`  | Runs all tests.             |
+| Command      | Description                |
+| :----------- | :------------------------- |
+| `make test`  | Runs all tests.            |
 | `make build` | Compiles the Lemur binary. |

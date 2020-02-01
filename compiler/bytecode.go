@@ -108,9 +108,6 @@ func readHeader(bytecode []byte) (uint16, uint16, int, error) {
 func writeConstants(consts []object.Object) []byte {
 	out := newOutput()
 
-	//	var length int8 = int8(len(consts))
-	//	out.write(byte(length), []byte{})
-
 	for _, c := range consts {
 		switch c.Type() {
 

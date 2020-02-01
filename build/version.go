@@ -6,7 +6,7 @@ import (
 
 var (
 	Major byte = 0
-	Minor byte = 0
+	Minor byte = 9
 	Patch byte = 0
 
 	// GitCommit will be overwritten automatically by the build system
