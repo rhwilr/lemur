@@ -2,13 +2,12 @@
 
 [![Build Status](https://github.com/rhwilr/lemur/workflows/Go/badge.svg)](https://github.com/rhwilr/lemur/actions)
 [![Go Report Card](https://goreportcard.com/badge/rhwilr/lemur)](https://goreportcard.com/report/github.com/rhwilr/lemur)
-[![Sourcegraph](https://sourcegraph.com/github.com/rhwilr/lemur/-/badge.svg)](https://sourcegraph.com/github.com/rhwilr/lemur?badge)
 
 
-This repository contains an interpreter and compiler for the "Lemur" programming
-language. This is my own implementation of the Monkey programming language
-designed in [Write an Interpreter in Go][1] and [Writing A Compiler In Go][2] by
-Thorsten Ball.
+This repository contains an interpreter and compiler for the **Lemur**
+programming language. This is my own implementation of the Monkey programming
+language designed in [Write an Interpreter in Go][1] and [Writing A Compiler In
+Go][2] by Thorsten Ball.
 
 [1]: https://interpreterbook.com/
 [2]: https://compilerbook.com/
