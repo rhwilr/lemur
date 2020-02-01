@@ -1,5 +1,10 @@
 # Lemur
 
+[![Build Status](https://github.com/rhwilr/lemur/workflows/Go/badge.svg)](https://github.com/rhwilr/lemur/actions)
+[![Go Report Card](https://goreportcard.com/badge/rhwilr/lemur)](https://goreportcard.com/report/github.com/rhwilr/lemur)
+[![Sourcegraph](https://sourcegraph.com/github.com/rhwilr/lemur/-/badge.svg)](https://sourcegraph.com/github.com/rhwilr/lemur?badge)
+
+
 This repository contains an interpreter and compiler for the "Lemur" programming
 language. This is my own implementation of the Monkey programming language
 designed in [Write an Interpreter in Go][1] and [Writing A Compiler In Go][2] by
@@ -7,6 +12,32 @@ Thorsten Ball.
 
 [1]: https://interpreterbook.com/
 [2]: https://compilerbook.com/
+
+## Table of Contents
+
+- [Lemur](#lemur)
+  - [Table of Contents](#table-of-contents)
+  - [Customizations](#customizations)
+  - [Installation](#installation)
+  - [Usage](#usage)
+    - [Evaluator](#evaluator)
+    - [Compiler](#compiler)
+    - [VM](#vm)
+  - [Syntax](#syntax)
+  - [Data Types](#data-types)
+    - [Definitions](#definitions)
+    - [Arithmetic operations](#arithmetic-operations)
+    - [Builtin functions](#builtin-functions)
+    - [Conditionals](#conditionals)
+    - [While-loops](#while-loops)
+    - [Comments](#comments)
+    - [Functions](#functions)
+  - [Compiler Optimizations](#compiler-optimizations)
+  - [Binary Format](#binary-format)
+    - [Header](#header)
+    - [Constant Pool](#constant-pool)
+    - [Instructions](#instructions)
+  - [Development](#development)
 
 
 ## Customizations
@@ -238,6 +269,10 @@ A function always produces a value. `return` can be used to explicitally return
 a value. If nothing is returned in the function, the result of the last
 expression will be returned. This can also be `null` if the expression does not
 produce a value.
+
+
+## Compiler Optimizations
+
 
 
 ## Binary Format
