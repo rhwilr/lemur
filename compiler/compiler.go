@@ -550,9 +550,32 @@ func (c *Compiler) leaveScope() code.Instructions {
 ** Add, modify and remove instructions
  */
 func (c *Compiler) addConstant(obj object.Object) int {
+	switch obj := obj.(type) {
+	case *object.Integer:
+		for i, node := range c.constants {
+			switch node := node.(type) {
+			case *object.Integer:
+				if obj.Value == node.Value {
+					return i
+				}
+			}
+		}
+
+	case *object.String:
+		for i, node := range c.constants {
+			switch node := node.(type) {
+			case *object.String:
+				if obj.Value == node.Value {
+					return i
+				}
+			}
+		}
+	}
+
 	c.constants = append(c.constants, obj)
 	return len(c.constants) - 1
 }
+
 
 func (c *Compiler) currentInstructions() code.Instructions {
 	return c.scopes[c.scopeIndex].instructions

@@ -32,6 +32,7 @@ Go][2] by Thorsten Ball.
     - [Comments](#comments)
     - [Functions](#functions)
   - [Compiler Optimizations](#compiler-optimizations)
+    - [Constants](#constants)
   - [Binary Format](#binary-format)
     - [Header](#header)
     - [Constant Pool](#constant-pool)
@@ -272,6 +273,14 @@ produce a value.
 
 ## Compiler Optimizations
 
+Lemur implements the following optimizations in the compiler.
+
+### Constants
+
+Constant values are only added to the pool if the value is not already present.
+This means, referencing the number `1` multiple times in the source code, for
+example, will only produce one constant. This optimization is performed for
+Integers and Strings.
 
 
 ## Binary Format
@@ -294,8 +303,7 @@ following binary file:
 
 ![Binary File](./.github/images/bin_overview.png)
 
-The file has 3 sections: `Header`, `Constant Pool`, and `Instructions`. Let's
-first look at the header:
+The file has 3 sections: `Header`, `Constant Pool`, and `Instructions`.
 
 ### Header
 
