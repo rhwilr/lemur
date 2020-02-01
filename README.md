@@ -312,7 +312,7 @@ following bytes to correctly read the file.
 
 | Bytes                                 | Description                                                                                                                |
 | :------------------------------------ | :------------------------------------------------------------------------------------------------------------------------- |
-| `72 68 77 69 6C 72 2F 6C 65 6D 75 72` | Signature. Used to identiy out binary format. The Vm will only execute files with this signature.                          |
+| `72 68 77 69 6C 72 2F 6C 65 6D 75 72` | Signature. Used to identiy our binary format. The VM will only execute files with this signature.                          |
 | `00 09 00`                            | Compiler version used to compile this files. Currently, the VM will denie execution if the version does not match exactly. |
 | `00 03`                               | The number of constants in the constant pool.                                                                              |
 | `00 16`                               | The length in bytes of the instructions section.                                                                           |
