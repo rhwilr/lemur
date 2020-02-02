@@ -444,7 +444,7 @@ func TestCallingFunctionsWithWrongArguments(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		program := parse(tt.input)
+		program := parse(t, tt.input)
 
 		comp := compiler.New()
 		err := comp.Compile(program)
@@ -724,6 +724,40 @@ func TestPrefixAndPostfixStatements(t *testing.T) {
 	runVmTests(t, tests)
 }
 
+func TestTailCalls(t *testing.T) {
+	tests := []vmTestCase{
+		// {
+		// 	input: `
+		// 	const fact = fn(n, a) {
+		// 	  if (n == 0) {
+		// 			return a
+		// 		}
+
+		// 	  fact(n - 1, a * n);
+		// 	};
+		// 	fact(5, 1);`,
+		// 	expected: 120,
+		// },
+
+		// without tail recursion optimization this will cause a stack overflow
+		{
+			input: `
+			const iter = fn(n, max) {
+				if (n == max) {
+					return n
+				}
+				return iter(n + 1, max)
+			};
+			iter(0, 9999)
+			`,
+			expected: 9999,
+		},
+	}
+
+	runVmTests(t, tests)
+}
+
+
 /*
 ** Helpers
  */
@@ -731,7 +765,7 @@ func runVmTests(t *testing.T, tests []vmTestCase) {
 	t.Helper()
 
 	for _, tt := range tests {
-		program := parse(tt.input)
+		program := parse(t, tt.input)
 
 		comp := compiler.New()
 		err := comp.Compile(program)
@@ -764,10 +798,17 @@ func runVmTests(t *testing.T, tests []vmTestCase) {
 	}
 }
 
-func parse(input string) *ast.Program {
+func parse(t *testing.T, input string) *ast.Program {
 	l := lexer.New(input)
 	p := parser.New(l)
-	return p.ParseProgram()
+	parsed := p.ParseProgram()
+
+	errors := p.Errors()
+	if len(errors) > 0 {
+		t.Fatalf("parse error: %s", errors)
+	}
+
+	return parsed
 }
 
 func testExpectedObject(t *testing.T, expected interface{}, actual object.Object) {

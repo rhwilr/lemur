@@ -405,7 +405,7 @@ func (c *Compiler) Compile(node ast.Node) error {
 			return err
 		}
 
-		c.emit(code.OpReturnValue)
+		c.emit(code.OpReturn)
 
 	case *ast.FunctionLiteral:
 		c.enterScope()
@@ -426,7 +426,14 @@ func (c *Compiler) Compile(node ast.Node) error {
 		if c.lastInstructionIs(code.OpPop) {
 			c.replaceLastPopWithReturn()
 		}
-		if !c.lastInstructionIs(code.OpReturnValue) {
+
+		// If the function doesn't end with a return statement add one with a
+		// `return null;` and also handle the edge-case of empty functions.
+		if !c.lastInstructionIs(code.OpReturn) {
+			// empty function body (LoadNull from BlockStatement)
+			if !c.lastInstructionIs(code.OpNull) {
+				c.emit(code.OpNull)
+			}
 			c.emit(code.OpReturn)
 		}
 
@@ -619,9 +626,9 @@ func (c *Compiler) removeLastPop() {
 
 func (c *Compiler) replaceLastPopWithReturn() {
 	lastPos := c.scopes[c.scopeIndex].lastInstruction.Position
-	c.replaceInstruction(lastPos, code.Make(code.OpReturnValue))
+	c.replaceInstruction(lastPos, code.Make(code.OpReturn))
 
-	c.scopes[c.scopeIndex].lastInstruction.Opcode = code.OpReturnValue
+	c.scopes[c.scopeIndex].lastInstruction.Opcode = code.OpReturn
 }
 
 func (c *Compiler) changeOperand(opPos int, operand int) {

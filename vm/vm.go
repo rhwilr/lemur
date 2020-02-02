@@ -236,22 +236,13 @@ func (vm *VM) Run() error {
 				return err
 			}
 
-		case code.OpReturnValue:
+		case code.OpReturn:
 			returnValue := vm.pop()
 
 			frame := vm.popFrame()
 			vm.sp = frame.basePointer - 1
 
 			err := vm.push(returnValue)
-			if err != nil {
-				return err
-			}
-
-		case code.OpReturn:
-			frame := vm.popFrame()
-			vm.sp = frame.basePointer - 1
-
-			err := vm.push(Null)
 			if err != nil {
 				return err
 			}
@@ -595,6 +586,19 @@ func (vm *VM) executeCall(numArgs int) error {
 func (vm *VM) callClosure(cl *object.Closure, numArgs int) error {
 	if numArgs != cl.Fn.NumParameters {
 		return fmt.Errorf("wrong number of arguments: want=%d, got=%d", cl.Fn.NumParameters, numArgs)
+	}
+
+	// Optimize tail calls and avoid creating a new frame
+	if cl.Fn == vm.currentFrame().cl.Fn {
+		nextOp := vm.currentFrame().NextOp()
+		if nextOp == code.OpReturn {
+			for p := 0; p < numArgs; p++ {
+				vm.stack[vm.currentFrame().basePointer+p] = vm.stack[vm.sp-numArgs+p]
+			}
+			vm.sp -= numArgs + 1
+			vm.currentFrame().ip = -1 // reset IP to beginning of the frame
+			return nil
+		}
 	}
 
 	frame := NewFrame(cl, vm.sp-numArgs)

@@ -1071,6 +1071,12 @@ func TestSyntaxErrors(t *testing.T) {
 				"Syntax error, expected semicolon.",
 			},
 		},
+		{
+			input: `let ff = fn(n) { if (n == 0) {return a} 1} ff(5, 1);`,
+			expectedErrors: []string{
+				"Syntax error, expected semicolon.",
+			},
+		},
 	}
 
 	for _, test := range tests {
@@ -1080,7 +1086,7 @@ func TestSyntaxErrors(t *testing.T) {
 
 		errors := p.errors
 		if len(errors) != len(test.expectedErrors) {
-			t.Errorf("Unexpected error-count. got=%d, want=%d", len(errors), len(test.expectedErrors))
+			t.Fatalf("Unexpected error-count. got=%d, want=%d", len(errors), len(test.expectedErrors))
 		}
 
 		for i, msg := range test.expectedErrors {

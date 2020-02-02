@@ -778,7 +778,7 @@ func TestFunctions(t *testing.T) {
 					code.Make(code.OpConstant, 0),
 					code.Make(code.OpConstant, 1),
 					code.Make(code.OpAdd),
-					code.Make(code.OpReturnValue),
+					code.Make(code.OpReturn),
 				},
 			},
 			expectedInstructions: []code.Instructions{
@@ -795,7 +795,7 @@ func TestFunctions(t *testing.T) {
 					code.Make(code.OpConstant, 0),
 					code.Make(code.OpConstant, 1),
 					code.Make(code.OpAdd),
-					code.Make(code.OpReturnValue),
+					code.Make(code.OpReturn),
 				},
 			},
 			expectedInstructions: []code.Instructions{
@@ -812,7 +812,7 @@ func TestFunctions(t *testing.T) {
 					code.Make(code.OpConstant, 0),
 					code.Make(code.OpPop),
 					code.Make(code.OpConstant, 1),
-					code.Make(code.OpReturnValue),
+					code.Make(code.OpReturn),
 				},
 			},
 			expectedInstructions: []code.Instructions{
@@ -825,12 +825,13 @@ func TestFunctions(t *testing.T) {
 	runCompilerTests(t, tests)
 }
 
-func TestFunctionsWithoutReturnValue(t *testing.T) {
+func TestFunctionsWithoutReturn(t *testing.T) {
 	tests := []compilerTestCase{
 		{
 			input: `fn() { }`,
 			expectedConstants: []interface{}{
 				[]code.Instructions{
+					code.Make(code.OpNull),
 					code.Make(code.OpReturn),
 				},
 			},
@@ -852,7 +853,7 @@ func TestFunctionCalls(t *testing.T) {
 				24,
 				[]code.Instructions{
 					code.Make(code.OpConstant, 0), // The literal "24"
-					code.Make(code.OpReturnValue),
+					code.Make(code.OpReturn),
 				},
 			},
 			expectedInstructions: []code.Instructions{
@@ -870,7 +871,7 @@ func TestFunctionCalls(t *testing.T) {
 				24,
 				[]code.Instructions{
 					code.Make(code.OpConstant, 0), // The literal "24"
-					code.Make(code.OpReturnValue),
+					code.Make(code.OpReturn),
 				},
 			},
 			expectedInstructions: []code.Instructions{
@@ -888,6 +889,7 @@ func TestFunctionCalls(t *testing.T) {
 			`,
 			expectedConstants: []interface{}{
 				[]code.Instructions{
+					code.Make(code.OpNull),
 					code.Make(code.OpReturn),
 				},
 				24,
@@ -908,6 +910,7 @@ func TestFunctionCalls(t *testing.T) {
 			`,
 			expectedConstants: []interface{}{
 				[]code.Instructions{
+					code.Make(code.OpNull),
 					code.Make(code.OpReturn),
 				},
 				24,
@@ -941,7 +944,7 @@ func TestLetStatementScopes(t *testing.T) {
 				55,
 				[]code.Instructions{
 					code.Make(code.OpGetGlobal, 0),
-					code.Make(code.OpReturnValue),
+					code.Make(code.OpReturn),
 				},
 			},
 			expectedInstructions: []code.Instructions{
@@ -964,7 +967,7 @@ func TestLetStatementScopes(t *testing.T) {
 					code.Make(code.OpConstant, 0),
 					code.Make(code.OpSetLocal, 0),
 					code.Make(code.OpGetLocal, 0),
-					code.Make(code.OpReturnValue),
+					code.Make(code.OpReturn),
 				},
 			},
 			expectedInstructions: []code.Instructions{
@@ -991,7 +994,7 @@ func TestLetStatementScopes(t *testing.T) {
 					code.Make(code.OpGetLocal, 0),
 					code.Make(code.OpGetLocal, 1),
 					code.Make(code.OpAdd),
-					code.Make(code.OpReturnValue),
+					code.Make(code.OpReturn),
 				},
 			},
 			expectedInstructions: []code.Instructions{
@@ -1014,7 +1017,7 @@ func TestLetStatementScopes(t *testing.T) {
 					code.Make(code.OpAdd),
 					code.Make(code.OpAssignGlobal, 0),
 					code.Make(code.OpPop),
-					code.Make(code.OpReturnValue),
+					code.Make(code.OpReturn),
 				},
 			},
 			expectedInstructions: []code.Instructions{
@@ -1056,7 +1059,7 @@ func TestBuiltins(t *testing.T) {
 					code.Make(code.OpGetBuiltin, 0),
 					code.Make(code.OpArray, 0),
 					code.Make(code.OpCall, 1),
-					code.Make(code.OpReturnValue),
+					code.Make(code.OpReturn),
 				},
 			},
 			expectedInstructions: []code.Instructions{
@@ -1084,12 +1087,12 @@ func TestClosures(t *testing.T) {
 					code.Make(code.OpGetFree, 0),
 					code.Make(code.OpGetLocal, 0),
 					code.Make(code.OpAdd),
-					code.Make(code.OpReturnValue),
+					code.Make(code.OpReturn),
 				},
 				[]code.Instructions{
 					code.Make(code.OpGetLocal, 0),
 					code.Make(code.OpClosure, 0, 1),
-					code.Make(code.OpReturnValue),
+					code.Make(code.OpReturn),
 				},
 			},
 			expectedInstructions: []code.Instructions{
@@ -1114,18 +1117,18 @@ func TestClosures(t *testing.T) {
 					code.Make(code.OpAdd),
 					code.Make(code.OpGetLocal, 0),
 					code.Make(code.OpAdd),
-					code.Make(code.OpReturnValue),
+					code.Make(code.OpReturn),
 				},
 				[]code.Instructions{
 					code.Make(code.OpGetFree, 0),
 					code.Make(code.OpGetLocal, 0),
 					code.Make(code.OpClosure, 0, 2),
-					code.Make(code.OpReturnValue),
+					code.Make(code.OpReturn),
 				},
 				[]code.Instructions{
 					code.Make(code.OpGetLocal, 0),
 					code.Make(code.OpClosure, 1, 1),
-					code.Make(code.OpReturnValue),
+					code.Make(code.OpReturn),
 				},
 			},
 			expectedInstructions: []code.Instructions{
@@ -1165,7 +1168,7 @@ func TestClosures(t *testing.T) {
 					code.Make(code.OpAdd),
 					code.Make(code.OpGetLocal, 0),
 					code.Make(code.OpAdd),
-					code.Make(code.OpReturnValue),
+					code.Make(code.OpReturn),
 				},
 				[]code.Instructions{
 					code.Make(code.OpConstant, 2),
@@ -1173,14 +1176,14 @@ func TestClosures(t *testing.T) {
 					code.Make(code.OpGetFree, 0),
 					code.Make(code.OpGetLocal, 0),
 					code.Make(code.OpClosure, 4, 2),
-					code.Make(code.OpReturnValue),
+					code.Make(code.OpReturn),
 				},
 				[]code.Instructions{
 					code.Make(code.OpConstant, 1),
 					code.Make(code.OpSetLocal, 0),
 					code.Make(code.OpGetLocal, 0),
 					code.Make(code.OpClosure, 5, 1),
-					code.Make(code.OpReturnValue),
+					code.Make(code.OpReturn),
 				},
 			},
 			expectedInstructions: []code.Instructions{
@@ -1210,7 +1213,7 @@ func TestRecursiveFunctions(t *testing.T) {
 					code.Make(code.OpConstant, 0),
 					code.Make(code.OpSub),
 					code.Make(code.OpCall, 1),
-					code.Make(code.OpReturnValue),
+					code.Make(code.OpReturn),
 				},
 			},
 			expectedInstructions: []code.Instructions{
@@ -1239,7 +1242,7 @@ func TestRecursiveFunctions(t *testing.T) {
 					code.Make(code.OpConstant, 0),
 					code.Make(code.OpSub),
 					code.Make(code.OpCall, 1),
-					code.Make(code.OpReturnValue),
+					code.Make(code.OpReturn),
 				},
 				[]code.Instructions{
 					code.Make(code.OpClosure, 1, 0),
@@ -1247,7 +1250,7 @@ func TestRecursiveFunctions(t *testing.T) {
 					code.Make(code.OpGetLocal, 0),
 					code.Make(code.OpConstant, 0),
 					code.Make(code.OpCall, 1),
-					code.Make(code.OpReturnValue),
+					code.Make(code.OpReturn),
 				},
 			},
 			expectedInstructions: []code.Instructions{

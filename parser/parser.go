@@ -188,6 +188,11 @@ func (p *Parser) parseLetStatement() *ast.LetStatement {
 		fl.Name = stmt.Name.Value
 	}
 
+	if !p.peekTokenIs(token.SEMICOLON) {
+		msg := fmt.Sprintf("Syntax error, expected semicolon.")
+		p.errors = append(p.errors, msg)
+	}
+
 	for !p.curTokenIs(token.SEMICOLON) {
 		p.nextToken()
 	}
@@ -509,10 +514,12 @@ func (p *Parser) parseFunctionLiteral() ast.Expression {
 
 	lit.Body = p.parseBlockStatement()
 
-	if !p.peekTokenIs(token.SEMICOLON) {
-		msg := fmt.Sprintf("Syntax error, expected semicolon.")
-		p.errors = append(p.errors, msg)
-	}
+	// after a function definition there has to be a semicolon or a call
+	// expression
+	// if !p.peekTokenIs(token.SEMICOLON) && !p.peekTokenIs(token.LPAREN) {
+	// 	msg := fmt.Sprintf("Syntax error, expected semicolon.")
+	// 	p.errors = append(p.errors, msg)
+	// }
 
 	return lit
 }

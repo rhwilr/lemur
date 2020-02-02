@@ -45,7 +45,6 @@ const (
 	OpIndex
 	OpCall
 	OpReturn
-	OpReturnValue
 	OpGetBuiltin
 	OpClosure
 	OpGetFree
@@ -82,7 +81,6 @@ var definitions = map[Opcode]*Definition{
 	OpIndex:          {"OpIndex", []int{}},
 	OpCall:           {"OpCall", []int{1}},
 	OpReturn:         {"OpReturn", []int{}},
-	OpReturnValue:    {"OpReturnValue", []int{}},
 	OpGetBuiltin:     {"OpGetBuiltin", []int{1}},
 	OpClosure:        {"OpClosure", []int{2, 1}},
 	OpGetFree:        {"OpGetFree", []int{1}},
