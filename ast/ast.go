@@ -208,7 +208,7 @@ type StringLiteral struct {
 
 func (sl *StringLiteral) expressionNode()      {}
 func (sl *StringLiteral) TokenLiteral() string { return sl.Token.Literal }
-func (sl *StringLiteral) String() string       { return sl.Token.Literal }
+func (sl *StringLiteral) String() string       { return `"` + sl.Token.Literal + `"` }
 
 /*
 ** ArrayLiteral
@@ -459,7 +459,7 @@ func (pe *PostfixExpression) String() string {
 ** WhileLoopExpression
  */
 type WhileLoopExpression struct {
-	Token       token.Token // The 'for' token
+	Token       token.Token // The 'while' token
 	Condition   Expression
 	Consequence *BlockStatement
 }
@@ -469,7 +469,7 @@ func (ie *WhileLoopExpression) TokenLiteral() string { return ie.Token.Literal }
 func (ie *WhileLoopExpression) String() string {
 	var out bytes.Buffer
 
-	out.WriteString("for (")
+	out.WriteString("while (")
 	out.WriteString(ie.Condition.String())
 	out.WriteString(") {")
 	out.WriteString(ie.Consequence.String())

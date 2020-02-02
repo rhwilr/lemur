@@ -1429,7 +1429,6 @@ func runCompilerTests(t *testing.T, tests []compilerTestCase) {
 		if err != nil {
 			t.Fatalf("testConstants failed: %s", err)
 		}
-
 	}
 }
 

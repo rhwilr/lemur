@@ -34,6 +34,7 @@ Go][2] by Thorsten Ball.
   - [Compiler Optimizations](#compiler-optimizations)
     - [Constants](#constants)
     - [Tail Recursion Optimization](#tail-recursion-optimization)
+    - [Compiler Optimizations](#compiler-optimizations-1)
   - [Binary Format](#binary-format)
     - [Header](#header)
     - [Constant Pool](#constant-pool)
@@ -59,6 +60,7 @@ in the book. Here are the changes I made.
 - Implemented `while` loops.
 - Defined my own binary format to save compiled code to file and read binary
   files in the vm.
+- Added an optimization layer before the compiler to simplify the AST.
 
 
 ## Installation
@@ -283,6 +285,7 @@ This means, referencing the number `1` multiple times in the source code, for
 example, will only produce one constant. This optimization is performed for
 Integers and Strings.
 
+
 ### Tail Recursion Optimization
 
 This is an optimization applied to recursive functions. Instead of pushing a new
@@ -324,6 +327,23 @@ factorial 2 24
 factorial 1 120
 factorial 0 720
 ```
+
+
+### Compiler Optimizations
+
+Lemur applies some optimizations on the AST before it is parsed by the compiler.
+The optimizer walks down the AST and is capable of performing simple
+precalculations and simplifying boolean expressions.
+
+Here are some examples of transformations the optimizer applies:
+
+| Input                      | Output                |
+| -------------------------- | --------------------- |
+| `let i = (1 * 6) + 2;`     | `let i = 8;`          |
+| `let i = 9 + 2 - 1;`       | `let i = 10;`         |
+| `puts("Helo " + "World");` | `puts("Helo World");` |
+| `while (0 < 99) {}`        | `while (true) {}`     |
+
 
 
 ## Binary Format

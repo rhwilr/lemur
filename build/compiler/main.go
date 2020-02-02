@@ -12,6 +12,7 @@ import (
 	"github.com/rhwilr/lemur/build"
 	"github.com/rhwilr/lemur/compiler"
 	"github.com/rhwilr/lemur/lexer"
+	"github.com/rhwilr/lemur/optimizer"
 	"github.com/rhwilr/lemur/parser"
 )
 
@@ -71,8 +72,14 @@ func runCompiler() {
 		log.Fatal(p.Errors())
 	}
 
+	optimized, err := optimizer.New(program).Optimize()
+	if err != nil {
+		fmt.Printf("error while optimizing programm: %s", err)
+		return
+	}
+	
 	c := compiler.New()
-	err = c.Compile(program)
+	err = c.Compile(optimized)
 	if err != nil {
 		log.Fatal(err)
 	}
