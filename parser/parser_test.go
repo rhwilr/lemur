@@ -605,7 +605,7 @@ func TestWhileLoopExpression(t *testing.T) {
 }
 
 func TestFunctionLiteralParsing(t *testing.T) {
-	input := `fn(x, y) { x + y; };`
+	input := `function(x, y) { x + y; };`
 
 	l := lexer.New(input)
 	p := New(l)
@@ -648,7 +648,7 @@ func TestFunctionLiteralParsing(t *testing.T) {
 }
 
 func TestFunctionLiteralWithName(t *testing.T) {
-	input := `let myFunction = fn() { };`
+	input := `let myFunction = function() { };`
 
 	l := lexer.New(input)
 	p := New(l)
@@ -679,9 +679,9 @@ func TestFunctionParameterParsing(t *testing.T) {
 		input          string
 		expectedParams []string
 	}{
-		{input: "fn() {};", expectedParams: []string{}},
-		{input: "fn(x) {};", expectedParams: []string{"x"}},
-		{input: "fn(x, y, z) {};", expectedParams: []string{"x", "y", "z"}},
+		{input: "function() {};", expectedParams: []string{}},
+		{input: "function(x) {};", expectedParams: []string{"x"}},
+		{input: "function(x, y, z) {};", expectedParams: []string{"x", "y", "z"}},
 	}
 
 	for _, tt := range tests {
@@ -1063,18 +1063,25 @@ func TestSyntaxErrors(t *testing.T) {
 		expectedErrors []string
 	}{
 		{
-			input: `
-			let minusOne = fn() {}
-			minusOne();
-			`,
+			input: `let 1 = "number";`,
 			expectedErrors: []string{
-				"Syntax error, expected semicolon.",
+				"SyntaxError: Unexpected INT '1', expected IDENT",
+				"expected assign token to be IDENT, got 1 instead.",
 			},
 		},
 		{
-			input: `let ff = fn(n) { if (n == 0) {return a} 1} ff(5, 1);`,
+			input: `
+			let minusOne = function() {}
+			minusOne();
+			`,
 			expectedErrors: []string{
-				"Syntax error, expected semicolon.",
+				"SyntaxError: expected semicolon.",
+			},
+		},
+		{
+			input: `let ff = function(n) { if (n == 0) {return a} 1} ff(5, 1);`,
+			expectedErrors: []string{
+				"SyntaxError: expected semicolon.",
 			},
 		},
 	}

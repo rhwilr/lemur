@@ -361,7 +361,7 @@ func (ie *IfExpression) String() string {
 ** FunctionLiteral
  */
 type FunctionLiteral struct {
-	Token      token.Token // The 'fn' token
+	Token      token.Token // The 'function' token
 	Parameters []*Identifier
 	Body       *BlockStatement
 	Name       string

@@ -1,4 +1,4 @@
-let fibonacci = fn(x) {
+let fibonacci = function(x) {
   // 0 and 1 are the trivial cases, we handle those first.
   if (x == 0) {
     return 0;

@@ -13,7 +13,7 @@ let ten = 10;
 const immutable = "test";
 f1 f2
 
-let add = fn(x, y) {
+let add = function(x, y) {
 	x + y;
 };
 
@@ -79,7 +79,7 @@ $
 		{token.LET, "let"},
 		{token.IDENT, "add"},
 		{token.ASSIGN, "="},
-		{token.FUNCTION, "fn"},
+		{token.FUNCTION, "function"},
 		{token.LPAREN, "("},
 		{token.IDENT, "x"},
 		{token.COMMA, ","},

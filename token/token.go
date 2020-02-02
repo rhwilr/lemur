@@ -70,15 +70,15 @@ const (
 )
 
 var keywords = map[string]TokenType{
-	"fn":     FUNCTION,
-	"let":    LET,
-	"const":  CONST,
-	"true":   TRUE,
-	"false":  FALSE,
-	"if":     IF,
-	"else":   ELSE,
-	"while":  WHILE,
-	"return": RETURN,
+	"function": FUNCTION,
+	"let":      LET,
+	"const":    CONST,
+	"true":     TRUE,
+	"false":    FALSE,
+	"if":       IF,
+	"else":     ELSE,
+	"while":    WHILE,
+	"return":   RETURN,
 }
 
 // LookupIdent checks, if the passed identifiers is reserved words. If that is

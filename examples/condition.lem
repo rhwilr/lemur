@@ -1,9 +1,9 @@
-let f1 = fn() {
+let f1 = function() {
   puts("f1 called\n");
   return false;
 };
 
-let f2 = fn() {
+let f2 = function() {
   puts("f2 called\n");
   return true;
 };

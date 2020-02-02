@@ -189,7 +189,7 @@ func (p *Parser) parseLetStatement() *ast.LetStatement {
 	}
 
 	if !p.peekTokenIs(token.SEMICOLON) {
-		msg := fmt.Sprintf("Syntax error, expected semicolon.")
+		msg := fmt.Sprintf("SyntaxError: expected semicolon.")
 		p.errors = append(p.errors, msg)
 	}
 
@@ -303,7 +303,7 @@ func (p *Parser) parsePrefixAssignmentExpression() ast.Expression {
 	if n, ok := name.(*ast.Identifier); ok {
 		stmt.Name = n
 	} else {
-		msg := fmt.Sprintf("expected assign token to be IDENT, got %s instead.", name.TokenLiteral())
+		msg := fmt.Sprintf("SyntaxError: expected assign token to be IDENT, got %s instead.", name.TokenLiteral())
 		p.errors = append(p.errors, msg)
 	}
 
@@ -517,7 +517,7 @@ func (p *Parser) parseFunctionLiteral() ast.Expression {
 	// after a function definition there has to be a semicolon or a call
 	// expression
 	// if !p.peekTokenIs(token.SEMICOLON) && !p.peekTokenIs(token.LPAREN) {
-	// 	msg := fmt.Sprintf("Syntax error, expected semicolon.")
+	// 	msg := fmt.Sprintf("SyntaxError: expected semicolon.")
 	// 	p.errors = append(p.errors, msg)
 	// }
 
@@ -681,8 +681,7 @@ func (p *Parser) peekPrecedence() int {
 }
 
 func (p *Parser) peekError(t token.TokenType) {
-	msg := fmt.Sprintf("expected next token to be %s, got %s instead",
-		t, p.peekToken.Type)
+	msg := fmt.Sprintf("SyntaxError: Unexpected %s '%s', expected %s", p.peekToken.Type, p.peekToken.Literal, t)
 	p.errors = append(p.errors, msg)
 }
 

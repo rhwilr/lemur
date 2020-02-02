@@ -171,7 +171,7 @@ if (10 > 1) {
 		},
 		{
 			`
-let f = fn(x) {
+let f = function(x) {
   return x;
   x + 10;
 };
@@ -180,7 +180,7 @@ f(10);`,
 		},
 		{
 			`
-let f = fn(x) {
+let f = function(x) {
    let result = x + 10;
    return result;
    return 10;
@@ -250,7 +250,7 @@ if (10 > 1) {
 			"unknown operator: STRING - STRING",
 		},
 		{
-			`{"name": "Lemur"}[fn(x) { x }];`,
+			`{"name": "Lemur"}[function(x) { x }];`,
 			"unusable as hash key: FUNCTION",
 		},
 		{
@@ -380,7 +380,7 @@ func TestPrefixStatements(t *testing.T) {
 }
 
 func TestFunctionObject(t *testing.T) {
-	input := "fn(x) { x + 2; };"
+	input := "function(x) { x + 2; };"
 
 	evaluated := testEval(input)
 	fn, ok := evaluated.(*object.Function)
@@ -409,12 +409,12 @@ func TestFunctionApplication(t *testing.T) {
 		input    string
 		expected int64
 	}{
-		{"let identity = fn(x) { x; }; identity(5);", 5},
-		{"let identity = fn(x) { return x; }; identity(5);", 5},
-		{"let double = fn(x) { x * 2; }; double(5);", 10},
-		{"let add = fn(x, y) { x + y; }; add(5, 5);", 10},
-		{"let add = fn(x, y) { x + y; }; add(5 + 5, add(5, 5));", 20},
-		{"fn(x) { x; }(5)", 5},
+		{"let identity = function(x) { x; }; identity(5);", 5},
+		{"let identity = function(x) { return x; }; identity(5);", 5},
+		{"let double = function(x) { x * 2; }; double(5);", 10},
+		{"let add = function(x, y) { x + y; }; add(5, 5);", 10},
+		{"let add = function(x, y) { x + y; }; add(5 + 5, add(5, 5));", 20},
+		{"function(x) { x; }(5)", 5},
 	}
 
 	for _, tt := range tests {
@@ -428,7 +428,7 @@ let first = 10;
 let second = 10;
 let third = 10;
 
-let ourFunction = fn(first) {
+let ourFunction = function(first) {
   let second = 20;
 
   first + second + third;
@@ -441,8 +441,8 @@ ourFunction(20) + first + second;`
 
 func TestClosures(t *testing.T) {
 	input := `
-let newAdder = fn(x) {
-  fn(y) { x + y };
+let newAdder = function(x) {
+  function(y) { x + y };
 };
 
 let addTwo = newAdder(2);

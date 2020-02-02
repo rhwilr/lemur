@@ -245,7 +245,7 @@ Functions are first class citizens in lemur. This means they can be passed as
 arguments and returned by other functions like any other value.
 
 ```js
-let fibonacci = fn(x) {
+let fibonacci = function(x) {
   if (x == 0) { return 0; }
   if (x == 1) { return 1; }
 
@@ -265,7 +265,7 @@ scope:
 let first = 10;
 let second = 10;
 
-let ourFunction = fn(first) {
+let ourFunction = function(first) {
   first + second;
 };
 
@@ -299,7 +299,7 @@ reused, efectifally flatining the recursion into a loop.
 
 **Non tail recursive implementation:**
 ```js
-const factorial = fn(n) {
+const factorial = function(n) {
   if (n == 1) { return 1;}
   n * factorial(n - 1);
 };
@@ -317,7 +317,7 @@ factorial 6
 
 **Tail recursive implementation:**
 ```js
-const factorial = fn(n, a) {
+const factorial = function(n, a) {
   if (n == 0) { return a;}
   factorial(n - 1, a * n);
 };
