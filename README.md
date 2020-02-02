@@ -33,6 +33,7 @@ Go][2] by Thorsten Ball.
     - [Functions](#functions)
   - [Compiler Optimizations](#compiler-optimizations)
     - [Constants](#constants)
+    - [Tail Recursion Optimization](#tail-recursion-optimization)
   - [Binary Format](#binary-format)
     - [Header](#header)
     - [Constant Pool](#constant-pool)
@@ -281,6 +282,48 @@ Constant values are only added to the pool if the value is not already present.
 This means, referencing the number `1` multiple times in the source code, for
 example, will only produce one constant. This optimization is performed for
 Integers and Strings.
+
+### Tail Recursion Optimization
+
+This is an optimization applied to recursive functions. Instead of pushing a new
+frame onto the stack with each recursive call, the same function frame is
+reused, efectifally flatining the recursion into a loop.
+
+**Non tail recursive implementation:**
+```js
+const factorial = fn(n) {
+  if (n == 1) { return 1;}
+  n * factorial(n - 1);
+};
+factorial(5);
+```
+```
+factorial 6
+6 * factorial 5
+6 * 5 * factorial 4
+6 * 5 * 4 * factorial 3
+6 * 5 * 4 * 3 * factorial 2
+6 * 5 * 4 * 3 * 2 * factorial 1
+6 * 5 * 4 * 3 * 2 * 1
+```
+
+**Tail recursive implementation:**
+```js
+const factorial = fn(n, a) {
+  if (n == 0) { return a;}
+  factorial(n - 1, a * n);
+};
+factorial(6, 1)
+```
+```
+factorial 6 1
+factorial 5 1
+factorial 4 2
+factorial 3 6
+factorial 2 24
+factorial 1 120
+factorial 0 720
+```
 
 
 ## Binary Format

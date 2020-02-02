@@ -726,18 +726,25 @@ func TestPrefixAndPostfixStatements(t *testing.T) {
 
 func TestTailCalls(t *testing.T) {
 	tests := []vmTestCase{
-		// {
-		// 	input: `
-		// 	const fact = fn(n, a) {
-		// 	  if (n == 0) {
-		// 			return a
-		// 		}
+		{
+			input: `
+			const factorial = fn(n) {
+			  if (n == 1) { return 1;}
+			  n * factorial(n - 1);
+			};
+			factorial(5);`,
+			expected: 120,
+		},
 
-		// 	  fact(n - 1, a * n);
-		// 	};
-		// 	fact(5, 1);`,
-		// 	expected: 120,
-		// },
+		{
+			input: `
+			const factorial = fn(n, a) {
+			  if (n == 0) { return a;}
+			  factorial(n - 1, a * n);
+			};
+			factorial(5, 1);`,
+			expected: 120,
+		},
 
 		// without tail recursion optimization this will cause a stack overflow
 		{
