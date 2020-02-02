@@ -5,9 +5,14 @@
 
 
 This repository contains an interpreter and compiler for the **Lemur**
-programming language. This is my own implementation of the Monkey programming
+programming language. This is my implementation of the Monkey programming
 language designed in [Write an Interpreter in Go][1] and [Writing A Compiler In
-Go][2] by Thorsten Ball.
+Go][2] by Thorsten Ball. Since finishing the book, I've made a lot of
+improvements and changes to the language.
+
+This language should not be used for anything serious. This is just a hoppy
+project of mine, with the goal of learning, go as well as getting a deeper
+understanding of how interpreters and compilers work.
 
 [1]: https://interpreterbook.com/
 [2]: https://compilerbook.com/
