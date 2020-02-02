@@ -500,7 +500,13 @@ func (p *Parser) parseIfExpression() ast.Expression {
 }
 
 func (p *Parser) parseFunctionLiteral() ast.Expression {
-	lit := &ast.FunctionLiteral{Token: p.curToken}
+	lit := &ast.FunctionLiteral{Token: p.curToken, Define: false}
+
+	if (p.peekTokenIs(token.IDENT)) {
+		p.nextToken()
+		lit.Name = p.curToken.Literal
+		lit.Define = true
+	}
 
 	if !p.expectPeek(token.LPAREN) {
 		return nil
@@ -513,13 +519,6 @@ func (p *Parser) parseFunctionLiteral() ast.Expression {
 	}
 
 	lit.Body = p.parseBlockStatement()
-
-	// after a function definition there has to be a semicolon or a call
-	// expression
-	// if !p.peekTokenIs(token.SEMICOLON) && !p.peekTokenIs(token.LPAREN) {
-	// 	msg := fmt.Sprintf("SyntaxError: expected semicolon.")
-	// 	p.errors = append(p.errors, msg)
-	// }
 
 	return lit
 }
@@ -681,7 +680,7 @@ func (p *Parser) peekPrecedence() int {
 }
 
 func (p *Parser) peekError(t token.TokenType) {
-	msg := fmt.Sprintf("SyntaxError: Unexpected %s '%s', expected %s", p.peekToken.Type, p.peekToken.Literal, t)
+	msg := fmt.Sprintf("SyntaxError: Unexpected %s, expected %s", p.peekToken.Type, t)
 	p.errors = append(p.errors, msg)
 }
 

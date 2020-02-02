@@ -365,6 +365,7 @@ type FunctionLiteral struct {
 	Parameters []*Identifier
 	Body       *BlockStatement
 	Name       string
+	Define     bool
 }
 
 func (fl *FunctionLiteral) expressionNode()      {}

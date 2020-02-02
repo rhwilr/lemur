@@ -63,6 +63,7 @@ in the book. Here are the changes I made.
 - Added support for logical operators `&&` and `||`. This also adds support for
   more complex conditionals like `if (i <= 10 && containsNumber(string))...`.
 - Implemented `while` loops.
+- Allow the definition of functions without a `let` or `const` statement.
 - Defined my own binary format to save compiled code to file and read binary
   files in the vm.
 - Added an optimization layer before the compiler to simplify the AST.

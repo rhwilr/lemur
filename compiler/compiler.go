@@ -82,7 +82,12 @@ func (c *Compiler) Compile(node ast.Node) error {
 		if err != nil {
 			return err
 		}
-		c.emit(code.OpPop)
+
+		// These instructions pop the last value, an additional OpPop is not
+		// required.
+		if !c.lastInstructionIs(code.OpSetGlobal) && !c.lastInstructionIs(code.OpSetLocal) {
+			c.emit(code.OpPop)
+		}
 
 	case *ast.Boolean:
 		if node.Value {
@@ -454,6 +459,18 @@ func (c *Compiler) Compile(node ast.Node) error {
 		fnIndex := c.addConstant(compiledFn)
 		c.emit(code.OpClosure, fnIndex, len(freeSymbols))
 
+		if node.Define {
+			symbol, err := c.symbolTable.Define(node.Name, VariableType)
+			if err != nil {
+				return fmt.Errorf(err.Error())
+			}
+
+			if symbol.Scope == GlobalScope {
+				c.emit(code.OpSetGlobal, symbol.Index)
+			} else {
+				c.emit(code.OpSetLocal, symbol.Index)
+			}
+		}
 	case *ast.CallExpression:
 		err := c.Compile(node.Function)
 		if err != nil {
@@ -582,7 +599,6 @@ func (c *Compiler) addConstant(obj object.Object) int {
 	c.constants = append(c.constants, obj)
 	return len(c.constants) - 1
 }
-
 
 func (c *Compiler) currentInstructions() code.Instructions {
 	return c.scopes[c.scopeIndex].instructions

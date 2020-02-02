@@ -205,6 +205,25 @@ func TestIndexExpressions(t *testing.T) {
 	runVmTests(t, tests)
 }
 
+func TestFunctionApplication(t *testing.T) {
+	tests := []vmTestCase {
+		{"let identity = function(x) { x; }; identity(5);", 5},
+		{"let identity = function(x) { return x; }; identity(5);", 5},
+		{"let double = function(x) { x * 2; }; double(5);", 10},
+		{"let add = function(x, y) { x + y; }; add(5, 5);", 10},
+		{"let add = function(x, y) { x + y; }; add(5 + 5, add(5, 5));", 20},
+
+		{"function identity (x) { x; }; identity(5);", 5},
+		{"function identity (x) { return x; }; identity(5);", 5},
+		{"function double (x) { x * 2; }; double(5);", 10},
+		{"function add (x, y) { x + y; }; add(5, 5);", 10},
+		{"function add (x, y) { x + y; }; add(5 + 5, add(5, 5));", 20},
+
+		{"function(x) { x; }(5)", 5},
+	}
+
+	runVmTests(t, tests)
+}
 func TestCallingFunctionsWithoutArguments(t *testing.T) {
 	tests := []vmTestCase{
 		{
