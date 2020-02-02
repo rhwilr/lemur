@@ -11,7 +11,7 @@ Go][2] by Thorsten Ball. Since finishing the book, I've made a lot of
 improvements and changes to the language.
 
 This language should not be used for anything serious. This is just a hoppy
-project of mine, with the goal of learning, go as well as getting a deeper
+project of mine, with the goal of learning Go while getting a deeper
 understanding of how interpreters and compilers work.
 
 [1]: https://interpreterbook.com/
