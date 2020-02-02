@@ -512,7 +512,7 @@ func (p *Parser) parseFunctionLiteral() ast.Expression {
 		return nil
 	}
 
-	lit.Parameters = p.parseFunctionParameters()
+	lit.Defaults, lit.Parameters = p.parseFunctionParameters()
 
 	if !p.expectPeek(token.LBRACE) {
 		return nil
@@ -546,31 +546,44 @@ func (p *Parser) parseWhileLoopExpression() ast.Expression {
 	return expression
 }
 
-func (p *Parser) parseFunctionParameters() []*ast.Identifier {
+func (p *Parser) parseFunctionParameters() (map[string]ast.Expression, []*ast.Identifier) {
 	identifiers := []*ast.Identifier{}
+	defaults := make(map[string]ast.Expression)
 
 	if p.peekTokenIs(token.RPAREN) {
 		p.nextToken()
-		return identifiers
+		return defaults, identifiers
 	}
 
 	p.nextToken()
 
-	ident := &ast.Identifier{Token: p.curToken, Value: p.curToken.Literal}
-	identifiers = append(identifiers, ident)
+	// Keep going until we find a ")"
+	for !p.curTokenIs(token.RPAREN) {
+		if p.curTokenIs(token.EOF) {
+			p.errors = append(p.errors, "SyntaxError: unterminated function parameters")
+			return nil, nil
+		}
 
-	for p.peekTokenIs(token.COMMA) {
-		p.nextToken()
-		p.nextToken()
+		// Get the identifier.
 		ident := &ast.Identifier{Token: p.curToken, Value: p.curToken.Literal}
 		identifiers = append(identifiers, ident)
-	}
+		p.nextToken()
 
-	if !p.expectPeek(token.RPAREN) {
-		return nil
-	}
+		// If we encounter a = we have default parameters
+		if p.curTokenIs(token.ASSIGN) {
+			p.nextToken()
 
-	return identifiers
+			defaults[ident.Value] = p.parseExpressionStatement().Expression
+			p.nextToken()
+		}
+
+		if p.curTokenIs(token.COMMA) {
+			p.nextToken()
+		}
+	}
+	
+
+	return defaults, identifiers
 }
 
 func (p *Parser) parseCallExpression(function ast.Expression) ast.Expression {

@@ -363,6 +363,7 @@ func (ie *IfExpression) String() string {
 type FunctionLiteral struct {
 	Token      token.Token // The 'function' token
 	Parameters []*Identifier
+	Defaults   map[string]Expression
 	Body       *BlockStatement
 	Name       string
 	Define     bool

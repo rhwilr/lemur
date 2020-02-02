@@ -422,6 +422,8 @@ func TestFunctionApplication(t *testing.T) {
 		{"function add (x, y) { x + y; }; add(5 + 5, add(5, 5));", 20},
 
 		{"function(x) { x; }(5)", 5},
+		{"function(x = 5) { x; }()", 5},
+		{"function(x, y = 5) { x + y; }(5)", 10},
 	}
 
 	for _, tt := range tests {

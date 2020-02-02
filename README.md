@@ -64,6 +64,7 @@ in the book. Here are the changes I made.
   more complex conditionals like `if (i <= 10 && containsNumber(string))...`.
 - Implemented `while` loops.
 - Allow the definition of functions without a `let` or `const` statement.
+- Function arguments may have default values.
 - Defined my own binary format to save compiled code to file and read binary
   files in the vm.
 - Added an optimization layer before the compiler to simplify the AST.
@@ -278,6 +279,19 @@ A function always produces a value. `return` can be used to explicitally return
 a value. If nothing is returned in the function, the result of the last
 expression will be returned. This can also be `null` if the expression does not
 produce a value.
+
+Named functions can also be defined directly by specifing the identifier after
+the `function` keyword. Additionally, arguments may have a default value, making
+them optionl.
+
+```js
+function increment (x, inc = 1) {
+  return x + inc;
+}
+
+increment(6); // Outputs: 7
+increment(6, 2); // Outputs: 8
+```
 
 
 ## Compiler Optimizations

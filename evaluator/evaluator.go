@@ -108,8 +108,9 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 	case *ast.FunctionLiteral:
 		params := node.Parameters
 		body := node.Body
+		defaults := node.Defaults
 
-		function := &object.Function{Parameters: params, Env: env, Body: body}
+		function := &object.Function{Parameters: params, Env: env, Body: body, Defaults: defaults}
 
 		// When the Define flag is set, the function should be registered in the env.
 		if (node.Define) {
@@ -606,8 +607,15 @@ func evalWhileLoopExpression(fle *ast.WhileLoopExpression, env *object.Environme
 func extendFunctionEnv(fn *object.Function, args []object.Object) *object.Environment {
 	env := object.NewEnclosedEnvironment(fn.Env)
 
+	// Set the defaults
+	for key, val := range fn.Defaults {
+		env.DefineVariable(key, Eval(val, env))
+	}
+
 	for paramIdx, param := range fn.Parameters {
-		env.DefineVariable(param.Value, args[paramIdx])
+		if paramIdx < len(args) {
+			env.DefineVariable(param.Value, args[paramIdx])
+		}
 	}
 
 	return env

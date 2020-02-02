@@ -413,6 +413,20 @@ func (c *Compiler) Compile(node ast.Node) error {
 		c.emit(code.OpReturn)
 
 	case *ast.FunctionLiteral:
+		// Defaults
+		// for key, val := range node.Defaults {
+		// 	symbol, err := c.symbolTable.Define(key, VariableType)
+		// 	if err != nil {
+		// 		return err
+		// 	}
+
+		// 	err = c.Compile(val)
+		// 	if err != nil {
+		// 		return err
+		// 	}
+
+		// 	c.emit(code.OpSetLocal, symbol.Index)
+		// }
 		c.enterScope()
 
 		if node.Name != "" {

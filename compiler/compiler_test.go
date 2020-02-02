@@ -969,6 +969,48 @@ func TestFunctionCalls(t *testing.T) {
 				code.Make(code.OpPop),
 			},
 		},
+		// {
+		// 	input: `
+		// 	let oneArg = function(a = 24) { };
+		// 	oneArg();
+		// 	`,
+		// 	expectedConstants: []interface{}{
+		// 		[]code.Instructions{
+		// 			code.Make(code.OpNull),
+		// 			code.Make(code.OpReturn),
+		// 		},
+		// 		24,
+		// 	},
+		// 	expectedInstructions: []code.Instructions{
+		// 		code.Make(code.OpClosure, 0, 0),
+		// 		code.Make(code.OpSetGlobal, 0),
+		// 		code.Make(code.OpGetGlobal, 0),
+		// 		code.Make(code.OpConstant, 1),
+		// 		code.Make(code.OpCall, 1),
+		// 		code.Make(code.OpPop),
+		// 	},
+		// },
+		// {
+		// 	input: `
+		// 	function oneArg (a = 24) { };
+		// 	oneArg();
+		// 	`,
+		// 	expectedConstants: []interface{}{
+		// 		[]code.Instructions{
+		// 			code.Make(code.OpNull),
+		// 			code.Make(code.OpReturn),
+		// 		},
+		// 		24,
+		// 	},
+		// 	expectedInstructions: []code.Instructions{
+		// 		code.Make(code.OpClosure, 0, 0),
+		// 		code.Make(code.OpSetGlobal, 0),
+		// 		code.Make(code.OpGetGlobal, 0),
+		// 		code.Make(code.OpConstant, 1),
+		// 		code.Make(code.OpCall, 1),
+		// 		code.Make(code.OpPop),
+		// 	},
+		// },
 	}
 
 	runCompilerTests(t, tests)

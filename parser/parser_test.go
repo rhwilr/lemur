@@ -605,7 +605,7 @@ func TestWhileLoopExpression(t *testing.T) {
 }
 
 func TestFunctionLiteralParsing(t *testing.T) {
-	input := `function(x, y) { x + y; };`
+	input := `function(x, y = 5) { x + y; };`
 
 	l := lexer.New(input)
 	p := New(l)
