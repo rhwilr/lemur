@@ -36,6 +36,10 @@ func TestExpressionsWithoutOptimizations(t *testing.T) {
 			input: `let one = 1; while (one < 99) {}`,
 			expected: `let one = 1;while ((one < 99)) {}`,
 		},
+		{
+			input: `true >= false`,
+			expected: `(true >= false)`,
+		},
 	}
 
 	runOptimizerTests(t, tests)
@@ -108,6 +112,30 @@ func TestComparisonOptimizations(t *testing.T) {
 		{
 			input: `while (0 < 99) {}`,
 			expected: `while (true) {}`,
+		},
+		{
+			input: `true == false`,
+			expected: `false`,
+		},
+		{
+			input: `true != false`,
+			expected: `true`,
+		},
+		{
+			input: `true || false`,
+			expected: `true`,
+		},
+		{
+			input: `true && false`,
+			expected: `false`,
+		},
+		{
+			input: `1 || 0`,
+			expected: `true`,
+		},
+		{
+			input: `12 && 0`,
+			expected: `false`,
 		},
 	}
 

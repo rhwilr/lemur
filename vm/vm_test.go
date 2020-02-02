@@ -8,6 +8,7 @@ import (
 	"github.com/rhwilr/lemur/compiler"
 	"github.com/rhwilr/lemur/lexer"
 	"github.com/rhwilr/lemur/object"
+	"github.com/rhwilr/lemur/optimizer"
 	"github.com/rhwilr/lemur/parser"
 )
 
@@ -774,8 +775,17 @@ func runVmTests(t *testing.T, tests []vmTestCase) {
 	for _, tt := range tests {
 		program := parse(t, tt.input)
 
+		opt, err := optimizer.New(program).Optimize()
+		if err != nil {
+			fmt.Printf("error while optimizing programm: %s", err)
+			return
+		}
+
+		// fmt.Printf("\n\n Optimized:\n")
+		// fmt.Printf("%s", opt.String())
+	
 		comp := compiler.New()
-		err := comp.Compile(program)
+		err = comp.Compile(opt)
 		if err != nil {
 			t.Fatalf("compiler error: %s", err)
 		}

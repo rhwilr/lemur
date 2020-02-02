@@ -72,14 +72,27 @@ func optimizeInfixExpression(node *ast.InfixExpression) ast.Expression {
 	_, okL := left.(*ast.IntegerLiteral)
 	_, okR := right.(*ast.IntegerLiteral)
 	if okL && okR {
-		return optimizeIntegerInfixExpression(node.Operator, left, right)
+		if opt := optimizeIntegerInfixExpression(node.Operator, left, right); opt != nil {
+			return opt
+		}
 	}
 
 	// Strings
 	_, okL = left.(*ast.StringLiteral)
 	_, okR = right.(*ast.StringLiteral)
 	if okL && okR {
-		return optimizeStringInfixExpression(node.Operator, left, right)
+		if opt := optimizeStringInfixExpression(node.Operator, left, right); opt != nil {
+			return opt
+		}
+	}
+
+	// Boolean
+	_, okL = left.(*ast.Boolean)
+	_, okR = right.(*ast.Boolean)
+	if okL && okR {
+		if opt := optimizeBooleanInfixExpression(node.Operator, left, right); opt != nil {
+			return opt
+		}
 	}
 
 	return node
@@ -103,6 +116,10 @@ func optimizeIntegerInfixExpression(operator string, left, right ast.Expression)
 		return nativeBoolToBooleanAst(leftVal <= rightVal)
 	case ">=":
 		return nativeBoolToBooleanAst(leftVal >= rightVal)
+	case "||":
+		return nativeBoolToBooleanAst(leftVal != 0 || rightVal != 0)
+	case "&&":
+		return nativeBoolToBooleanAst(leftVal != 0 && rightVal != 0)
 	case "+", "+=":
 		return nativeIntegerToIntegerAst(leftVal + rightVal)
 	case "-", "-=":
@@ -135,6 +152,24 @@ func optimizeStringInfixExpression(operator string, left, right ast.Expression) 
 		return nativeBoolToBooleanAst(leftVal >= rightVal)
 	case "+":
 		return nativeStringToStringAst(leftVal + rightVal)
+	default:
+		return nil
+	}
+}
+
+func optimizeBooleanInfixExpression(operator string, left, right ast.Expression) ast.Expression {
+	leftVal := left.(*ast.Boolean).Value
+	rightVal := right.(*ast.Boolean).Value
+
+	switch operator {
+	case "==":
+		return nativeBoolToBooleanAst(leftVal == rightVal)
+	case "!=":
+		return nativeBoolToBooleanAst(leftVal != rightVal)
+	case "||":
+		return nativeBoolToBooleanAst(leftVal || rightVal)
+	case "&&":
+		return nativeBoolToBooleanAst(leftVal && rightVal)
 	default:
 		return nil
 	}
