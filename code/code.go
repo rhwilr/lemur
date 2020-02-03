@@ -51,6 +51,11 @@ const (
 	OpCurrentClosure
 )
 
+// The NOP opcode will consume 1 cpu cycle, but do nothing
+const OpNop Opcode = 255
+
+const OptionalParameterInstructions = 3
+
 var definitions = map[Opcode]*Definition{
 	OpConstant:       {"OpConstant", []int{2}},
 	OpAdd:            {"OpAdd", []int{}},
@@ -85,6 +90,7 @@ var definitions = map[Opcode]*Definition{
 	OpClosure:        {"OpClosure", []int{2, 1}},
 	OpGetFree:        {"OpGetFree", []int{1}},
 	OpCurrentClosure: {"OpCurrentClosure", []int{}},
+	OpNop:            {"OpNop", []int{}},
 }
 
 func Lookup(op byte) (*Definition, error) {

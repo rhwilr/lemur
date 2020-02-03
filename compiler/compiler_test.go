@@ -946,6 +946,27 @@ func TestFunctionCalls(t *testing.T) {
 		},
 		{
 			input: `
+			function oneArg (a) { a };
+			oneArg(24);
+			`,
+			expectedConstants: []interface{}{
+				[]code.Instructions{
+					code.Make(code.OpGetLocal, 0),
+					code.Make(code.OpReturn),
+				},
+				24,
+			},
+			expectedInstructions: []code.Instructions{
+				code.Make(code.OpClosure, 0, 0),
+				code.Make(code.OpSetGlobal, 0),
+				code.Make(code.OpGetGlobal, 0),
+				code.Make(code.OpConstant, 1),
+				code.Make(code.OpCall, 1),
+				code.Make(code.OpPop),
+			},
+		},
+		{
+			input: `
 			let manyArg = function(a, b, c) { };
 			manyArg(24, 25, 26);
 			`,
@@ -969,48 +990,103 @@ func TestFunctionCalls(t *testing.T) {
 				code.Make(code.OpPop),
 			},
 		},
-		// {
-		// 	input: `
-		// 	let oneArg = function(a = 24) { };
-		// 	oneArg();
-		// 	`,
-		// 	expectedConstants: []interface{}{
-		// 		[]code.Instructions{
-		// 			code.Make(code.OpNull),
-		// 			code.Make(code.OpReturn),
-		// 		},
-		// 		24,
-		// 	},
-		// 	expectedInstructions: []code.Instructions{
-		// 		code.Make(code.OpClosure, 0, 0),
-		// 		code.Make(code.OpSetGlobal, 0),
-		// 		code.Make(code.OpGetGlobal, 0),
-		// 		code.Make(code.OpConstant, 1),
-		// 		code.Make(code.OpCall, 1),
-		// 		code.Make(code.OpPop),
-		// 	},
-		// },
-		// {
-		// 	input: `
-		// 	function oneArg (a = 24) { };
-		// 	oneArg();
-		// 	`,
-		// 	expectedConstants: []interface{}{
-		// 		[]code.Instructions{
-		// 			code.Make(code.OpNull),
-		// 			code.Make(code.OpReturn),
-		// 		},
-		// 		24,
-		// 	},
-		// 	expectedInstructions: []code.Instructions{
-		// 		code.Make(code.OpClosure, 0, 0),
-		// 		code.Make(code.OpSetGlobal, 0),
-		// 		code.Make(code.OpGetGlobal, 0),
-		// 		code.Make(code.OpConstant, 1),
-		// 		code.Make(code.OpCall, 1),
-		// 		code.Make(code.OpPop),
-		// 	},
-		// },
+		{
+			input: `
+			let oneArg = function(a = 24) { a };
+			oneArg();
+			`,
+			expectedConstants: []interface{}{
+				24,
+				[]code.Instructions{
+					code.Make(code.OpConstant, 0),
+					code.Make(code.OpAssignLocal, 0),
+					code.Make(code.OpGetLocal, 0),
+					code.Make(code.OpReturn),
+				},
+			},
+			expectedInstructions: []code.Instructions{
+				code.Make(code.OpClosure, 1, 0),
+				code.Make(code.OpSetGlobal, 0),
+				code.Make(code.OpGetGlobal, 0),
+				code.Make(code.OpCall, 0),
+				code.Make(code.OpPop),
+			},
+		},
+		{
+			input: `
+			function oneArg (a = 24) { };
+			oneArg();
+			`,
+			expectedConstants: []interface{}{
+				24,
+				[]code.Instructions{
+					code.Make(code.OpConstant, 0),
+					code.Make(code.OpAssignLocal, 0),
+					code.Make(code.OpNull),
+					code.Make(code.OpReturn),
+				},
+			},
+			expectedInstructions: []code.Instructions{
+				code.Make(code.OpClosure, 1, 0),
+				code.Make(code.OpSetGlobal, 0),
+				code.Make(code.OpGetGlobal, 0),
+				code.Make(code.OpCall, 0),
+				code.Make(code.OpPop),
+			},
+		},
+		{
+			input: `
+			function oneArg (a = 24) { };
+			oneArg(10);
+			`,
+			expectedConstants: []interface{}{
+				24,
+				[]code.Instructions{
+					code.Make(code.OpConstant, 0),
+					code.Make(code.OpAssignLocal, 0),
+					code.Make(code.OpNull),
+					code.Make(code.OpReturn),
+				},
+				10,
+			},
+			expectedInstructions: []code.Instructions{
+				code.Make(code.OpClosure, 1, 0),
+				code.Make(code.OpSetGlobal, 0),
+				code.Make(code.OpGetGlobal, 0),
+				code.Make(code.OpConstant, 2),
+				code.Make(code.OpCall, 1),
+				code.Make(code.OpPop),
+			},
+		},
+		{
+			input: `
+			let manyArg = function(a = true, b = 0, c = "String") { };
+			manyArg();
+			`,
+			expectedConstants: []interface{}{
+				0,
+				"String",
+				[]code.Instructions{
+					code.Make(code.OpTrue),
+					code.Make(code.OpNop),
+					code.Make(code.OpNop),
+					code.Make(code.OpAssignLocal, 0),
+					code.Make(code.OpConstant, 0),
+					code.Make(code.OpAssignLocal, 1),
+					code.Make(code.OpConstant, 1),
+					code.Make(code.OpAssignLocal, 2),
+					code.Make(code.OpNull),
+					code.Make(code.OpReturn),
+				},
+			},
+			expectedInstructions: []code.Instructions{
+				code.Make(code.OpClosure, 2, 0),
+				code.Make(code.OpSetGlobal, 0),
+				code.Make(code.OpGetGlobal, 0),
+				code.Make(code.OpCall, 0),
+				code.Make(code.OpPop),
+			},
+		},
 	}
 
 	runCompilerTests(t, tests)

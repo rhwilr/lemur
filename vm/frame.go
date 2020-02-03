@@ -11,10 +11,10 @@ type Frame struct {
 	basePointer int
 }
 
-func NewFrame(cl *object.Closure, basePointer int) *Frame {
+func NewFrame(cl *object.Closure, basePointer int, ip int) *Frame {
 	f := &Frame{
 		cl:          cl,
-		ip:          -1,
+		ip:          ip,
 		basePointer: basePointer,
 	}
 

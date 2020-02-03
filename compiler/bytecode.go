@@ -132,10 +132,11 @@ func writeConstants(consts []object.Object) []byte {
 		case object.COMPILED_FUNCTION_OBJ:
 			var cnst *object.CompiledFunction = c.(*object.CompiledFunction)
 
-			value := make([]byte, 12)
+			value := make([]byte, 16)
 			binary.BigEndian.PutUint32(value[:], uint32(len(cnst.Instructions)))
 			binary.BigEndian.PutUint32(value[4:], uint32(cnst.NumLocals))
 			binary.BigEndian.PutUint32(value[8:], uint32(cnst.NumParameters))
+			binary.BigEndian.PutUint32(value[12:], uint32(cnst.NumDefaults))
 
 			value = append(value, cnst.Instructions...)
 			out.write(byte(2), value)
@@ -181,12 +182,16 @@ func readConstants(bytecode []byte, offset int, lenConstants uint16) ([]object.O
 
 			numParameters := int(binary.BigEndian.Uint32(bytecode[offset : offset+4]))
 			offset += 4
+			
+			numDefaults := int(binary.BigEndian.Uint32(bytecode[offset : offset+4]))
+			offset += 4
 
 			instructions := bytecode[offset : offset+length]
 
 			compiledFunctionObject := &object.CompiledFunction{
 				NumLocals:     numLocals,
 				NumParameters: numParameters,
+				NumDefaults:   numDefaults,
 				Instructions:  instructions,
 			}
 

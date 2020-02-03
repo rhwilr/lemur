@@ -189,7 +189,7 @@ func (p *Parser) parseLetStatement() *ast.LetStatement {
 	}
 
 	if !p.peekTokenIs(token.SEMICOLON) {
-		msg := fmt.Sprintf("SyntaxError: expected semicolon.")
+		msg := fmt.Sprintf("SyntaxError: Expected token ';'.")
 		p.errors = append(p.errors, msg)
 	}
 
@@ -303,7 +303,7 @@ func (p *Parser) parsePrefixAssignmentExpression() ast.Expression {
 	if n, ok := name.(*ast.Identifier); ok {
 		stmt.Name = n
 	} else {
-		msg := fmt.Sprintf("SyntaxError: expected assign token to be IDENT, got %s instead.", name.TokenLiteral())
+		msg := fmt.Sprintf("SyntaxError: Expected assign token to be IDENT, got '%s' instead.", name.TokenLiteral())
 		p.errors = append(p.errors, msg)
 	}
 
@@ -569,9 +569,21 @@ func (p *Parser) parseFunctionParameters() (map[string]ast.Expression, []*ast.Id
 		identifiers = append(identifiers, ident)
 		p.nextToken()
 
-		// If we encounter a = we have default parameters
+		// If we encounter an = we have default parameters
 		if p.curTokenIs(token.ASSIGN) {
 			p.nextToken()
+
+			if p.curTokenOneOf([]token.TokenType{token.RPAREN, token.RBRACE, token.LPAREN, token.LBRACE}) {
+				msg := fmt.Sprintf("SyntaxError: Unexpected token '%s'.", p.curToken.Literal)
+				p.errors = append(p.errors, msg)
+				return nil, nil
+			}
+
+			if !p.curTokenOneOf([]token.TokenType{token.TRUE, token.FALSE, token.INT, token.STRING}) {
+				msg := fmt.Sprintf("SyntaxError: Unsupported token %s for default parameter.", p.curToken.Type)
+				p.errors = append(p.errors, msg)
+				return nil, nil
+			}
 
 			defaults[ident.Value] = p.parseExpressionStatement().Expression
 			p.nextToken()
@@ -613,7 +625,7 @@ func (p *Parser) parseAssignExpression(name ast.Expression) ast.Expression {
 	if n, ok := name.(*ast.Identifier); ok {
 		stmt.Name = n
 	} else {
-		msg := fmt.Sprintf("expected assign token to be IDENT, got %s instead.", name.TokenLiteral())
+		msg := fmt.Sprintf("SyntaxError: Expected assign token to be IDENT, got '%s' instead.", name.TokenLiteral())
 		p.errors = append(p.errors, msg)
 	}
 
@@ -658,6 +670,16 @@ func (p *Parser) nextToken() {
 	p.peekToken = p.l.NextToken()
 }
 
+func (p *Parser) curTokenOneOf(t []token.TokenType) bool {
+	for _, token := range t {
+		if p.curTokenIs(token) {
+			return true
+		}
+	}
+
+	return false
+}
+
 func (p *Parser) curTokenIs(t token.TokenType) bool {
 	return p.curToken.Type == t
 }
@@ -693,7 +715,7 @@ func (p *Parser) peekPrecedence() int {
 }
 
 func (p *Parser) peekError(t token.TokenType) {
-	msg := fmt.Sprintf("SyntaxError: Unexpected %s, expected %s", p.peekToken.Type, t)
+	msg := fmt.Sprintf("SyntaxError: Unexpected token '%s', expected %s", p.peekToken.Literal, t)
 	p.errors = append(p.errors, msg)
 }
 

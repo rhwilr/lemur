@@ -31,7 +31,7 @@ var Null = &object.Null{}
 func New(bytecode *compiler.Bytecode) *VM {
 	mainFn := &object.CompiledFunction{Instructions: bytecode.Instructions}
 	mainClosure := &object.Closure{Fn: mainFn}
-	mainFrame := NewFrame(mainClosure, 0)
+	mainFrame := NewFrame(mainClosure, 0, -1)
 
 	frames := make([]*Frame, MaxFrames)
 	frames[0] = mainFrame
@@ -285,6 +285,8 @@ func (vm *VM) Run() error {
 			if err != nil {
 				return err
 			}
+
+		case code.OpNop:
 		}
 	}
 
@@ -584,7 +586,12 @@ func (vm *VM) executeCall(numArgs int) error {
 }
 
 func (vm *VM) callClosure(cl *object.Closure, numArgs int) error {
-	if numArgs != cl.Fn.NumParameters {
+	numRequiredArgs := cl.Fn.NumParameters - cl.Fn.NumDefaults
+	if numArgs < numRequiredArgs || numArgs > cl.Fn.NumParameters {
+		if cl.Fn.NumDefaults > 0 {
+			return fmt.Errorf("wrong number of arguments: want=%d-%d, got=%d", numRequiredArgs, cl.Fn.NumParameters, numArgs)
+		}
+
 		return fmt.Errorf("wrong number of arguments: want=%d, got=%d", cl.Fn.NumParameters, numArgs)
 	}
 
@@ -601,7 +608,15 @@ func (vm *VM) callClosure(cl *object.Closure, numArgs int) error {
 		}
 	}
 
-	frame := NewFrame(cl, vm.sp-numArgs)
+	// Default parameters are inserted in the beginning of the function. When the
+	// function is called, we need to calculate how many default parameteres are
+	// left undefined and skip those that have been assigned. For us to be able to
+	// skipp parameters, each parameter has to take up a constant amount of
+	// instructions.
+	skipedDefaultArgs := cl.Fn.NumDefaults - (cl.Fn.NumParameters - numArgs)
+	ipOffset := (skipedDefaultArgs * (code.OptionalParameterInstructions + 2)) - 1
+
+	frame := NewFrame(cl, vm.sp-numArgs, ipOffset)
 	vm.pushFrame(frame)
 
 	vm.sp = frame.basePointer + cl.Fn.NumLocals

@@ -220,8 +220,13 @@ func TestFunctionApplication(t *testing.T) {
 		{"function add (x, y) { x + y; }; add(5 + 5, add(5, 5));", 20},
 
 		{"function(x) { x; }(5)", 5},
-		// {"function(x = 5) { x; }()", 5},
-		// {"function(x, y = 5) { x + y; }(5)", 10},
+		{"function(x = 5) { x; }()", 5},
+		{"function(x, y = 5) { x + y; }(5)", 10},
+		{"function(x, y = 5) { x + y; }(5, 10)", 15},
+		{"function(x, b = false) { b; }(5)", false},
+		{"function(x, b = false) { b; }(5, true)", true},
+		{"function(x, b = false, y = 5) { x + y; }(5)", 10},
+		{"function(x, b = false, y = 5) { x + y; }(5, true)", 10},
 	}
 
 	runVmTests(t, tests)
@@ -249,6 +254,22 @@ func TestCallingFunctionsWithoutArguments(t *testing.T) {
 			let b = function() { a() + 1 };
 			let c = function() { b() + 1 };
 			c();
+			`,
+			expected: 3,
+		},
+		{
+			input: `
+			let a = function(x = 1) { x };
+			let b = function(x = 2) { a() + x };
+			let c = function(i = 3, j = 2) { b() + i - j };
+			c();
+			`,
+			expected: 4,
+		},
+		{
+			input: `
+			let c = function(h, i = 3, j = 2) { h + i + j };
+			c(1, 1, 1);
 			`,
 			expected: 3,
 		},
@@ -463,6 +484,18 @@ func TestCallingFunctionsWithWrongArguments(t *testing.T) {
 			input:    `function(a, b) { a + b; }(1);`,
 			expected: `wrong number of arguments: want=2, got=1`,
 		},
+		{
+			input:    `function(a = 3) { 1; }(1, 2);`,
+			expected: `wrong number of arguments: want=0-1, got=2`,
+		},
+		{
+			input:    `function(a, b = 3) { 1; }();`,
+			expected: `wrong number of arguments: want=1-2, got=0`,
+		},
+		{
+			input:    `function(a, b, c = 3) { a + b; }(1);`,
+			expected: `wrong number of arguments: want=2-3, got=1`,
+		},
 	}
 
 	for _, tt := range tests {
@@ -481,7 +514,7 @@ func TestCallingFunctionsWithWrongArguments(t *testing.T) {
 		}
 
 		if err.Error() != tt.expected {
-			t.Fatalf("wrong VM error: want=%q, got=%q", err, tt.expected)
+			t.Fatalf("wrong VM error: want=%q, got=%q", tt.expected, err)
 		}
 	}
 }

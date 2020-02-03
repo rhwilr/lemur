@@ -418,7 +418,7 @@ This includes `Integers`, `Strings`, and `Functions`.
 | :--- | :------- | :---------------------------------------------------------------------------- | :-------------------- |
 | `00` | Integer  | -                                                                             | `uint64 BE`           |
 | `01` | String   | Lenght(`uint32 BE`)                                                           | `UTF-8`               |
-| `02` | Function | Instructions(`uint32 BE`), NumLocals(`uint32 BE`), NumParameters(`uint32 BE`) | Instructions bytecode |
+| `02` | Function | Instructions(`uint32 BE`), NumLocals(`uint32 BE`), NumParameters(`uint32 BE`), NumDefaults(`uint32 BE`) | Instructions bytecode |
 
 `BE` = BigEndian
 

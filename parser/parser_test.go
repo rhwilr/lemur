@@ -726,6 +726,7 @@ func TestFunctionParameterParsing(t *testing.T) {
 	}{
 		{input: "function() {};", expectedParams: []string{}},
 		{input: "function(x) {};", expectedParams: []string{"x"}},
+		{input: "function(x = 5) {};", expectedParams: []string{"x"}},
 		{input: "function(x, y, z) {};", expectedParams: []string{"x", "y", "z"}},
 	}
 
@@ -745,6 +746,37 @@ func TestFunctionParameterParsing(t *testing.T) {
 
 		for i, ident := range tt.expectedParams {
 			testLiteralExpression(t, function.Parameters[i], ident)
+		}
+	}
+}
+
+func TestFunctionDefaulltParameterParsing(t *testing.T) {
+	tests := []struct {
+		input          string
+		expectedParams map[string]string
+	}{
+		{input: "function(x = 0) {};", expectedParams: map[string]string{"x": "0"}},
+		{input: "function(x= 1, y = 0) {};", expectedParams: map[string]string{"x": "1", "y": "0"}},
+		{input: `function(x = "test", y = true) {};`, expectedParams: map[string]string{"x": "test", "y": "true"}},
+	}
+
+	for _, tt := range tests {
+		l := lexer.New(tt.input)
+		p := New(l)
+		program := p.ParseProgram()
+		checkParserErrors(t, p)
+
+		stmt := program.Statements[0].(*ast.ExpressionStatement)
+		function := stmt.Expression.(*ast.FunctionLiteral)
+
+		if len(function.Parameters) != len(tt.expectedParams) {
+			t.Errorf("length parameters wrong. want=%d, got=%d\n", len(tt.expectedParams), len(function.Parameters))
+		}
+
+		for key, value := range tt.expectedParams {
+			if function.Defaults[key].TokenLiteral() != value {
+				t.Errorf("Parameter name wrong. want=%s, got=%s\n", value, function.Defaults[key].TokenLiteral())
+			}
 		}
 	}
 }
@@ -1110,8 +1142,7 @@ func TestSyntaxErrors(t *testing.T) {
 		{
 			input: `let 1 = "number";`,
 			expectedErrors: []string{
-				"SyntaxError: Unexpected INT, expected IDENT",
-				"expected assign token to be IDENT, got 1 instead.",
+				"SyntaxError: Unexpected token '1', expected IDENT",
 			},
 		},
 		{
@@ -1120,13 +1151,37 @@ func TestSyntaxErrors(t *testing.T) {
 			minusOne();
 			`,
 			expectedErrors: []string{
-				"SyntaxError: expected semicolon.",
+				"SyntaxError: Expected token ';'.",
 			},
 		},
 		{
 			input: `let ff = function(n) { if (n == 0) {return a} 1} ff(5, 1);`,
 			expectedErrors: []string{
-				"SyntaxError: expected semicolon.",
+				"SyntaxError: Expected token ';'.",
+			},
+		},
+		{
+			input: `function(x = ) {};`,
+			expectedErrors: []string{
+				"SyntaxError: Unexpected token ')'.",
+			},
+		},
+		{
+			input: `function(x = {) {};`,
+			expectedErrors: []string{
+				"SyntaxError: Unexpected token '{'.",
+			},
+		},
+		{
+			input: `function(x = number) {};`,
+			expectedErrors: []string{
+				"SyntaxError: Unsupported token IDENT for default parameter.",
+			},
+		},
+		{
+			input: `function(x = function(){}) {};`,
+			expectedErrors: []string{
+				"SyntaxError: Unsupported token FUNCTION for default parameter.",
 			},
 		},
 	}
@@ -1137,7 +1192,7 @@ func TestSyntaxErrors(t *testing.T) {
 		_ = p.ParseProgram()
 
 		errors := p.errors
-		if len(errors) != len(test.expectedErrors) {
+		if len(errors) < len(test.expectedErrors) {
 			t.Fatalf("Unexpected error-count. got=%d, want=%d", len(errors), len(test.expectedErrors))
 		}
 

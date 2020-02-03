@@ -413,20 +413,6 @@ func (c *Compiler) Compile(node ast.Node) error {
 		c.emit(code.OpReturn)
 
 	case *ast.FunctionLiteral:
-		// Defaults
-		// for key, val := range node.Defaults {
-		// 	symbol, err := c.symbolTable.Define(key, VariableType)
-		// 	if err != nil {
-		// 		return err
-		// 	}
-
-		// 	err = c.Compile(val)
-		// 	if err != nil {
-		// 		return err
-		// 	}
-
-		// 	c.emit(code.OpSetLocal, symbol.Index)
-		// }
 		c.enterScope()
 
 		if node.Name != "" {
@@ -434,7 +420,26 @@ func (c *Compiler) Compile(node ast.Node) error {
 		}
 
 		for _, p := range node.Parameters {
-			c.symbolTable.Define(p.Value, VariableType)
+			symbol, err :=c.symbolTable.Define(p.Value, VariableType)
+
+			if val, ok := node.Defaults[p.Value]; ok {
+				if err != nil {
+					return fmt.Errorf(err.Error())
+				}
+
+				currentInstructions := len(c.currentInstructions())
+				err = c.Compile(val)
+				if err != nil {
+					return err
+				}
+
+				insertedInstructions := len(c.currentInstructions()) - currentInstructions
+				for index := insertedInstructions; index < code.OptionalParameterInstructions; index++ {
+					c.emit(code.OpNop)
+				}
+
+				c.emit(code.OpAssignLocal, symbol.Index)
+			}
 		}
 
 		err := c.Compile(node.Body)
@@ -468,6 +473,7 @@ func (c *Compiler) Compile(node ast.Node) error {
 			Instructions:  instructions,
 			NumLocals:     numLocals,
 			NumParameters: len(node.Parameters),
+			NumDefaults: len(node.Defaults),
 		}
 
 		fnIndex := c.addConstant(compiledFn)
