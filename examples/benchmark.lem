@@ -1,4 +1,4 @@
-let fibonacci = function(x) {
+function fibonacci (x) {
   if (x == 0) {
     return 0;
 	}
@@ -7,18 +7,19 @@ let fibonacci = function(x) {
 		return 1;
 	}
 
+	// Printing a progress bar,
 	if (x == 25) {
-		print(".");
+		print("■");
 	}
 	
-	fibonacci(x - 1) + fibonacci(x - 2);
+	return fibonacci(x - 1) + fibonacci(x - 2);
 };
 
 println("Welcome to the Lemur benchmark.");
 println("Running benchmark for Lemur engine: " + env("LEMUR_RUNTIME"));
 
 println();
-println("|--------------------- Progress --------------------------------------------------------|");
+println("|___________________ Progress __________________________________________________________|");
 
 fibonacci(35);
 println();
