@@ -6,5 +6,5 @@ const name = read();
 
 
 // Then output a string to stdout.
-println("");
+println();
 println("Helo " + name + "!");

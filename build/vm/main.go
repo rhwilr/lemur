@@ -43,6 +43,8 @@ func main() {
 }
 
 func runVM() {
+	os.Setenv("LEMUR_RUNTIME", "VM")
+
 	args := flag.Args()
 
 	f, err := os.Open(args[0])

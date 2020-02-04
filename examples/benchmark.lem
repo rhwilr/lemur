@@ -15,9 +15,11 @@ let fibonacci = function(x) {
 };
 
 println("Welcome to the Lemur benchmark.");
-println("");
+println("Running benchmark for Lemur engine: " + env("LEMUR_RUNTIME"));
+
+println();
 println("|--------------------- Progress --------------------------------------------------------|");
 
 fibonacci(35);
-println("");
-println("");
+println();
+println();

@@ -103,8 +103,7 @@ var Builtins = []struct {
 		"push",
 		&Builtin{Fn: func(args ...Object) Object {
 			if len(args) != 2 {
-				return newError("wrong number of arguments. got=%d, want=2",
-					len(args))
+				return newError("wrong number of arguments. got=%d, want=2", len(args))
 			}
 
 			if args[0].Type() != ARRAY_OBJ {
@@ -153,11 +152,49 @@ var Builtins = []struct {
 	{
 		"println",
 		&Builtin{Fn: func(args ...Object) Object {
+			if len(args) == 0 {
+				fmt.Println("")
+				return nil
+			}
+
 			for _, arg := range args {
 				fmt.Println(arg.Inspect())
 			}
 
 			return nil
+		},
+		},
+	},
+
+	{
+		"env",
+		&Builtin{Fn: func(args ...Object) Object {
+			if len(args) > 1 {
+				return newError("wrong number of arguments. got=%d, want=1", len(args))
+			}
+
+			if len(args) == 1 && args[0].Type() == STRING_OBJ {
+				stringArg, _ := args[0].(*String)
+				env := os.Getenv(stringArg.Value)
+				return &String{Value: env}
+			}
+
+			hash := &Hash{}
+			hash.Pairs = make(map[HashKey]HashPair)
+
+			for _, e := range os.Environ() {
+				pair := strings.SplitN(e, "=", 2)
+
+				key := String{Value: pair[0]}
+				value := HashPair{
+					Key:   &key,
+					Value: &String{Value: pair[1]},
+				}
+
+				hash.Pairs[key.HashKey()] = value
+			}
+
+			return hash
 		},
 		},
 	},

@@ -84,6 +84,8 @@ func runRepl() {
 		panic(err)
 	}
 
+	os.Setenv("LEMUR_RUNTIME", "VM")
+
 	fmt.Printf("Hello %s! This is the Lemur programming language!\n", user.Username)
 	repl.Start(os.Stdin, os.Stdout)
 }
@@ -113,6 +115,8 @@ func runEvaluator() {
 	}
 
 	if engine == "vm" {
+		os.Setenv("LEMUR_RUNTIME", "VM")
+
 		comp := compiler.New()
 		err := comp.Compile(program)
 		if err != nil {
@@ -130,6 +134,8 @@ func runEvaluator() {
 		duration = time.Since(start)
 		result = machine.LastPoppedStackElem()
 	} else {
+		os.Setenv("LEMUR_RUNTIME", "EVAL")
+
 		env := object.NewEnvironment()
 		start := time.Now()
 		result = evaluator.Eval(program, env)
@@ -199,6 +205,8 @@ func runCompiler() {
 }
 
 func runVM() {
+	os.Setenv("LEMUR_RUNTIME", "VM")
+
 	args := flag.Args()
 
 	f, err := os.Open(args[0])
