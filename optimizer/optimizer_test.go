@@ -83,8 +83,8 @@ func TestStringConcatinations(t *testing.T) {
 			expected: `let input = "Helo World";`,
 		},
 		{
-			input: `puts("Helo" + " " + "World!");`,
-			expected: `puts("Helo World!")`,
+			input: `println("Helo" + " " + "World!");`,
+			expected: `println("Helo World!")`,
 		},
 	}
 

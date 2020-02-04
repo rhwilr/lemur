@@ -1,10 +1,10 @@
 let f1 = function() {
-  puts("f1 called\n");
+  println("f1 called\n");
   return false;
 };
 
 let f2 = function() {
-  puts("f2 called\n");
+  println("f2 called\n");
   return true;
 };
 

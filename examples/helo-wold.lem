@@ -3,4 +3,4 @@ let number = 5;
 number * 2;
 
 // Then output a string to stdout.
-puts("Helo World!");
+println("Helo World!");

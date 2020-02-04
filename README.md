@@ -169,10 +169,10 @@ Lemur supports all the basic arithmetic operations of Integer types.
 let a = 4;
 let b = 2;
 
-puts( a + b );  // Outputs: 6
-puts( a - b );  // Outputs: 2
-puts( a * b );  // Outputs: 8
-puts( a / b );  // Outputs: 2
+println( a + b );  // Outputs: 6
+println( a - b );  // Outputs: 2
+println( a * b );  // Outputs: 8
+println( a / b );  // Outputs: 2
 ```
 
 
@@ -185,7 +185,8 @@ These core primitives are part of the lemur language:
 - `last`
 - `rest`
 - `push`
-- `puts`
+- `print`
+- `println`
 
 
 ### Conditionals
@@ -196,9 +197,9 @@ Lemur has support for `if` and `if else` expressions:
 let a = 4;
 
 if (a > 10) {
-  puts("a is larger than 10");
+  println("a is larger than 10");
 } else {
-  puts("a is smaller or equal to 10");
+  println("a is smaller or equal to 10");
 }
 
 ```
@@ -212,7 +213,7 @@ Lemur has only support for one looping construct, the `while` loop:
 let i = 3;
 
 while (i > 0) {
-    puts(i);
+    println(i);
     i--;
 }
 // Outputs:
@@ -238,7 +239,7 @@ let number = 6;
 ** The two stars at the beginning of this line are not required,
 ** they are just there to make the text align.
 */
-puts(number);
+println(number);
 ```
 
 ### Functions
@@ -357,12 +358,12 @@ precalculations and simplifying boolean expressions.
 
 Here are some examples of transformations the optimizer applies:
 
-| Input                      | Output                |
-| -------------------------- | --------------------- |
-| `let i = (1 * 6) + 2;`     | `let i = 8;`          |
-| `let i = 9 + 2 - 1;`       | `let i = 10;`         |
-| `puts("Helo " + "World");` | `puts("Helo World");` |
-| `while (0 < 99) {}`        | `while (true) {}`     |
+| Input                       | Output                 |
+| --------------------------- | ---------------------- |
+| `let i = (1 * 6) + 2;`      | `let i = 8;`           |
+| `let i = 9 + 2 - 1;`        | `let i = 10;`          |
+| `print("Helo " + "World");` | `print("Helo World");` |
+| `while (0 < 99) {}`         | `while (true) {}`      |
 
 
 
@@ -378,7 +379,7 @@ let number = 5;
 number * 2;
 
 // Then output a string to stdout.
-puts("Helo World!");
+println("Helo World!");
 ```
 
 Compiling the programm with `lemur-compiler example.lem` will produce the
@@ -414,10 +415,10 @@ This includes `Integers`, `Strings`, and `Functions`.
 
 
 
-| Byte | Type     | Parameters                                                                    | Encoding              |
-| :--- | :------- | :---------------------------------------------------------------------------- | :-------------------- |
-| `00` | Integer  | -                                                                             | `uint64 BE`           |
-| `01` | String   | Lenght(`uint32 BE`)                                                           | `UTF-8`               |
+| Byte | Type     | Parameters                                                                                              | Encoding              |
+| :--- | :------- | :------------------------------------------------------------------------------------------------------ | :-------------------- |
+| `00` | Integer  | -                                                                                                       | `uint64 BE`           |
+| `01` | String   | Lenght(`uint32 BE`)                                                                                     | `UTF-8`               |
 | `02` | Function | Instructions(`uint32 BE`), NumLocals(`uint32 BE`), NumParameters(`uint32 BE`), NumDefaults(`uint32 BE`) | Instructions bytecode |
 
 `BE` = BigEndian

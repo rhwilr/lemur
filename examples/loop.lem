@@ -10,4 +10,4 @@ let sum = function(x) {
   return sum;
 };
 
-puts(sum(100));
+println(sum(100));
