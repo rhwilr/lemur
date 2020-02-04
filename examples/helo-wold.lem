@@ -1,6 +1,10 @@
-// Define a variable and mutiply it by 2
-let number = 5;
-number * 2;
+println("Hi! What should I call you?");
+
+print("Name: ");
+
+const name = read();
+
 
 // Then output a string to stdout.
-println("Helo World!");
+println("");
+println("Helo " + name + "!");

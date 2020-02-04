@@ -24,9 +24,6 @@ build: dep ## Build the binary file
 	@go build -i -o dist/lemur-vm $(PKG)/build/vm
 	@go build -i -o dist/lemur $(PKG)/build/cli
 
-benchmark: dep ## Build the benchmark binary
-	@go build -o dist/benchmark ./benchmark
-
 clean: ## Remove previous build
 	@rm -rf dist
  

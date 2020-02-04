@@ -1,6 +1,11 @@
 package object
 
-import "fmt"
+import (
+	"bufio"
+	"fmt"
+	"os"
+	"strings"
+)
 
 var Builtins = []struct {
 	Name    string
@@ -115,6 +120,20 @@ var Builtins = []struct {
 			newElements[length] = args[1]
 
 			return &Array{Elements: newElements}
+		},
+		},
+	},
+
+	{
+		"read",
+		&Builtin{Fn: func(args ...Object) Object {
+			reader := bufio.NewReader(os.Stdin)
+			text, _ := reader.ReadString('\n')
+
+			// convert CRLF to LF
+			text = strings.Replace(text, "\n", "", -1)
+
+			return &String{Value: text}
 		},
 		},
 	},

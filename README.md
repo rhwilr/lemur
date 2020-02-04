@@ -181,12 +181,21 @@ println( a / b );  // Outputs: 2
 These core primitives are part of the lemur language:
 
 - `len`
+  - Returns the length of an Array or String
 - `first`
+  - Returns the first element in an Array
 - `last`
+  - Returns the last element in an Array
 - `rest`
+  - Returns a new Array, containing every element of the passed Array, except the first element.
 - `push`
+  - Append an element to the end of an Array
+- `read`
+  - Reads a string from stdin
 - `print`
+  - Prints a String to stdout
 - `println`
+  - Prints a String to stdout, including a newline at the end.
 
 
 ### Conditionals
