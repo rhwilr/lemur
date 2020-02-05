@@ -293,3 +293,46 @@ let number /* next we assign the variable */ = 3;`
 		}
 	}
 }
+
+func TestStringParsing(t *testing.T) {
+	input := `
+	"test";
+	"\r\n";
+	"\ttest";
+	"■";
+	"\r\n■";
+	`
+
+	tests := []struct {
+		expectedType    token.TokenType
+		expectedLiteral string
+	}{
+		{token.STRING, "test"},
+		{token.SEMICOLON, ";"},
+
+		{token.STRING, "\r\n"},
+		{token.SEMICOLON, ";"},
+
+		{token.STRING, "\ttest"},
+		{token.SEMICOLON, ";"},
+
+		{token.STRING, "■"},
+		{token.SEMICOLON, ";"},
+
+		{token.STRING, "\r\n■"},
+		{token.SEMICOLON, ";"},
+
+		{token.EOF, ""},
+	}
+	l := New(input)
+	for i, tt := range tests {
+		tok := l.NextToken()
+		if tok.Type != tt.expectedType {
+			t.Fatalf("tests[%d] - tokentype wrong, expected=%q, got=%q", i, tt.expectedType, tok.Type)
+		}
+		if tok.Literal != tt.expectedLiteral {
+			t.Fatalf("tests[%d] - Literal wrong, expected=%q, got=%q", i, tt.expectedLiteral, tok.Literal)
+		}
+	}
+}
+

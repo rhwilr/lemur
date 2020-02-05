@@ -70,7 +70,7 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 
 	// LetStatements
 	case *ast.LetStatement:
-		if env.Exists(node.Name.Value) {
+		if env.Exists(node.Name.Value, false) {
 			return newError("identifier '%s' has already been declared", node.Name.Value)
 		}
 
@@ -83,7 +83,7 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 
 	// ConstStatement
 	case *ast.ConstStatement:
-		if env.Exists(node.Name.Value) {
+		if env.Exists(node.Name.Value, false) {
 			return newError("identifier '%s' has already been declared", node.Name.Value)
 		}
 
@@ -114,7 +114,7 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 
 		// When the Define flag is set, the function should be registered in the env.
 		if (node.Define) {
-			if env.Exists(node.Name) {
+			if env.Exists(node.Name, false) {
 				return newError("identifier '%s' has already been declared", node.Name)
 			}
 			

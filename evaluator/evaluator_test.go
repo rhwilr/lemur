@@ -438,7 +438,8 @@ let second = 10;
 let third = 10;
 
 let ourFunction = function(first) {
-  let second = 20;
+	let second = 20;
+	third = 10
 
   first + second + third;
 };

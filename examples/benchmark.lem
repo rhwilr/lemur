@@ -1,3 +1,24 @@
+let progress = 0;
+function printProgress() {
+	print("\r|");
+	
+	let percentage = 100 * progress / 89;
+	let i = 0;
+	while (i <= 89) {
+		if (i <= progress) {
+			print("█");
+		} else {
+			print(" ");
+		}
+
+		i++;
+	}
+	print("| ");
+
+	print(percentage);
+	print("%");
+}
+
 function fibonacci (x) {
   if (x == 0) {
     return 0;
@@ -9,18 +30,20 @@ function fibonacci (x) {
 
 	// Printing a progress bar,
 	if (x == 25) {
-		print("■");
+		progress++;
+		printProgress()
 	}
 	
 	return fibonacci(x - 1) + fibonacci(x - 2);
 };
 
+
 println("Welcome to the Lemur benchmark.");
 println("Running benchmark for Lemur engine: " + env("LEMUR_RUNTIME"));
-
 println();
-println("|___________________ Progress __________________________________________________________|");
 
+printProgress()
 fibonacci(35);
+
 println();
 println();

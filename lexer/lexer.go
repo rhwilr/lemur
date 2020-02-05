@@ -4,15 +4,15 @@ import "github.com/rhwilr/lemur/token"
 
 // The Lexer is used to parse source code and turn it into tokens
 type Lexer struct {
-	input        string
+	input        []rune
 	position     int  // current position in input
 	readPosition int  // current reading position in input
-	ch           byte // current char under examination
+	ch           rune // current char under examination
 }
 
 // New will return a new instance of a Lexer
 func New(input string) *Lexer {
-	l := &Lexer{input: input}
+	l := &Lexer{input: []rune(input)}
 	l.readChar()
 	return l
 }
@@ -174,7 +174,7 @@ func (l *Lexer) readChar() {
 	l.readPosition++
 }
 
-func (l *Lexer) peekChar() byte {
+func (l *Lexer) peekChar() rune {
 	if l.readPosition >= len(l.input) {
 		return 0
 	}
@@ -225,7 +225,7 @@ func (l *Lexer) readItentifier() string {
 	for isLetter(l.ch) || isDigit(l.ch) {
 		l.readChar()
 	}
-	return l.input[position:l.position]
+	return string(l.input[position:l.position])
 }
 
 func (l *Lexer) readNumber() string {
@@ -233,28 +233,54 @@ func (l *Lexer) readNumber() string {
 	for isDigit(l.ch) {
 		l.readChar()
 	}
-	return l.input[position:l.position]
+	return string(l.input[position:l.position])
 }
 
 func (l *Lexer) readStringLiteral() string {
-	position := l.position + 1
+	out := ""
+
 	for {
 		l.readChar()
+
 		if l.ch == '"' || l.ch == 0 {
 			break
 		}
+
+
+		// Handle \n, \r, \t, \", etc.
+		if l.ch == '\\' {
+			l.readChar()
+			if l.ch == 'n' {
+				l.ch = '\n'
+			}
+			if l.ch == 'r' {
+				l.ch = '\r'
+			}
+			if l.ch == 't' {
+				l.ch = '\t'
+			}
+			if l.ch == '"' {
+				l.ch = '"'
+			}
+			if l.ch == '\\' {
+				l.ch = '\\'
+			}
+		}
+
+		out = out + string(l.ch)
 	}
-	return l.input[position:l.position]
+
+	return out
 }
 
-func newToken(tokenType token.TokenType, ch byte) token.Token {
+func newToken(tokenType token.TokenType, ch rune) token.Token {
 	return token.Token{Type: tokenType, Literal: string(ch)}
 }
 
-func isLetter(ch byte) bool {
+func isLetter(ch rune) bool {
 	return 'a' <= ch && ch <= 'z' || 'A' <= ch && ch <= 'Z' || ch == '_'
 }
 
-func isDigit(ch byte) bool {
+func isDigit(ch rune) bool {
 	return '0' <= ch && ch <= '9'
 }
