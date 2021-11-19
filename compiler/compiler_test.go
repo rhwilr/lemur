@@ -1436,7 +1436,6 @@ func TestAssignmentStatements(t *testing.T) {
 			expectedInstructions: []code.Instructions{
 				code.Make(code.OpConstant, 0),
 				code.Make(code.OpSetGlobal, 0),
-				code.Make(code.OpGetGlobal, 0),
 				code.Make(code.OpConstant, 1),
 				code.Make(code.OpAssignGlobal, 0),
 				code.Make(code.OpPop),
@@ -1581,7 +1580,7 @@ func runCompilerTests(t *testing.T, tests []compilerTestCase) {
 
 		err = testInstructions(tt.expectedInstructions, bytecode.Instructions)
 		if err != nil {
-			t.Fatalf("testInstructions failed: %s", err)
+			t.Fatalf("testInstructions failed: %s\ninput=%s", err, tt.input)
 		}
 
 		err = testConstants(t, tt.expectedConstants, bytecode.Constants)

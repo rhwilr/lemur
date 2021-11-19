@@ -36,7 +36,7 @@ func (b *Bytecode) Write() []byte {
 	constants := writeConstants(b.Constants)
 	instructions := b.Instructions
 
-	header := writeHeader(uint16(len(b.Constants)), uint16(len(instructions)))
+	header := writeHeader(uint16(len(b.Constants)), uint64(len(instructions)))
 
 	out := append(header, constants...)
 	out = append(out, instructions...)
@@ -61,7 +61,7 @@ func Read(bytecode []byte) (*Bytecode, error) {
 /*
 ** Write Binary Functions
  */
-func writeHeader(lenConstants uint16, lenInstructions uint16) []byte {
+func writeHeader(lenConstants uint16, lenInstructions uint64) []byte {
 	out := make([]byte, 0)
 
 	signature := []byte(Signature)
@@ -69,8 +69,8 @@ func writeHeader(lenConstants uint16, lenInstructions uint16) []byte {
 
 	constants := make([]byte, 2)
 	binary.BigEndian.PutUint16(constants, lenConstants)
-	instructions := make([]byte, 2)
-	binary.BigEndian.PutUint16(instructions, lenInstructions)
+	instructions := make([]byte, 8)
+	binary.BigEndian.PutUint64(instructions, lenInstructions)
 
 	out = append(out, signature...)
 	out = append(out, version...)
@@ -80,7 +80,7 @@ func writeHeader(lenConstants uint16, lenInstructions uint16) []byte {
 	return out
 }
 
-func readHeader(bytecode []byte) (uint16, uint16, int, error) {
+func readHeader(bytecode []byte) (uint16, uint64, int, error) {
 	offset := len(Signature)
 
 	// Signature must be the magic value
@@ -99,8 +99,8 @@ func readHeader(bytecode []byte) (uint16, uint16, int, error) {
 	constants := binary.BigEndian.Uint16(bytecode[offset : offset+2])
 	offset += 2
 
-	instructions := binary.BigEndian.Uint16(bytecode[offset : offset+2])
-	offset += 2
+	instructions := binary.BigEndian.Uint64(bytecode[offset : offset+8])
+	offset += 8
 
 	return constants, instructions, offset, nil
 }

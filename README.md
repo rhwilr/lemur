@@ -328,7 +328,7 @@ reused, efectifally flatining the recursion into a loop.
 **Non tail recursive implementation:**
 ```js
 const factorial = function(n) {
-  if (n == 1) { return 1;}
+  if (n == 1) { return 1; }
   n * factorial(n - 1);
 };
 factorial(5);
@@ -346,10 +346,10 @@ factorial 6
 **Tail recursive implementation:**
 ```js
 const factorial = function(n, a) {
-  if (n == 0) { return a;}
+  if (n == 0) { return a; }
   factorial(n - 1, a * n);
 };
-factorial(6, 1)
+factorial(6, 1);
 ```
 ```
 factorial 6 1

@@ -29,6 +29,7 @@ var (
 	engine      string
 	output      string
 	interactive bool
+	assembler   bool
 	compile     bool
 	execute     bool
 	version     bool
@@ -43,6 +44,7 @@ func init() {
 
 	flag.BoolVar(&version, "v", false, "display version information")
 	flag.BoolVar(&compile, "c", false, "compile input to bytecode")
+	flag.BoolVar(&assembler, "a", false, "compile input to lemur assembly")
 
 	flag.BoolVar(&interactive, "i", false, "enable interactive mode")
 	flag.BoolVar(&execute, "b", false, "execute a compiled file using the lemur-vm")
@@ -56,6 +58,11 @@ func main() {
 
 	if version {
 		fmt.Printf("%s %s\n", path.Base(os.Args[0]), build.FullVersion())
+		os.Exit(0)
+	}
+
+	if assembler {
+		runAssembler()
 		os.Exit(0)
 	}
 
@@ -147,6 +154,60 @@ func runEvaluator() {
 		engine,
 		result.Inspect(),
 		duration)
+}
+
+func runAssembler() {
+	args := flag.Args()
+	var duration time.Duration
+	start := time.Now()
+
+	if len(args) < 1 {
+		log.Fatal("no source file given to compile")
+	}
+
+	f, err := os.Open(args[0])
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer f.Close()
+
+	b, err := ioutil.ReadAll(f)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	l := lexer.New(string(b))
+	p := parser.New(l)
+
+	program := p.ParseProgram()
+	if len(p.Errors()) != 0 {
+		log.Fatalf("parse error: %s", p.Errors())
+	}
+
+	optimized, err := optimizer.New(program).Optimize()
+	if err != nil {
+		fmt.Printf("error while optimizing programm: %s", err)
+		return
+	}
+
+	c := compiler.New()
+	err = c.Compile(optimized)
+	if err != nil {
+		log.Fatalf("compiler error: %s", err)
+	}
+
+	assembly := c.Bytecode().Instructions.String()
+
+	f2, err := os.Create(args[0] + ".lml")
+	if err != nil {
+		log.Fatalf("compiler error: %s", err)
+		return
+	}
+
+	duration = time.Since(start)
+
+	writer, _ := f2.WriteString(assembly)
+	fmt.Printf("wrote %d bytes in %s\n", writer, duration)
 }
 
 func runCompiler() {

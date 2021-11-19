@@ -20,9 +20,9 @@ test: ## Run unittests
 	@go test -short ${PKG_LIST}
 
 build: dep ## Build the binary file
-	@go build -i -o dist/lemur-compiler $(PKG)/build/compiler
-	@go build -i -o dist/lemur-vm $(PKG)/build/vm
-	@go build -i -o dist/lemur $(PKG)/build/cli
+	@go build -o dist/lemur-compiler $(PKG)/build/compiler
+	@go build -o dist/lemur-vm $(PKG)/build/vm
+	@go build -o dist/lemur $(PKG)/build/cli
 
 clean: ## Remove previous build
 	@rm -rf dist

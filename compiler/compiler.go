@@ -325,7 +325,9 @@ func (c *Compiler) Compile(node ast.Node) error {
 			return fmt.Errorf("assignment to constant variable: %s", node.Name.Value)
 		}
 
-		c.loadSymbol(symbol)
+		if node.Operator != "=" {
+			c.loadSymbol(symbol)
+		}
 
 		err := c.Compile(node.Value)
 		if err != nil {
