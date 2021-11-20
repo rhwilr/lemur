@@ -5,9 +5,7 @@ import (
 )
 
 var (
-	Major byte = 0
-	Minor byte = 9
-	Patch byte = 0
+	BinaryVersion byte = 1
 
 	// GitCommit will be overwritten automatically by the build system
 	GitCommit = "HEAD"
@@ -15,5 +13,5 @@ var (
 
 // FullVersion returns the full version and commit hash
 func FullVersion() string {
-	return fmt.Sprintf("%d.%d.%d@%s", Major, Minor, Patch, GitCommit)
+	return fmt.Sprintf("%s (bin:%02X)", GitCommit, BinaryVersion)
 }

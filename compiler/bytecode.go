@@ -65,7 +65,7 @@ func writeHeader(lenConstants uint16, lenInstructions uint64) []byte {
 	out := make([]byte, 0)
 
 	signature := []byte(Signature)
-	version := []byte{build.Major, build.Minor, build.Patch}
+	version := []byte{build.BinaryVersion}
 
 	constants := make([]byte, 2)
 	binary.BigEndian.PutUint16(constants, lenConstants)
@@ -90,10 +90,10 @@ func readHeader(bytecode []byte) (uint16, uint64, int, error) {
 		return 0, 0, 0, fmt.Errorf("signature not found, expected '%s'", Signature)
 	}
 
-	version := bytecode[offset : offset+3]
-	offset += 3
-	if version[0] != build.Major {
-		return 0, 0, 0, fmt.Errorf("incompatible binary file version: vm=%d.%d.%d bin=%d.%d.%d", version[0], version[2], version[2], build.Major, build.Minor, build.Patch)
+	version := bytecode[offset : offset+1]
+	offset += 1
+	if version[0] != build.BinaryVersion {
+		return 0, 0, 0, fmt.Errorf("incompatible binary file version: vm=%02X bin=%02X", build.BinaryVersion, version[0])
 	}
 
 	constants := binary.BigEndian.Uint16(bytecode[offset : offset+2])

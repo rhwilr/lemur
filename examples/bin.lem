@@ -1,0 +1,6 @@
+// Define a variable and mutiply it by 2
+let number = 5;
+number * 2;
+
+// Then output a string to stdout.
+println("Helo World!");

@@ -1,10 +1,10 @@
 let f1 = function() {
-  println("f1 called\n");
+  println("f1 called");
   return false;
 };
 
 let f2 = function() {
-  println("f2 called\n");
+  println("f2 should not be called");
   return true;
 };
 
