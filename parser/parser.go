@@ -189,7 +189,7 @@ func (p *Parser) parseLetStatement() *ast.LetStatement {
 	}
 
 	if !p.peekTokenIs(token.SEMICOLON) {
-		msg := fmt.Sprintf("SyntaxError: Expected token ';'.")
+		msg := fmt.Sprintf("SyntaxError: [%d:%d] Expected token ';'", p.curToken.Position.Line, p.curToken.Position.Column + 1)
 		p.errors = append(p.errors, msg)
 	}
 
@@ -303,7 +303,7 @@ func (p *Parser) parsePrefixAssignmentExpression() ast.Expression {
 	if n, ok := name.(*ast.Identifier); ok {
 		stmt.Name = n
 	} else {
-		msg := fmt.Sprintf("SyntaxError: Expected assign token to be IDENT, got '%s' instead.", name.TokenLiteral())
+		msg := fmt.Sprintf("SyntaxError: [%d:%d] Expected assign token to be IDENT, got '%s' instead", p.curToken.Position.Line, p.curToken.Position.Column, name.TokenLiteral())
 		p.errors = append(p.errors, msg)
 	}
 
@@ -560,7 +560,8 @@ func (p *Parser) parseFunctionParameters() (map[string]ast.Expression, []*ast.Id
 	// Keep going until we find a ")"
 	for !p.curTokenIs(token.RPAREN) {
 		if p.curTokenIs(token.EOF) {
-			p.errors = append(p.errors, "SyntaxError: unterminated function parameters")
+			msg := fmt.Sprintf("SyntaxError: [%d:%d] unterminated function parameters", p.curToken.Position.Line, p.curToken.Position.Column)
+			p.errors = append(p.errors, msg)
 			return nil, nil
 		}
 
@@ -573,14 +574,15 @@ func (p *Parser) parseFunctionParameters() (map[string]ast.Expression, []*ast.Id
 		if p.curTokenIs(token.ASSIGN) {
 			p.nextToken()
 
+
 			if p.curTokenOneOf([]token.TokenType{token.RPAREN, token.RBRACE, token.LPAREN, token.LBRACE}) {
-				msg := fmt.Sprintf("SyntaxError: Unexpected token '%s'.", p.curToken.Literal)
+				msg := fmt.Sprintf("SyntaxError: [%d:%d] Unexpected token '%s'", p.curToken.Position.Line, p.curToken.Position.Column, p.curToken.Literal)
 				p.errors = append(p.errors, msg)
 				return nil, nil
 			}
 
 			if !p.curTokenOneOf([]token.TokenType{token.TRUE, token.FALSE, token.INT, token.STRING}) {
-				msg := fmt.Sprintf("SyntaxError: Unsupported token %s for default parameter.", p.curToken.Type)
+				msg := fmt.Sprintf("SyntaxError: [%d:%d] Unsupported token %s for default parameter", p.curToken.Position.Line, p.curToken.Position.Column, p.curToken.Type)
 				p.errors = append(p.errors, msg)
 				return nil, nil
 			}
@@ -625,7 +627,7 @@ func (p *Parser) parseAssignExpression(name ast.Expression) ast.Expression {
 	if n, ok := name.(*ast.Identifier); ok {
 		stmt.Name = n
 	} else {
-		msg := fmt.Sprintf("SyntaxError: Expected assign token to be IDENT, got '%s' instead.", name.TokenLiteral())
+		msg := fmt.Sprintf("SyntaxError: [%d:%d] Expected assign token to be IDENT, got '%s' instead.", p.curToken.Position.Line, p.curToken.Position.Column, name.TokenLiteral())
 		p.errors = append(p.errors, msg)
 	}
 
@@ -715,7 +717,7 @@ func (p *Parser) peekPrecedence() int {
 }
 
 func (p *Parser) peekError(t token.TokenType) {
-	msg := fmt.Sprintf("SyntaxError: Unexpected token '%s', expected %s", p.peekToken.Literal, t)
+	msg := fmt.Sprintf("SyntaxError: [%d:%d] Unexpected token '%s', expected %s", p.peekToken.Position.Line, p.peekToken.Position.Column, p.peekToken.Literal, t)
 	p.errors = append(p.errors, msg)
 }
 

@@ -2,9 +2,14 @@ package token
 
 type TokenType string
 
+type TokenPosition struct {
+	Line int
+	Column int
+}
 type Token struct {
 	Type    TokenType
 	Literal string
+	Position TokenPosition
 }
 
 const (
@@ -87,5 +92,6 @@ func LookupIdent(ident string) TokenType {
 	if tok, ok := keywords[ident]; ok {
 		return tok
 	}
+
 	return IDENT
 }

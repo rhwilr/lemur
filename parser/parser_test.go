@@ -2,9 +2,11 @@ package parser
 
 import (
 	"fmt"
+	"strings"
+	"testing"
+
 	"github.com/rhwilr/lemur/ast"
 	"github.com/rhwilr/lemur/lexer"
-	"testing"
 )
 
 func TestIncompleteLetConstStatement(t *testing.T) {
@@ -1142,7 +1144,7 @@ func TestSyntaxErrors(t *testing.T) {
 		{
 			input: `let 1 = "number";`,
 			expectedErrors: []string{
-				"SyntaxError: Unexpected token '1', expected IDENT",
+				"SyntaxError: [1:5] Unexpected token '1', expected IDENT",
 			},
 		},
 		{
@@ -1151,43 +1153,46 @@ func TestSyntaxErrors(t *testing.T) {
 			minusOne();
 			`,
 			expectedErrors: []string{
-				"SyntaxError: Expected token ';'.",
+				"SyntaxError: [2:29] Expected token ';'",
 			},
 		},
 		{
 			input: `let ff = function(n) { if (n == 0) {return a} 1} ff(5, 1);`,
 			expectedErrors: []string{
-				"SyntaxError: Expected token ';'.",
+				"SyntaxError: [1:49] Expected token ';'",
 			},
 		},
 		{
 			input: `function(x = ) {};`,
 			expectedErrors: []string{
-				"SyntaxError: Unexpected token ')'.",
+				"SyntaxError: [1:14] Unexpected token ')'",
 			},
 		},
 		{
+
 			input: `function(x = {) {};`,
 			expectedErrors: []string{
-				"SyntaxError: Unexpected token '{'.",
+				"SyntaxError: [1:14] Unexpected token '{'",
 			},
 		},
 		{
 			input: `function(x = number) {};`,
 			expectedErrors: []string{
-				"SyntaxError: Unsupported token IDENT for default parameter.",
+				"SyntaxError: [1:14] Unsupported token IDENT for default parameter",
 			},
 		},
 		{
 			input: `function(x = function(){}) {};`,
 			expectedErrors: []string{
-				"SyntaxError: Unsupported token FUNCTION for default parameter.",
+				"SyntaxError: [1:14] Unsupported token FUNCTION for default parameter",
 			},
 		},
 	}
 
 	for _, test := range tests {
-		l := lexer.New(test.input)
+		input := strings.Replace(test.input, "\t", "", -1)
+
+		l := lexer.New(input)
 		p := New(l)
 		_ = p.ParseProgram()
 
